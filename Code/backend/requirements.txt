@@ -1,4 +1,6 @@
+setuptools
 flask
 Flask-SQLAlchemy
 flask-restful
 Flask-Security-Too
+bcrypt

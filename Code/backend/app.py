@@ -3,7 +3,7 @@ import os
 from application.config import DevConfig, Config
 from application.database import db
 from application.models import User, Role
-from flask_security import Security, SQLAlchemyUserDatastore
+from flask_security import Security, SQLAlchemyUserDatastore, auth_required
 
 
 app = None
@@ -24,6 +24,18 @@ def create_app():
     return app
     
 app = create_app()
+
+import application.init_data
+
+@app.get('/')
+def welcome():
+    return {"message": "Welcome to Pro Services"}
+
+
+@app.get('/protected')
+@auth_required()
+def protected():
+    return {"message": "Welcome to Protected Pro Services"}
 
 if __name__ == '__main__':
     app.run(port=5050)

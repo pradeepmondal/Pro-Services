@@ -1,6 +1,6 @@
 from application.database import db
 from flask_security import UserMixin, RoleMixin
-import datetime
+from datetime import datetime
 
 
 class User(db.Model, UserMixin):
@@ -8,11 +8,9 @@ class User(db.Model, UserMixin):
     uid = db.Column(db.Integer, primary_key = True)
     email = db.Column(db.String, unique = True, nullable = False)
     password = db.Column(db.String, nullable = False)
-    f_name = db.Column(db.String, nullable = False)
-    l_name = db.Column(db.String)
     active = db.Column(db.Boolean, nullable = False, default = True)
     fs_uniquifier = db.Column(db.String, unique = True, nullable = False)
-    role = db.Relationship('Role', backref = 'bearers', secondary = 'user_roles')
+    roles = db.Relationship('Role', backref = 'bearers', secondary = 'user_roles')
 
 class Role(db.Model, RoleMixin):
     __tablename__ = 'role'
@@ -30,6 +28,8 @@ class ServiceProfessional(db.Model):
     __tablename__ = 'service_professional'
     sp_id = db.Column(db.Integer, db.ForeignKey('user.uid'), primary_key = True)
     date_created = db.Column(db.DateTime, nullable = False, default = datetime.now())
+    f_name = db.Column(db.String, nullable = False)
+    l_name = db.Column(db.String)
     description = db.Column(db.String)
     service_type = db.Column(db.String, db.ForeignKey('service.s_id'))
     experience = db.Column(db.Integer, nullable = False)
@@ -38,6 +38,8 @@ class Customer(db.Model):
     __tablename__ = 'customer'
     c_id = db.Column(db.Integer, db.ForeignKey('user.uid'), primary_key = True)
     date_created = db.Column(db.DateTime, nullable = False, default = datetime.now())
+    f_name = db.Column(db.String, nullable = False)
+    l_name = db.Column(db.String)
     description = db.Column(db.String)
     
 
