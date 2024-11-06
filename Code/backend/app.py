@@ -19,7 +19,7 @@ def create_app():
     datastore = SQLAlchemyUserDatastore(db, User, Role)
 
     db.init_app(app)
-    app.security = Security(app, datastore=datastore)
+    app.security = Security(app, datastore=datastore, register_blueprint=False)
     app.app_context().push()
     return app
     
@@ -27,15 +27,7 @@ app = create_app()
 
 import application.init_data
 
-@app.get('/')
-def welcome():
-    return {"message": "Welcome to Pro Services"}
-
-
-@app.get('/protected')
-@auth_required()
-def protected():
-    return {"message": "Welcome to Protected Pro Services"}
+import application.api
 
 if __name__ == '__main__':
     app.run(port=5050)

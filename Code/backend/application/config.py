@@ -9,6 +9,7 @@ class Config():
     DEBUG = False
     SQL_ALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_DATABASE_URI = "sqlite:///" + prod_db_d_path + "/prodDB.sqlite3"
+    SECURITY_TOKEN_AUTHENTICATION_HEADER = 'auth-token'
     
 
 class DevConfig(Config):
