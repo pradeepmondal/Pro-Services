@@ -10,6 +10,7 @@ class Config():
     SQL_ALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_DATABASE_URI = "sqlite:///" + prod_db_d_path + "/prodDB.sqlite3"
     SECURITY_TOKEN_AUTHENTICATION_HEADER = 'auth-token'
+    SECURITY_TOKEN_MAX_AGE = 1800
     
 
 class DevConfig(Config):

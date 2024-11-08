@@ -4,6 +4,7 @@ from application.config import DevConfig, Config
 from application.database import db
 from application.models import User, Role
 from flask_security import Security, SQLAlchemyUserDatastore, auth_required
+from flask_restful import Api, Resource
 
 
 app = None
@@ -20,14 +21,17 @@ def create_app():
 
     db.init_app(app)
     app.security = Security(app, datastore=datastore, register_blueprint=False)
+    api = Api(app)
     app.app_context().push()
-    return app
+    return app, api
     
-app = create_app()
+app, api = create_app()
 
 import application.init_data
+from application.api import Welcome, Login
 
-import application.api
+api.add_resource(Welcome, '/')
+api.add_resource(Login, '/login')
 
 if __name__ == '__main__':
     app.run(port=5050)
