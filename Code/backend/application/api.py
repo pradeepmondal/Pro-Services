@@ -53,6 +53,10 @@ class Login(Resource):
             abort(404, error = "Invalid Credentials")
             
     
+class Register(Resource):
+
+    def post(self):
+        pass
 
     
 

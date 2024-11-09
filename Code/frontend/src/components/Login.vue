@@ -1,5 +1,5 @@
 <template>
-    <h1 id="heading"> Welcome !! </h1>
+    <h1 id="heading"> Login Page </h1>
 </template>
 
 <style scoped>
