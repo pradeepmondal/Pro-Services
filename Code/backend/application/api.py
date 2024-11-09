@@ -1,6 +1,6 @@
 from flask import current_app as app, jsonify
 from flask_security import auth_required, SQLAlchemyUserDatastore, verify_password, hash_password
-from flask_restful import Resource, fields, marshal_with, reqparse
+from flask_restful import Resource, fields, marshal_with, reqparse, abort
 
 
 ds : SQLAlchemyUserDatastore = app.security.datastore
@@ -36,21 +36,21 @@ class Login(Resource):
         password = cred.get("password", None)
 
         if email is None:
-            return {"error": "email is missing"}, 400
+            abort(400, error = "Email is missing")
         
         if password is None:
-            return {"error": "password is missing"}, 400
+            abort(400, error = "Password is missing")
         
         user = ds.find_user(email = email)
 
         if (not user):
-            return {"error": "Invalid credentials"}, 404
+            abort(404, error = "Invalid Credentials")
         
         if(verify_password(password, user.password)):
             user.token = user.get_auth_token()
             return user, 200
         else:
-            return {"error": "Invalid Credentials"}, 404
+            abort(404, error = "Invalid Credentials")
             
     
 
