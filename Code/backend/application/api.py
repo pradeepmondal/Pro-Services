@@ -1,6 +1,8 @@
 from flask import current_app as app, jsonify
-from flask_security import auth_required, SQLAlchemyUserDatastore, verify_password, hash_password
+from flask_security import auth_required, SQLAlchemyUserDatastore, verify_password, hash_password, current_user
 from flask_restful import Resource, fields, marshal_with, reqparse, abort
+from application.database import db
+from application.models import Customer, User
 
 
 ds : SQLAlchemyUserDatastore = app.security.datastore
@@ -21,6 +23,14 @@ authenticated_user = {
     "email": fields.String,
     "roles": fields.List(fields.Nested(roles)),
     "token": fields.String
+    }
+
+customer = {
+    "cid": fields.Integer,
+    "date_created": fields.DateTime,
+    "f_name": fields.String,
+    "l_name": fields.String,
+    "description": fields.String
     }
 
 
@@ -59,7 +69,14 @@ class Register(Resource):
         pass
 
     
-
+class CustomerResource(Resource):
+    @auth_required('token')
+    @marshal_with(customer)
+    def get(self):
+        customer = db.session.query(Customer).filter(Customer.c_id == current_user.uid).first()
+        if not customer:
+            abort(404, error = "Customer not found")
+        return customer, 200
 
 
     

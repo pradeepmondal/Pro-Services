@@ -1,6 +1,7 @@
 from flask import current_app as app
 from application.database import db
 from flask_security import SQLAlchemyUserDatastore, hash_password
+from application.models import Customer
 
 
 with app.app_context():
@@ -26,6 +27,10 @@ with app.app_context():
 
     if(not test_customer):
         userdatastore.create_user(email = 'krish02@example.com', password = hash_password('test'), roles = ['customer'])
+        test_customer = userdatastore.find_user(email = 'krish02@example.com')
+        test_customer_data = Customer(c_id = test_customer.uid, f_name = 'Krish', l_name = 'Kumar', description = 'A test user')
+        db.session.add(test_customer_data)
+
 
     
     db.session.commit()

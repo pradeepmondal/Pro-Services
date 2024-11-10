@@ -3,4 +3,5 @@ flask
 Flask-SQLAlchemy
 flask-restful
 Flask-Security-Too
-bcrypt
+bcrypt==4.0.1
+flask-cors

@@ -1,20 +1,12 @@
 <script>
+import Login from './Login.vue'
+
 export default {
-  name: "Landing",
-  data() {
-    return {
-      form_type: "customer",
-    };
-  },
-  methods: {
-    changeToSPForm() {
-      this.form_type = "sp";
-    },
-    changeToCForm() {
-      this.form_type = "customer";
-    },
-  },
-};
+  components : {
+    Login
+  }
+}
+
 </script>
 
 <template>
@@ -24,78 +16,9 @@ export default {
       <img class="graphics-1" src="../assets/graphic-1.png" />
       <img class="graphics-2" src="../assets/graphic-2.png" />
     </div>
+    <Login />
 
-    <div class="common-login">
-      <div class="card text-center common-login-inner">
-        <div class="card-header">
-          <ul class="nav nav-tabs card-header-tabs n-item">
-            <li class="nav-item">
-              <a
-                v-if="form_type === 'customer'"
-                aria-current="true"
-                class="nav-link active"
-                >For Customers</a
-              >
-              <a v-else class="nav-link" @click="changeToCForm"
-                >For Customers</a
-              >
-            </li>
-            <li class="nav-item">
-              <a v-if="form_type === 'sp'" class="nav-link active"
-                >For Service Professionals</a
-              >
-              <a v-else class="nav-link" @click="changeToSPForm"
-                >For Service Professionals</a
-              >
-            </li>
-          </ul>
-        </div>
-        <div class="card-body">
-          <div v-if="form_type === 'customer'" class="customer-login">
-            <h5 class="card-title">Customer Login</h5>
-            <div class="input-group mb-3">
-              <span class="input-group-text" id="basic-addon1">@</span>
-              <input
-                type="text"
-                class="form-control"
-                placeholder="Email"
-                aria-label="Username"
-                aria-describedby="basic-addon1"
-              />
-            </div>
-            <div class="input-group mb-3">
-              <span class="input-group-text" id="basic-addon1">#</span>
-              <input
-                type="password"
-                class="form-control"
-                placeholder="Password"
-                aria-label="Password"
-                aria-describedby="basic-addon1"
-              />
-            </div>
-            <div class="form-check stay-loggedin">
-              <input
-                class="form-check-input"
-                type="checkbox"
-                value=""
-                id="login-checkbox"
-              />
-              <label class="form-check-label" for="stayLoggedIn">
-                Stay logged in
-              </label>
-            </div>
-            
-            <a href="#" class="btn btn-primary">Login</a>
-          </div>
-
-          <div v-if="form_type === 'sp'" class="sp-login">
-            <h5 class="card-title">SP Login</h5>
-            <p class="card-text">Login form for Service Professionals.</p>
-            <a href="#" class="btn btn-primary">Login</a>
-          </div>
-        </div>
-      </div>
-    </div>
+    
   </div>
 
   <!-- <ul>
@@ -111,22 +34,7 @@ body {
 </style>
 
 <style scoped>
-.common-login-inner {
-  width: auto;
-  height: fit-content;
-  
-  border: 5px solid rgba(111, 36, 162, 0.611);
-  border-radius: 2rem;
-}
 
-.common-login {
-    width: auto;
-  height: fit-content;
-}
-
-.n-item li {
-  cursor: pointer;
-}
 
 .custom-container {
   display: flex;
@@ -161,19 +69,4 @@ body {
   padding: 2rem;
 }
 
-.stay-loggedin {
-    /* border: 1px solid red; */
-    display: flex;
-    justify-items: flex-start;
-    padding-bottom: 1rem;
-
-}
-.stay-loggedin * {
-    padding-left:  0.5rem;
-}
-
-#login-checkbox {
-    margin-left: 0.1rem;
-    cursor: pointer;
-}
 </style>
