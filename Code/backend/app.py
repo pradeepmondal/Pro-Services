@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, jsonify
 import os
 from application.config import DevConfig, Config
 from application.database import db
@@ -36,6 +36,9 @@ api.add_resource(Welcome, '/')
 api.add_resource(Login, '/login')
 api.add_resource(CustomerResource, '/customer')
 api.add_resource(AdminResource, '/admin')
+
+
+
 
 if __name__ == '__main__':
     app.run(port=5050)

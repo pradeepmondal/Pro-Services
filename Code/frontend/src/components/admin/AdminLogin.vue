@@ -5,10 +5,20 @@ export default {
     return {
       email: null,
       password: null,
+      error_message: null
     };
   },
   methods: {
     async adminLogin() {
+
+      if (!this.email){
+        this.error_message = 'Email is missing'
+      }
+      if (!this.password){
+        this.error_message = 'Password is missing'
+
+      }
+      if(!this.error_message) {
         try {
       const res = await fetch('http://localhost:5050' + '/login', {method: 'POST', headers: {"content-type" : "application/json"}, body: JSON.stringify({email: this.email, password: this.password})})
       if(res.ok){
@@ -24,10 +34,18 @@ export default {
         
         
       }
+
+
+    if(!res.ok){
+          const data = await res.json()
+          throw new Error(data.message || 'Error occurred')
+        }
     } catch(e) {
-        console.error(e);
-        
+        console.error(e.message);
+        this.error_message = e.message
+
     }
+  }
 
 
     }
@@ -65,6 +83,8 @@ export default {
                 v-model="password"
               />
             </div>
+
+            <div :class="[error_message ? 'active-error': '']">{{ error_message }}</div>
             <div class="form-check stay-loggedin">
               <input
                 class="form-check-input"
@@ -122,4 +142,9 @@ export default {
     cursor: pointer;
 }
 
+.active-error {
+  background-color: red;
+  color: white;
+  height: fit-content;
+}
 </style>

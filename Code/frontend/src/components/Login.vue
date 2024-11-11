@@ -6,16 +6,32 @@ export default {
       form_type: "customer",
       email: null,
       password: null,
+      error_message: null
     };
   },
   methods: {
     changeToSPForm() {
       this.form_type = "sp";
+      this.email = null;
+      this.password = null;
+      this.error_message = null;
     },
     changeToCForm() {
       this.form_type = "customer";
+      this.email = null;
+      this.password = null;
+      this.error_message = null;
     },
     async custLogin() {
+
+      if (!this.email){
+        this.error_message = 'Email is missing'
+      }
+      if (!this.password){
+        this.error_message = 'Password is missing'
+
+      }
+      if(!this.error_message) {
         try {
       const res = await fetch('http://localhost:5050' + '/login', {method: 'POST', headers: {"content-type" : "application/json"}, body: JSON.stringify({email: this.email, password: this.password})})
       if(res.ok){
@@ -31,10 +47,58 @@ export default {
         
         
       }
+
+      if(!res.ok){
+          const data = await res.json()
+          throw new Error(data.message || 'Error occurred')
+        }
     } catch(e) {
-        console.error(e);
+        console.error(e.message);
+        this.error_message = e.message
+
+    }
+
         
     }
+
+
+    },
+    async spLogin() {
+      if (!this.email){
+        this.error_message = 'Email is missing'
+      }
+      if (!this.password){
+        this.error_message = 'Password is missing'
+
+      }
+      if(!this.error_message) {
+        try {
+      const res = await fetch('http://localhost:5050' + '/login', {method: 'POST', headers: {"content-type" : "application/json"}, body: JSON.stringify({email: this.email, password: this.password})})
+      if(res.ok){
+        const data = await res.json();
+        // console.log('success', data.roles[0].rid)
+        const roles = data.roles.map((role) => role.name)
+        if (roles.includes('service_professional')){
+            localStorage.setItem('auth-token', data.token)
+            localStorage.setItem('user-type', 'sp')
+            this.$router.push('/dashboard')
+
+        }
+        
+        
+        
+      }
+
+      if(!res.ok){
+          const data = await res.json()
+          throw new Error(data.message || 'Error occurred')
+        }
+    } catch(e) {
+      console.error(e.message);
+      this.error_message = e.message
+        
+    }
+  }
 
 
     }
@@ -70,6 +134,7 @@ export default {
           </ul>
         </div>
         <div class="card-body">
+          
           <div v-if="form_type === 'customer'" class="customer-login">
             <h5 class="card-title">Customer Login</h5>
             <div class="input-group mb-3">
@@ -94,6 +159,7 @@ export default {
                 v-model="password"
               />
             </div>
+            <div :class="[error_message ? 'active-error': '']">{{ error_message }}</div>
             <div class="form-check stay-loggedin">
               <input
                 class="form-check-input"
@@ -111,8 +177,43 @@ export default {
 
           <div v-if="form_type === 'sp'" class="sp-login">
             <h5 class="card-title">SP Login</h5>
-            <p class="card-text">Login form for Service Professionals.</p>
-            <a href="#" class="btn btn-primary">Login</a>
+            <div class="input-group mb-3">
+              <span class="input-group-text" id="basic-addon1">@</span>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Email"
+                aria-label="Username"
+                aria-describedby="basic-addon1"
+                v-model="email"
+              />
+            </div>
+            <div class="input-group mb-3">
+              <span class="input-group-text" id="basic-addon1">#</span>
+              <input
+                type="password"
+                class="form-control"
+                placeholder="Password"
+                aria-label="Password"
+                aria-describedby="basic-addon1"
+                v-model="password"
+              />
+            </div>
+            <div :class="[error_message ? 'active-error': '']">{{ error_message }}</div>
+            <div class="form-check stay-loggedin">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                value=""
+                id="login-checkbox"
+              />
+              <label class="form-check-label" for="stayLoggedIn">
+                Stay logged in
+              </label>
+            </div>
+            
+            <a  class="btn btn-primary" @click="spLogin">Login</a>
+          
           </div>
         </div>
       </div>
@@ -155,6 +256,12 @@ export default {
 #login-checkbox {
     margin-left: 0.1rem;
     cursor: pointer;
+}
+
+.active-error {
+  background-color: red;
+  color: white;
+  height: fit-content;
 }
 
 </style>

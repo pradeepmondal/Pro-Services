@@ -1,7 +1,7 @@
 from flask import current_app as app
 from application.database import db
 from flask_security import SQLAlchemyUserDatastore, hash_password
-from application.models import Customer
+from application.models import Customer, ServiceProfessional
 
 
 with app.app_context():
@@ -22,6 +22,8 @@ with app.app_context():
 
     if(not test_sp):
         userdatastore.create_user(email = 'rajesh@example.com', password = hash_password('test'), roles = ['service_professional'])
+        # test_sp = userdatastore.find_user(email = 'rajesh@example.com')
+        # test_sp_data = ServiceProfessional()
 
     test_customer = userdatastore.find_user(email = 'krish02@example.com')
 

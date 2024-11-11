@@ -51,21 +51,21 @@ class Login(Resource):
         password = cred.get("password", None)
 
         if email is None:
-            abort(400, error = "Email is missing")
+            abort(400, message = "Email is missing")
         
         if password is None:
-            abort(400, error = "Password is missing")
+            abort(400, message = "Password is missing")
         
         user = ds.find_user(email = email)
 
         if (not user):
-            abort(404, error = "Invalid Credentials")
+            abort(404, message = "Invalid Credentials")
         
         if(verify_password(password, user.password)):
             user.token = user.get_auth_token()
             return user, 200
         else:
-            abort(404, error = "Invalid Credentials")
+            abort(404, message = "Invalid Credentials")
             
     
 class Register(Resource):
@@ -80,7 +80,7 @@ class CustomerResource(Resource):
     def get(self):
         customer = db.session.query(Customer).filter(Customer.c_id == current_user.uid).first()
         if not customer:
-            abort(404, error = "Customer not found")
+            abort(404, message = "Customer not found")
         return customer, 200
     
 
@@ -90,7 +90,7 @@ class AdminResource(Resource):
     def get(self):
         admin = current_user
         if not admin:
-            abort(404, error = "Admin not found")
+            abort(404, message = "Admin not found")
         return admin, 200
 
 
