@@ -33,6 +33,11 @@ customer = {
     "description": fields.String
     }
 
+admin = {
+    "uid": fields.Integer,
+    "email": fields.String, 
+}
+
 
 class Welcome(Resource):
     def get(self):
@@ -77,6 +82,16 @@ class CustomerResource(Resource):
         if not customer:
             abort(404, error = "Customer not found")
         return customer, 200
+    
+
+class AdminResource(Resource):
+    @auth_required('token')
+    @marshal_with(admin)
+    def get(self):
+        admin = current_user
+        if not admin:
+            abort(404, error = "Admin not found")
+        return admin, 200
 
 
     

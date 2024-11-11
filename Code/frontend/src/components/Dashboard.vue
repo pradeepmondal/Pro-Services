@@ -1,9 +1,11 @@
 <script>
-import CustomerDashboard from './CustomerDashboard.vue'
+import CustomerDashboard from './customer/CustomerDashboard.vue'
+import AdminDashboard from './admin/AdminDashboard.vue'
 
 export default {
   components : {
-    CustomerDashboard
+    CustomerDashboard,
+    AdminDashboard
   },
   name: "Dashboard",
   data() {
@@ -20,6 +22,7 @@ export default {
 
 
 <template>
+    <AdminDashboard v-if="user_type === 'admin'" />
     <CustomerDashboard v-if="user_type === 'customer'" />
 
 </template>

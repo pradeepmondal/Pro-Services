@@ -1,12 +1,30 @@
 <script>
-import Login from './Login.vue'
+import Login from "./Login.vue";
+import AdminLogin from "./admin/AdminLogin.vue";
 
 export default {
-  components : {
-    Login
-  }
-}
-
+  components: {
+    Login,
+    AdminLogin,
+  },
+  name: "Landing",
+  data() {
+    return {
+      show_login_form: false,
+      show_admin_login_form: false,
+    };
+  },
+  methods: {
+    showLoginForm() {
+      this.show_admin_login_form = false;
+      this.show_login_form = true;
+    },
+    showAdminLoginForm() {
+      this.show_login_form = false;
+      this.show_admin_login_form = true;
+    },
+  },
+};
 </script>
 
 <template>
@@ -16,9 +34,33 @@ export default {
       <img class="graphics-1" src="../assets/graphic-1.png" />
       <img class="graphics-2" src="../assets/graphic-2.png" />
     </div>
-    <Login />
+    <div class="login-container">
+      <div class="login-container">
+        <Login v-if="show_login_form" />
+        <AdminLogin v-if="show_admin_login_form" />
+      </div>
+      <div class="login-button-container">
+        <a
+          v-if="!(show_login_form) & !(show_admin_login_form)"
+          class="btn btn-primary"
+          @click="showLoginForm"
+          >Let's Login</a
+        >
+        <a
+          v-if="!(show_login_form) & (show_admin_login_form)"
+          class="btn btn-primary"
+          @click="showLoginForm"
+          >Customer/SP Login</a
+        >
 
-    
+        <a
+          v-if="!(show_admin_login_form) & show_login_form"
+          class="btn btn-primary"
+          @click="showAdminLoginForm"
+          >Admin Login</a
+        >
+      </div>
+    </div>
   </div>
 
   <!-- <ul>
@@ -34,8 +76,6 @@ body {
 </style>
 
 <style scoped>
-
-
 .custom-container {
   display: flex;
   justify-content: space-between;
@@ -54,7 +94,6 @@ body {
   height: fit-content;
   background-color: hsl(279, 43%, 55%);
   border-radius: 2rem;
-  
 }
 
 .graphics-1 {
@@ -69,4 +108,16 @@ body {
   padding: 2rem;
 }
 
+.login-button-container {
+  
+  display: flex;
+  flex-direction: column;
+  padding: 1em ;
+}
+
+.login-button-container a {
+  padding: 0.5rem 1rem;
+  margin: 0.5em 1rem;
+
+}
 </style>

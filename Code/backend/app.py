@@ -30,11 +30,12 @@ def create_app():
 app, api = create_app()
 
 import application.init_data
-from application.api import Welcome, Login, CustomerResource
+from application.api import Welcome, Login, CustomerResource, AdminResource
 
 api.add_resource(Welcome, '/')
 api.add_resource(Login, '/login')
 api.add_resource(CustomerResource, '/customer')
+api.add_resource(AdminResource, '/admin')
 
 if __name__ == '__main__':
     app.run(port=5050)
