@@ -5,20 +5,37 @@ export default {
     return {
       email: null,
       password: null,
-      error_message: null
+      b_error_message: null
     };
   },
+
+  computed: {
+    f_error_message() {
+      this.b_error_message = null
+      if (!this.email){
+        return 'Email is missing'
+      } 
+      if (!this.password){
+        return 'Password is missing'
+
+      } 
+      if (this.password & this.email) {
+        return null
+      }
+
+    },
+
+    error_message() {
+      let error = this.f_error_message || this.b_error_message
+      return error
+    }
+
+  },
+
   methods: {
     async adminLogin() {
 
-      if (!this.email){
-        this.error_message = 'Email is missing'
-      }
-      if (!this.password){
-        this.error_message = 'Password is missing'
-
-      }
-      if(!this.error_message) {
+      if(!this.f_error_message) {
         try {
       const res = await fetch('http://localhost:5050' + '/login', {method: 'POST', headers: {"content-type" : "application/json"}, body: JSON.stringify({email: this.email, password: this.password})})
       if(res.ok){
@@ -42,7 +59,7 @@ export default {
         }
     } catch(e) {
         console.error(e.message);
-        this.error_message = e.message
+        this.b_error_message = e.message
 
     }
   }

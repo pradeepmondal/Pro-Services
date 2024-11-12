@@ -30,12 +30,13 @@ def create_app():
 app, api = create_app()
 
 import application.init_data
-from application.api import Welcome, Login, CustomerResource, AdminResource
+from application.api import Welcome, Login, CustomerResource, AdminResource, SPResource
 
 api.add_resource(Welcome, '/')
 api.add_resource(Login, '/login')
 api.add_resource(CustomerResource, '/customer')
 api.add_resource(AdminResource, '/admin')
+api.add_resource(SPResource, '/sp')
 
 
 

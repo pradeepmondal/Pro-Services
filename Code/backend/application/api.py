@@ -2,7 +2,7 @@ from flask import current_app as app, jsonify
 from flask_security import auth_required, SQLAlchemyUserDatastore, verify_password, hash_password, current_user
 from flask_restful import Resource, fields, marshal_with, reqparse, abort
 from application.database import db
-from application.models import Customer, User
+from application.models import Customer, User, ServiceProfessional
 
 
 ds : SQLAlchemyUserDatastore = app.security.datastore
@@ -26,7 +26,7 @@ authenticated_user = {
     }
 
 customer = {
-    "cid": fields.Integer,
+    "c_id": fields.Integer,
     "date_created": fields.DateTime,
     "f_name": fields.String,
     "l_name": fields.String,
@@ -36,6 +36,17 @@ customer = {
 admin = {
     "uid": fields.Integer,
     "email": fields.String, 
+}
+
+sp = {
+    "sp_id": fields.Integer,
+    "date_created": fields.DateTime,
+    "f_name": fields.String,
+    "l_name": fields.String,
+    "description": fields.String,
+    "service_type": fields.String,
+    "experience": fields.Integer
+
 }
 
 
@@ -78,10 +89,10 @@ class CustomerResource(Resource):
     @auth_required('token')
     @marshal_with(customer)
     def get(self):
-        customer = db.session.query(Customer).filter(Customer.c_id == current_user.uid).first()
-        if not customer:
+        current_customer = db.session.query(Customer).filter(Customer.c_id == current_user.uid).first()
+        if not current_customer:
             abort(404, message = "Customer not found")
-        return customer, 200
+        return current_customer, 200
     
 
 class AdminResource(Resource):
@@ -92,6 +103,16 @@ class AdminResource(Resource):
         if not admin:
             abort(404, message = "Admin not found")
         return admin, 200
+    
+
+class SPResource(Resource):
+    @auth_required('token')
+    @marshal_with(sp)
+    def get(self):
+        current_sp = db.session.query(ServiceProfessional).filter(ServiceProfessional.sp_id == current_user.uid).first()
+        if not current_sp:
+            abort(404, message = "Service Professional not found")
+        return current_sp, 200
 
 
     
