@@ -1,8 +1,14 @@
 <script>
 
+import Navbar from './Navbar.vue';
+
 export default {
 
   name: "AdminDashboard",
+  components: {
+    Navbar
+
+  },
   data() {
     return {
         email: null,
@@ -45,7 +51,9 @@ export default {
 
 
 <template>
-    <h1>Welcome {{ email }} !!</h1>
-    <button @click="adminLogout">Logout</button>
+    <div class="dashboard-container">
+      <Navbar :email  :adminLogout="adminLogout"/>
+    </div>
+    
 
 </template>
