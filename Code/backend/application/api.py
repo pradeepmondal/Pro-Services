@@ -1,4 +1,4 @@
-from flask import current_app as app, jsonify
+from flask import current_app as app, jsonify, request
 from flask_security import auth_required, SQLAlchemyUserDatastore, verify_password, hash_password, current_user
 from flask_restful import Resource, fields, marshal_with, reqparse, abort
 from application.database import db
@@ -48,6 +48,22 @@ sp = {
     "experience": fields.Integer
 
 }
+
+def check_for_role():
+    if request.endpoint in ['admin']:
+        user_roles = [role.name for role in current_user.roles]
+        if 'admin' not in user_roles:
+            abort(403, message = "Incorrect role, forbidden")
+    
+    if request.endpoint in ['customer']:
+        user_roles = [role.name for role in current_user.roles]
+        if 'customer' not in user_roles:
+            abort(403, message = "Incorrect role, forbidden")
+    
+    if request.endpoint in ['sp']:
+        user_roles = [role.name for role in current_user.roles]
+        if 'sp' not in user_roles:
+            abort(403, message = "Incorrect role, forbidden")
 
 
 class Welcome(Resource):
@@ -99,6 +115,7 @@ class AdminResource(Resource):
     @auth_required('token')
     @marshal_with(admin)
     def get(self):
+        check_for_role()
         admin = current_user
         if not admin:
             abort(404, message = "Admin not found")

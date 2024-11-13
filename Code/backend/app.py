@@ -3,7 +3,7 @@ import os
 from application.config import DevConfig, Config
 from application.database import db
 from application.models import User, Role
-from flask_security import Security, SQLAlchemyUserDatastore, auth_required
+from flask_security import Security, SQLAlchemyUserDatastore
 from flask_restful import Api, Resource
 from flask_cors import CORS
 
@@ -32,11 +32,15 @@ app, api = create_app()
 import application.init_data
 from application.api import Welcome, Login, CustomerResource, AdminResource, SPResource
 
+
+
+
+
 api.add_resource(Welcome, '/')
 api.add_resource(Login, '/login')
-api.add_resource(CustomerResource, '/customer')
-api.add_resource(AdminResource, '/admin')
-api.add_resource(SPResource, '/sp')
+api.add_resource(CustomerResource, '/customer', endpoint = 'customer')
+api.add_resource(AdminResource, '/admin', endpoint = 'admin')
+api.add_resource(SPResource, '/sp', endpoint = 'sp')
 
 
 
