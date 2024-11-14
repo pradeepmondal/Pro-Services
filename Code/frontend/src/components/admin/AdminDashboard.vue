@@ -1,7 +1,7 @@
 <script>
-import Navbar from './Navbar.vue';
-import AdminSearch from './AdminSearch.vue';
-import AdminTiles from './AdminTiles.vue';
+import Navbar from './components/Navbar.vue';
+import AdminSearch from './components/AdminSearch.vue';
+import AdminTiles from './components/AdminTiles.vue';
 
 
 

@@ -1,6 +1,11 @@
 <script>
+import Tile from './Tile.vue';
+
 export default {
   name: "AdminTiles",
+  components: {
+    Tile
+  },
   props: {
     
   },
@@ -16,30 +21,22 @@ export default {
     <div class="tiles-container row">
         
         <div class="col-lg-3 col-md-6 col-12 services-container">
-            <div class=" tile-heading">
-                Services 
-            </div>
+            <Tile tile_heading="Services" />
         </div>
 
 
         <div class="col-lg-3 col-md-6 col-12 requests-container">
-            <div class="tile-heading">
-                SRs 
-            </div>
+            <Tile tile_heading="SRs" />
         </div>
 
 
         <div class="col-lg-3 col-md-6 col-12 customers-container">
-            <div class="tile-heading">
-                Customers 
-            </div>
+            <Tile tile_heading="Customers" />
         </div>
 
 
         <div class="col-lg-3 col-md-6 col-12 professionals-container">
-            <div class="tile-heading">
-                Professionals 
-            </div>
+            <Tile tile_heading="Professionals" />
         </div>
         
     </div>
@@ -57,15 +54,9 @@ export default {
 }
 
 .tiles-container > div {
-    display: flex;
-    border: 1px solid black;
-    width: 15rem;
-    height: 12rem;
+    
 }
 
-.tile-heading {
-    justify-content: center;
-    padding: 0.5rem 0.5rem;
-}
+
 
 </style>
