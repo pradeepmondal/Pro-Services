@@ -1,12 +1,18 @@
 <script>
-
 import Navbar from './Navbar.vue';
+import AdminSearch from './AdminSearch.vue';
+import AdminTiles from './AdminTiles.vue';
+
+
+
 
 export default {
 
   name: "AdminDashboard",
   components: {
-    Navbar
+    Navbar,
+    AdminSearch,
+    AdminTiles
 
   },
   data() {
@@ -51,8 +57,12 @@ export default {
 
 
 <template>
-    <div class="dashboard-container">
-      <Navbar :email  :adminLogout="adminLogout"/>
+  <Navbar :email  :adminLogout="adminLogout"/>
+    <div class="container-fluid">
+      
+      
+      <AdminSearch />
+      <AdminTiles />
     </div>
     
 

@@ -14,7 +14,7 @@ export default {
 </script>
 
 <template>
-  <div class="nav-container">
+  <div class="nav-container ">
     <div class="user-label">
         <ul class="navbar-nav">
         <li class="nav-item dropdown-center d-container">
