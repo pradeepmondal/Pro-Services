@@ -21,22 +21,22 @@ export default {
     <div class="tiles-container row">
         
         <div class="col-lg-3 col-md-6 col-12 services-container">
-            <Tile tile_heading="Services" />
+            <Tile tile_heading="Services" category="services" />
         </div>
 
 
         <div class="col-lg-3 col-md-6 col-12 requests-container">
-            <Tile tile_heading="SRs" />
+            <Tile tile_heading="SRs" category="srs" />
         </div>
 
 
         <div class="col-lg-3 col-md-6 col-12 customers-container">
-            <Tile tile_heading="Customers" />
+            <Tile tile_heading="Customers" category="customers" />
         </div>
 
 
         <div class="col-lg-3 col-md-6 col-12 professionals-container">
-            <Tile tile_heading="Professionals" />
+            <Tile tile_heading="Professionals" category="professionals" />
         </div>
         
     </div>

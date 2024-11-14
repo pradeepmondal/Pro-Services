@@ -5,6 +5,10 @@ export default {
     tile_heading: {
         type: String,
         required: true
+    },
+    category: {
+        type: String,
+        required: true
     }
     
   },
@@ -12,6 +16,14 @@ export default {
     return {
         
         
+    }
+  },
+  methods: {
+    gotoNavigate() {
+        this.$router.push('/admin/' + this.category)
+    },
+    statNavigate() {
+        this.$router.push('/admin/stat/' + this.category)
     }
   }
 };
@@ -25,12 +37,12 @@ export default {
             </div>
 
             <div class="tile-buttons">
-                <button class="goto btn btn-outline-primary">
+                <button class="goto btn btn-outline-primary" @click="gotoNavigate">
                     Go to {{ tile_heading }}
 
                 </button>
 
-                <button class="stats btn btn-outline-primary">
+                <button class="stats btn btn-outline-primary" @click="statNavigate">
                     View Stats
 
                 </button>
