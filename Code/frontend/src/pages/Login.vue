@@ -61,8 +61,9 @@ export default {
         // console.log('success', data.roles[0].rid)
         const roles = data.roles.map((role) => role.name)
         if (roles.includes('customer')){
-            localStorage.setItem('auth-token', data.token)
+            localStorage.setItem('user', JSON.stringify(data))
             localStorage.setItem('user-type', 'customer')
+            this.$store.commit('setUser')
             this.$router.push('/dashboard')
 
         }
@@ -101,8 +102,9 @@ export default {
         // console.log('success', data.roles[0].rid)
         const roles = data.roles.map((role) => role.name)
         if (roles.includes('service_professional')){
-            localStorage.setItem('auth-token', data.token)
+            localStorage.setItem('user', JSON.stringify(data))
             localStorage.setItem('user-type', 'sp')
+            this.$store.commit('setUser')
             this.$router.push('/dashboard')
 
         }

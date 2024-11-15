@@ -4,12 +4,16 @@ export default {
   props: {
     email: {
       type: String,
-    },
-    adminLogout: {
-        type: Function,
-        required: true
-    },
+    }
   },
+
+  methods: {
+    adminLogout() {
+        this.$store.commit('logout')
+        localStorage.removeItem('user-type')
+        this.$router.push('/')
+    }
+  }
 };
 </script>
 

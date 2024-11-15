@@ -20,6 +20,9 @@ importers:
       vue-router:
         specifier: '4'
         version: 4.4.5(vue@3.5.12)
+      vuex:
+        specifier: ^4.0.2
+        version: 4.0.2(vue@3.5.12)
     devDependencies:
       '@vitejs/plugin-vue':
         specifier: ^5.1.4
@@ -419,6 +422,11 @@ packages:
       typescript:
         optional: true
 
+  vuex@4.0.2:
+    resolution: {integrity: sha512-M6r8uxELjZIK8kTKDGgZTYX/ahzblnzC4isU1tpmEuOIIKmV+TRdc+H4s8ds2NuZ7wpUTdGRzJRtoj+lI+pc0Q==}
+    peerDependencies:
+      vue: ^3.0.2
+
 snapshots:
 
   '@babel/helper-string-parser@7.25.9': {}
@@ -725,3 +733,8 @@ snapshots:
       '@vue/runtime-dom': 3.5.12
       '@vue/server-renderer': 3.5.12(vue@3.5.12)
       '@vue/shared': 3.5.12
+
+  vuex@4.0.2(vue@3.5.12):
+    dependencies:
+      '@vue/devtools-api': 6.6.4
+      vue: 3.5.12

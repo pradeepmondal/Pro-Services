@@ -43,8 +43,9 @@ export default {
         // console.log('success', data.roles[0].rid)
         const roles = data.roles.map((role) => role.name)
         if (roles.includes('admin')){
-            localStorage.setItem('auth-token', data.token)
+            localStorage.setItem('user', JSON.stringify(data))
             localStorage.setItem('user-type', 'admin')
+            this.$store.commit('setUser')
             this.$router.push('/dashboard')
 
         }

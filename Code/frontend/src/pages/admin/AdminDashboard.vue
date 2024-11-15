@@ -27,7 +27,7 @@ export default {
   methods: {
     async fetchAdmin() {
         try{
-        const res = await fetch('http://localhost:5050' + '/admin', {method: 'GET', headers: {"content-type" : "application/json", 'auth-token': localStorage.getItem('auth-token')}})
+        const res = await fetch('http://localhost:5050' + '/admin', {method: 'GET', headers: {"content-type" : "application/json", 'auth-token': this.$store.state.auth_token}})
         if(res.ok){
 
             const data = await res.json()
@@ -43,12 +43,8 @@ export default {
         
 
 
-    },
-    adminLogout() {
-        localStorage.removeItem('auth-token')
-        localStorage.removeItem('user-type')
-        this.$router.push('/')
     }
+
 
   }
 }
@@ -57,7 +53,7 @@ export default {
 
 
 <template>
-  <Navbar :email  :adminLogout="adminLogout"/>
+  <Navbar :email />
     <div class="container-fluid">
       
       

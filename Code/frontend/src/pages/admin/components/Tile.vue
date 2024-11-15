@@ -9,6 +9,11 @@ export default {
     category: {
         type: String,
         required: true
+    },
+    stats: {
+        type: Boolean,
+        required: true
+
     }
     
   },
@@ -42,7 +47,7 @@ export default {
 
                 </button>
 
-                <button class="stats btn btn-outline-primary" @click="statNavigate">
+                <button v-if="stats" class="stats btn btn-outline-primary" @click="statNavigate">
                     View Stats
 
                 </button>

@@ -13,7 +13,7 @@ export default {
   name: "Dashboard",
   data() {
     return {
-        user_type: localStorage.getItem('user-type')
+        user_type: this.$store.state.user_type
     }
   },
   methods: {

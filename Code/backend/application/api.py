@@ -2,7 +2,7 @@ from flask import current_app as app, jsonify, request
 from flask_security import auth_required, SQLAlchemyUserDatastore, verify_password, hash_password, current_user
 from flask_restful import Resource, fields, marshal_with, reqparse, abort
 from application.database import db
-from application.models import Customer, User, ServiceProfessional
+from application.models import Customer, User, ServiceProfessional, Category
 
 
 ds : SQLAlchemyUserDatastore = app.security.datastore
@@ -47,6 +47,12 @@ sp = {
     "service_type": fields.String,
     "experience": fields.Integer
 
+}
+
+category = {
+    "cat_id": fields.Integer,
+    "name": fields.String,
+    "description": fields.String
 }
 
 def check_for_role():
@@ -132,4 +138,9 @@ class SPResource(Resource):
         return current_sp, 200
 
 
-    
+class CategoryList(Resource):
+    @auth_required('token')
+    @marshal_with(category)
+    def get(self):
+        cat_list = db.session.query(Category).all()
+        return cat_list, 200

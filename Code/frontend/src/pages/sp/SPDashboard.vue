@@ -15,7 +15,7 @@ export default {
   methods: {
     async fetchSP() {
         try{
-        const res = await fetch('http://localhost:5050' + '/sp', {method: 'GET', headers: {"content-type" : "application/json", 'auth-token': localStorage.getItem('auth-token')}})
+        const res = await fetch('http://localhost:5050' + '/sp', {method: 'GET', headers: {"content-type" : "application/json", 'auth-token': this.$store.state.auth_token}})
         if(res.ok){
 
             const data = await res.json()
@@ -33,7 +33,7 @@ export default {
 
     },
     spLogout() {
-        localStorage.removeItem('auth-token')
+        this.$store.commit('logout')
         localStorage.removeItem('user-type')
         this.$router.push('/')
     }
