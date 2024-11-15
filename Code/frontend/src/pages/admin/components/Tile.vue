@@ -6,6 +6,10 @@ export default {
         type: String,
         required: true
     },
+    goto: {
+        type: Boolean,
+        required: true
+    },
     category: {
         type: String,
         required: true
@@ -14,6 +18,21 @@ export default {
         type: Boolean,
         required: true
 
+    },
+    delete: {
+        type: Boolean,
+    },
+    create: {
+        type: Boolean
+    },
+    addCategory : {
+        type: Function,
+    },
+    deleteCategory : {
+        type: Function
+    },
+    obj: {
+        type: Object
     }
     
   },
@@ -42,13 +61,23 @@ export default {
             </div>
 
             <div class="tile-buttons">
-                <button class="goto btn btn-outline-primary" @click="gotoNavigate">
+                <button v-if="goto" class="goto btn btn-outline-primary" @click="gotoNavigate">
                     Go to {{ tile_heading }}
 
                 </button>
 
                 <button v-if="stats" class="stats btn btn-outline-primary" @click="statNavigate">
                     View Stats
+
+                </button>
+
+                <button v-if="delete" class="stats btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#staticBackdrop" @click="deleteCategory(obj)">
+                    Delete
+
+                </button>
+
+                <button v-if="create" class="stats btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#staticBackdrop" @click="addCategory">
+                    Add
 
                 </button>
             </div>

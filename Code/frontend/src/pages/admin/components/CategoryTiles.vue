@@ -7,42 +7,30 @@ export default {
     Tile
   },
   props: {
+    addCategory : {
+        type: Function,
+    },
+    categories: {
+        type: Array,
+        required: true
+    },
+    deleteCategory: {
+        type: Function
+    }
+
     
   },
   data(){
     return {
         email: this.$store.state.email,
-        categories: null
+        
 
         
     }
-  },
-  async created() {
-    await this.fetchServices()
   },
 
   methods: {
-    async fetchServices(){
-        try{
-        const res = await fetch('http://localhost:5050' + '/service_categories', {method: 'GET', headers: {"content-type" : "application/json", 'auth-token': this.$store.state.auth_token}})
-        if(res.ok){
-
-            const data = await res.json()
-            console.log(data);
-            
-            this.categories = data
-
-
-
-        }
-    }catch(e){
-        console.error(e)
-    }
-        
-        
-
-
-    }
+    
   }
 };
 </script>
@@ -51,7 +39,11 @@ export default {
     <div class="tiles-container row">
         
         <div v-for="cat in categories" class="col-lg-3 col-md-6 col-12 services-container">
-            <Tile :tile_heading="cat.name" :stats="false" :category="String(cat.cat_id)" />
+            <Tile :tile_heading="cat.name" :goto="true" :stats="false" :category="String(cat.cat_id)" :delete="true" :deleteCategory="deleteCategory" :obj="cat" />
+        </div>
+
+        <div class="col-lg-3 col-md-6 col-12 services-container">
+            <Tile tile_heading="Add Category" :goto="false" :stats="false" category="add_category" :create="true" :addCategory="addCategory" />
         </div>
 
 

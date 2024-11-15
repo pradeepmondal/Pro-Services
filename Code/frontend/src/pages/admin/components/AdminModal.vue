@@ -1,0 +1,81 @@
+<script>
+
+import AddCategoryForm from './service_category/AddCategoryForm.vue';
+import DeleteCategoryForm from './service_category/DeleteCategoryForm.vue';
+
+
+
+export default {
+  name: "AdminModal",
+  components: {
+    AddCategoryForm,
+    DeleteCategoryForm
+
+  },
+  props: {
+    modal_type: {
+        type: String,
+        required: true
+    },
+    heading: {
+        type: String
+    },
+    d_category: {
+        type: Object
+    }
+
+  },
+
+
+  data(){
+    return {
+      email: this.$store.state.email
+        
+        
+    }
+  }
+};
+</script>
+
+<template>
+  <Navbar :email />
+    <div class="">
+      <!-- Button trigger modal
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+  Launch static backdrop modal
+</button> -->
+
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="staticBackdropLabel">{{ heading }}</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <AddCategoryForm v-if="modal_type === 'add_category_form'" />
+        <DeleteCategoryForm v-if="modal_type === 'delete_category_form'" :d_category="d_category"/>
+        
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button v-if="modal_type === 'add_category_form'" type="button" class="btn btn-success">Create</button>
+        <button v-if="modal_type === 'delete_category_form'" type="button" class="btn btn-danger">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+        
+    </div>
+
+
+</template>
+
+
+<style scoped>
+
+
+</style>

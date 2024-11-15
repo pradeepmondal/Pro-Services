@@ -21,22 +21,22 @@ export default {
     <div class="tiles-container row">
         
         <div class="col-lg-3 col-md-6 col-12 services-container">
-            <Tile tile_heading="Services" category="services" stats="true" />
+            <Tile tile_heading="Services" :goto="true" category="services" stats="true" />
         </div>
 
 
         <div class="col-lg-3 col-md-6 col-12 requests-container">
-            <Tile tile_heading="SRs" category="srs" stats="true" />
+            <Tile tile_heading="SRs" :goto="true" category="srs" stats="true" />
         </div>
 
 
         <div class="col-lg-3 col-md-6 col-12 customers-container">
-            <Tile tile_heading="Customers" category="customers" stats="true" />
+            <Tile tile_heading="Customers" :goto="true" category="customers" stats="true" />
         </div>
 
 
         <div class="col-lg-3 col-md-6 col-12 professionals-container">
-            <Tile tile_heading="Professionals" category="professionals" stats="true" />
+            <Tile tile_heading="Professionals" :goto="true" category="professionals" stats="true" />
         </div>
         
     </div>
