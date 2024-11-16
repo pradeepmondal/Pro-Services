@@ -27,6 +27,8 @@ authenticated_user = {
 
 customer = {
     "c_id": fields.Integer,
+    "email": fields.String,
+    "active": fields.Boolean,
     "date_created": fields.DateTime,
     "f_name": fields.String,
     "l_name": fields.String,
@@ -128,6 +130,8 @@ class CustomerResource(Resource):
         current_customer = db.session.query(Customer).filter(Customer.c_id == current_user.uid).first()
         if not current_customer:
             abort(404, message = "Customer not found")
+        current_customer.email = current_user.email
+        current_customer.active = current_user.active
         return current_customer, 200
     
 
@@ -168,3 +172,15 @@ class ServiceList(Resource):
         if(not services):
             abort(404, message = "No Services in this category")
         return services, 200
+    
+class CustomerList(Resource):
+    @auth_required('token')
+    @marshal_with(customer)
+    def get(self):
+        customers = db.session.query(Customer).all()
+        if(not customers):
+            abort(404, message = "No customers found")
+        for customer in customers:
+            customer.email = db.session.query(User).filter(User.uid == customer.c_id).first().email
+            customer.active = db.session.query(User).filter(User.uid == customer.c_id).first().active
+        return customers, 200
