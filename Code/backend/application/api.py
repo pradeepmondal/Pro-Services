@@ -12,6 +12,17 @@ login_parser = reqparse.RequestParser()
 login_parser.add_argument("email")
 login_parser.add_argument("password")
 
+# Service Parser
+service_parser = reqparse.RequestParser()
+service_parser.add_argument("s_id")
+service_parser.add_argument("name")
+service_parser.add_argument("price")
+service_parser.add_argument("req_time")
+service_parser.add_argument("description")
+service_parser.add_argument("cat_id")
+service_parser.add_argument("_method")
+
+
 roles = {
     "rid": fields.Integer,
     "name": fields.String,
@@ -154,6 +165,57 @@ class SPResource(Resource):
         if not current_sp:
             abort(404, message = "Service Professional not found")
         return current_sp, 200
+
+
+class ServiceResource(Resource):
+    @auth_required('token')
+    def put(self):
+        
+        args = service_parser.parse_args()
+        
+        
+        s_id = args.get("s_id", None)
+        name = args.get("name", None)
+        price = args.get("price", None)
+        req_time = args.get("req_time", None)
+        description = args.get("description", None)
+        cat_id = args.get("cat_id", None)
+        
+
+        if(not s_id):
+            abort(400, message = "Service Id is missing")
+        if(not name):
+            abort(400, message = "Name is missing")
+        if(not price):
+            abort(400, message = "Price is missing")
+        if(not req_time):
+            abort(400, message = "Required Time is missing")
+        if(not description):
+            abort(400, message = "Description is missing")
+        if(not cat_id):
+            abort(400, message = "Category is missing")
+        
+        service = db.session.query(Service).filter(Service.s_id == s_id).first()
+
+        
+
+        service.name = name
+        service.price = price
+        service.req_time = req_time
+        service.description = description
+        service.cat_id = cat_id
+
+        # if(_method == 'POST'):
+        #     service = Service(s_id = 'abcd', name = name, price = price, req_time = req_time, description = description, cat_id = cat_id)
+        #     # handle s_id
+
+        db.session.add(service)
+        db.session.commit()
+
+        return "Successfully updated", 200
+
+
+
 
 
 class CategoryList(Resource):

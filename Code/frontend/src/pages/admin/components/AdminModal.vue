@@ -2,6 +2,7 @@
 
 import AddCategoryForm from './service_category/AddCategoryForm.vue';
 import DeleteCategoryForm from './service_category/DeleteCategoryForm.vue';
+import EditServiceForm from './service_category/EditServiceForm.vue'
 import ViewForm from './service_category/ViewForm.vue';
 
 
@@ -10,7 +11,9 @@ export default {
   name: "AdminModal",
   components: {
     AddCategoryForm,
-    DeleteCategoryForm
+    DeleteCategoryForm,
+    ViewForm,
+    EditServiceForm
 
   },
   props: {
@@ -26,6 +29,9 @@ export default {
     },
     obj: {
       type: Object
+    },
+    afterAction: {
+      type: Function
     }
 
   },
@@ -60,7 +66,7 @@ export default {
       <div class="modal-body">
         <AddCategoryForm v-if="modal_type === 'add_category_form'" />
         <DeleteCategoryForm v-if="modal_type === 'delete_form'" :obj="obj"/>
-        <EditForm v-if="modal_type === 'edit_form'" :obj="obj"/>
+        <EditServiceForm v-if="modal_type === 'edit_form'" :obj="obj" :afterAction="afterAction"/>
         <ViewForm v-if="modal_type === 'view_form'" :obj="obj" />
 
         
