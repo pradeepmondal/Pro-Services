@@ -1,12 +1,12 @@
 <script>
-import AdminServices from './AdminServices.vue';
-import AdminSRs from './AdminSRs.vue';
-import AdminCustomers from './AdminCustomers.vue';
-import AdminProfessionals from './AdminProfessionals.vue';
+import AdminServices from './services/AdminServices.vue';
+import AdminSRs from './srs/AdminSRs.vue';
+import AdminCustomers from './customers/AdminCustomers.vue';
+import AdminProfessionals from './professionals/AdminProfessionals.vue';
 
 
 export default {
-  name: "Tile",
+  name: "AdminDisplayCategory",
   props: ['category'],
   components: {
     AdminServices,

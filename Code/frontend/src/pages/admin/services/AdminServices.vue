@@ -1,10 +1,10 @@
 <script>
 
-import AdminModal from './components/AdminModal.vue';
+import AdminModal from '.././components/AdminModal.vue';
 
-import AdminSearch from './components/AdminSearch.vue';
-import CategoryTiles from './components/CategoryTiles.vue';
-import Navbar from './components/Navbar.vue';
+import AdminSearch from '.././components/AdminSearch.vue';
+import CategoryTiles from '.././components/CategoryTiles.vue';
+import Navbar from '.././components//Navbar.vue';
 
 export default {
   name: "Services",
@@ -21,7 +21,8 @@ export default {
       categories: null,
       modal_form: null,
       modal_heading: null,
-      d_category: null
+      d_category: null,
+      obj: null
         
         
     }
@@ -61,9 +62,9 @@ export default {
 
     },
     deleteCategory(category) {
-      this.modal_form = 'delete_category_form'
+      this.modal_form = 'delete_form'
       this.modal_heading = 'Delete'
-      this.d_category = category
+      this.obj = category
     }
   }
 };
@@ -71,7 +72,7 @@ export default {
 
 <template>
   <Navbar :email />
-  <AdminModal :modal_type="modal_form" :heading="modal_heading" :d_category="d_category" />
+  <AdminModal :modal_type="modal_form" :heading="modal_heading" :obj="obj" />
     <div class="">
       <AdminSearch />
         <div>Services</div>

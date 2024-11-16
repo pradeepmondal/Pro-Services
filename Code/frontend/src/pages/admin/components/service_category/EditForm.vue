@@ -1,14 +1,16 @@
 <script>
 
-import AdminSearch from './components/AdminSearch.vue';
-import Navbar from './components/Navbar.vue';
 
 export default {
-  name: "Professionals",
+  name: "EditForm",
+  props: {
+    obj: {
+      type: Object
+    }
+  },
 
   components: {
-    Navbar,
-    AdminSearch
+
   },
   data(){
     return {
@@ -23,8 +25,8 @@ export default {
 <template>
   <Navbar :email />
     <div class="">
-      <AdminSearch />
-        <div>Professionals</div>
+      
+        <div>Edit {{ obj.name }}</div>
 
 
         

@@ -39,7 +39,7 @@ export default {
     <div class="tiles-container row">
         
         <div v-for="cat in categories" class="col-lg-3 col-md-6 col-12 services-container">
-            <Tile :tile_heading="cat.name" :goto="true" :stats="false" :category="String(cat.cat_id)" :delete="true" :deleteCategory="deleteCategory" :obj="cat" />
+            <Tile :tile_heading="cat.name" :goto="true" :stats="false" :navlink="'/admin/service/' + String(cat.cat_id)" :delete="true" :deleteCategory="deleteCategory" :obj="cat" />
         </div>
 
         <div class="col-lg-3 col-md-6 col-12 services-container">

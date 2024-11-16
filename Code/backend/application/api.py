@@ -2,7 +2,7 @@ from flask import current_app as app, jsonify, request
 from flask_security import auth_required, SQLAlchemyUserDatastore, verify_password, hash_password, current_user
 from flask_restful import Resource, fields, marshal_with, reqparse, abort
 from application.database import db
-from application.models import Customer, User, ServiceProfessional, Category
+from application.models import Customer, User, ServiceProfessional, Category, Service
 
 
 ds : SQLAlchemyUserDatastore = app.security.datastore
@@ -55,6 +55,15 @@ category = {
     "description": fields.String
 }
 
+service = {
+    "s_id": fields.String,
+    "name": fields.String,
+    "price": fields.Integer,
+    "req_time": fields.Float,
+    "description": fields.String,
+    "cat_id": fields.Integer
+}
+
 def check_for_role():
     if request.endpoint in ['admin']:
         user_roles = [role.name for role in current_user.roles]
@@ -70,6 +79,11 @@ def check_for_role():
         user_roles = [role.name for role in current_user.roles]
         if 'sp' not in user_roles:
             abort(403, message = "Incorrect role, forbidden")
+
+def check_admin_role():
+    user_roles = [role.name for role in current_user.roles]
+    if 'admin' not in user_roles:
+        abort(403, message = "Incorrect role, forbidden")
 
 
 class Welcome(Resource):
@@ -144,3 +158,13 @@ class CategoryList(Resource):
     def get(self):
         cat_list = db.session.query(Category).all()
         return cat_list, 200
+
+
+class ServiceList(Resource):
+    @auth_required('token')
+    @marshal_with(service)
+    def get(self, cat_id):
+        services = db.session.query(Service).filter(Service.cat_id == cat_id).all()
+        if(not services):
+            abort(404, message = "No Services in this category")
+        return services, 200

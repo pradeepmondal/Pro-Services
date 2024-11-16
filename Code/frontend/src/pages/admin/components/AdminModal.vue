@@ -2,6 +2,7 @@
 
 import AddCategoryForm from './service_category/AddCategoryForm.vue';
 import DeleteCategoryForm from './service_category/DeleteCategoryForm.vue';
+import ViewForm from './service_category/ViewForm.vue';
 
 
 
@@ -22,6 +23,9 @@ export default {
     },
     d_category: {
         type: Object
+    },
+    obj: {
+      type: Object
     }
 
   },
@@ -55,13 +59,17 @@ export default {
       </div>
       <div class="modal-body">
         <AddCategoryForm v-if="modal_type === 'add_category_form'" />
-        <DeleteCategoryForm v-if="modal_type === 'delete_category_form'" :d_category="d_category"/>
+        <DeleteCategoryForm v-if="modal_type === 'delete_form'" :obj="obj"/>
+        <EditForm v-if="modal_type === 'edit_form'" :obj="obj"/>
+        <ViewForm v-if="modal_type === 'view_form'" :obj="obj" />
+
         
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
         <button v-if="modal_type === 'add_category_form'" type="button" class="btn btn-success">Create</button>
-        <button v-if="modal_type === 'delete_category_form'" type="button" class="btn btn-danger">Delete</button>
+        <button v-if="modal_type === 'delete_form'" type="button" class="btn btn-danger">Delete</button>
+        <button v-if="modal_type === 'edit_form'" type="button" class="btn btn-success">Confirm Edit</button>
       </div>
     </div>
   </div>

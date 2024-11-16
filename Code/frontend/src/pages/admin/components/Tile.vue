@@ -10,9 +10,8 @@ export default {
         type: Boolean,
         required: true
     },
-    category: {
-        type: String,
-        required: true
+    navlink: {
+        type: String
     },
     stats: {
         type: Boolean,
@@ -44,7 +43,7 @@ export default {
   },
   methods: {
     gotoNavigate() {
-        this.$router.push('/admin/' + this.category)
+        this.$router.push(this.navlink)
     },
     statNavigate() {
         this.$router.push('/admin/stat/' + this.category)

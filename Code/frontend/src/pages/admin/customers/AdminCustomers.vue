@@ -1,7 +1,7 @@
 <script>
 
-import AdminSearch from './components/AdminSearch.vue';
-import Navbar from './components/Navbar.vue';
+import AdminSearch from '.././components/AdminSearch.vue';
+import Navbar from '.././components/Navbar.vue';
 
 export default {
   name: "Customers",

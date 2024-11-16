@@ -1,19 +1,14 @@
 <script>
 
+import AdminSearch from '.././components//AdminSearch.vue';
+import Navbar from '.././components//Navbar.vue';
 
 export default {
-  name: "DeleteCategoryForm",
-  props: {
-    d_category: {
-        type: Object
-    },
-    obj: {
-      type: Object
-    }
-  },
+  name: "SRs",
 
   components: {
-
+    Navbar,
+    AdminSearch
   },
   data(){
     return {
@@ -28,8 +23,8 @@ export default {
 <template>
   <Navbar :email />
     <div class="">
-      
-        <div>Delete {{ obj.name }}</div>
+      <AdminSearch />
+        <div>Srs</div>
 
 
         
