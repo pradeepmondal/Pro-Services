@@ -1,27 +1,38 @@
 <script>
 import Login from "./Login.vue";
 import AdminLogin from "./admin/AdminLogin.vue";
+import Register from "./Register.vue";
+
 
 export default {
   components: {
     Login,
     AdminLogin,
+    Register
   },
   name: "Landing",
   data() {
     return {
       show_login_form: false,
       show_admin_login_form: false,
+      show_register_form: false
     };
   },
   methods: {
     showLoginForm() {
       this.show_admin_login_form = false;
       this.show_login_form = true;
+      this.show_register_form = false;
     },
     showAdminLoginForm() {
       this.show_login_form = false;
       this.show_admin_login_form = true;
+      this.show_register_form = false;
+    },
+    showRegisterForm() {
+      this.show_admin_login_form = false;
+      this.show_login_form = false;
+      this.show_register_form = true;
     },
   },
 };
@@ -38,14 +49,18 @@ export default {
       <div class="login-container">
         <Login v-if="show_login_form" />
         <AdminLogin v-if="show_admin_login_form" />
+        <Register v-if="show_register_form" />
       </div>
       <div class="login-button-container">
         <a
-          v-if="!(show_login_form) & !(show_admin_login_form)"
+          v-if="!(show_login_form) & !(show_admin_login_form) & !(show_register_form)"
+          
           class="btn btn-primary"
           @click="showLoginForm"
           >Let's Login</a
         >
+        
+
         <a
           v-if="!(show_login_form) & (show_admin_login_form)"
           class="btn btn-primary"
@@ -54,10 +69,38 @@ export default {
         >
 
         <a
+          v-if="!(show_login_form) & (show_register_form)"
+          class="btn btn-primary"
+          @click="showLoginForm"
+          >Go to Login</a
+        >
+
+        <a
           v-if="!(show_admin_login_form) & show_login_form"
           class="btn btn-primary"
           @click="showAdminLoginForm"
           >Admin Login</a
+        >
+
+        <a
+          v-if="!(show_login_form) & !(show_admin_login_form) & !(show_register_form) "
+          class="btn btn-primary"
+          @click="showRegisterForm"
+          >New? Register Here !</a
+        >
+
+        <a
+          v-if="(show_login_form) & !(show_register_form) "
+          class="btn btn-primary"
+          @click="showRegisterForm"
+          >New? Register Here !</a
+        >
+
+        <a
+          v-if="(show_admin_login_form) & !(show_register_form) "
+          class="btn btn-primary"
+          @click="showRegisterForm"
+          >New? Register Here !</a
         >
       </div>
     </div>

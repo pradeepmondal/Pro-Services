@@ -33,6 +33,8 @@ class ServiceProfessional(db.Model):
     description = db.Column(db.String)
     service_type = db.Column(db.String, db.ForeignKey('service.s_id'))
     experience = db.Column(db.Integer, nullable = False)
+    submitted_doc_path = db.Column(db.String, nullable = False)
+    loc_pincode = db.Column(db.Integer, nullable = False)
 
 class Customer(db.Model):
     __tablename__ = 'customer'
