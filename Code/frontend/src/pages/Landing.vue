@@ -15,7 +15,8 @@ export default {
     return {
       show_login_form: false,
       show_admin_login_form: false,
-      show_register_form: false
+      show_register_form: false,
+      active_success_message: false
     };
   },
   methods: {
@@ -23,17 +24,26 @@ export default {
       this.show_admin_login_form = false;
       this.show_login_form = true;
       this.show_register_form = false;
+      this.active_success_message = false;
     },
     showAdminLoginForm() {
       this.show_login_form = false;
       this.show_admin_login_form = true;
       this.show_register_form = false;
+      this.active_success_message = false;
     },
     showRegisterForm() {
       this.show_admin_login_form = false;
       this.show_login_form = false;
       this.show_register_form = true;
+      this.active_success_message = false;
     },
+    setActiveSuccessMessage(message) {
+      this.active_success_message = message
+      this.show_admin_login_form = false;
+      this.show_login_form = false;
+      this.show_register_form = false;
+    }
   },
 };
 </script>
@@ -47,9 +57,12 @@ export default {
     </div>
     <div class="login-container">
       <div class="login-container">
-        <Login v-if="show_login_form" />
-        <AdminLogin v-if="show_admin_login_form" />
-        <Register v-if="show_register_form" />
+        <Login v-if="show_login_form" :setActiveSuccessMessage="setActiveSuccessMessage" />
+        <AdminLogin v-if="show_admin_login_form" :setActiveSuccessMessage="setActiveSuccessMessage" />
+        <Register v-if="show_register_form" :setActiveSuccessMessage="setActiveSuccessMessage" />
+        <div class=" card card-body" v-if="active_success_message"> 
+          <div class="active_success_message"> {{ active_success_message }}  </div>
+        </div>
       </div>
       <div class="login-button-container">
         <a
@@ -162,5 +175,9 @@ body {
   padding: 0.5rem 1rem;
   margin: 0.5em 1rem;
 
+}
+
+.active-success-message {
+  background-color: green;
 }
 </style>

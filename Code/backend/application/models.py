@@ -30,11 +30,14 @@ class ServiceProfessional(db.Model):
     date_created = db.Column(db.DateTime, nullable = False, default = datetime.now())
     f_name = db.Column(db.String, nullable = False)
     l_name = db.Column(db.String)
+    email = db.Column(db.String, db.ForeignKey('user.email'))
     description = db.Column(db.String)
     service_type = db.Column(db.String, db.ForeignKey('service.s_id'))
     experience = db.Column(db.Integer, nullable = False)
     submitted_doc_path = db.Column(db.String, nullable = False)
+    address = db.Column(db.String, nullable = False)
     loc_pincode = db.Column(db.Integer, nullable = False)
+    rating = db.Column(db.Float) 
 
 class Customer(db.Model):
     __tablename__ = 'customer'
@@ -42,7 +45,10 @@ class Customer(db.Model):
     date_created = db.Column(db.DateTime, nullable = False, default = datetime.now())
     f_name = db.Column(db.String, nullable = False)
     l_name = db.Column(db.String)
+    email = db.Column(db.String, db.ForeignKey('user.email'))
     description = db.Column(db.String)
+    address = db.Column(db.String)
+    loc_pincode = db.Column(db.Integer)
     
 
 class Service(db.Model):

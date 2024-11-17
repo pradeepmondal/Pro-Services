@@ -1,19 +1,26 @@
 <script>
 export default {
   name: "Register",
+  props: {
+    setActiveSuccessMessage: {
+        type: Function
+    }
+  },
   data() {
     return {
       form_type: "customer",
       customerData: {
-        email: null,
-        password: null,
-        confirm_password: null,
-        f_name: null,
-        l_name: null,
+        accepted : false,
+        email : null,
+        password : null,
+        confirm_password : null,
+        f_name : null,
+        l_name : null,
 
       },
 
       spData: {
+        accepted: false,
         email: null,
         password: null,
         confirm_password: null,
@@ -26,7 +33,6 @@ export default {
 
       },
       
-      
       b_error_message: null,
       
     };
@@ -34,13 +40,23 @@ export default {
   computed: {
     f_error_message() {
       this.b_error_message = null
-      if (!this.email){
+      if (!this.customerData.f_name){
+        return 'First name is missing'
+
+      } 
+      if (!this.customerData.email){
         return 'Email is missing'
       } 
-      if (!this.password){
+      if (!this.customerData.password){
         return 'Password is missing'
 
       } 
+
+      if (!this.customerData.confirm_password){
+        return 'Confirm the password'
+
+      } 
+      
       if (this.password & this.email) {
         return null
       }
@@ -69,14 +85,26 @@ export default {
       this.b_error_message = null;
     },
     async custRegister() {
+        
+
+
+
 
       
       if(!this.f_error_message) {
         try {
-      const res = await fetch('http://localhost:5050' + '/register', {method: 'POST', headers: {"content-type" : "application/json"}, body: JSON.stringify(this.customerData)})
+      const res = await fetch('http://localhost:5050' + '/customer', {method: 'POST', headers: {"content-type" : "application/json"}, body: JSON.stringify(this.customerData)})
       if(res.ok){
         const data = await res.json();
-        console.log(data.message)
+        this.customerData.accepted = false
+        this.customerData.email = null
+        this.customerData.password = null
+        this.customerData.confirm_password = null
+        this.customerData.f_name = null
+        this.customerData.l_name = null
+        this.error_message = null
+        this.setActiveSuccessMessage(data)
+
         
         
         
@@ -98,7 +126,7 @@ export default {
 
 
     },
-    async spLogin() {
+    async spRegister() {
       if (!this.email){
         this.f_error_message = 'Email is missing'
       }
@@ -171,7 +199,7 @@ export default {
         </div>
         <div class="card-body">
           
-          <div v-if="form_type === 'customer'" class="customer-login">
+          <div v-if="form_type === 'customer'" class="customer-register">
             <h5 class="card-title">Customer Registration</h5>
             <div class="input-group mb-3">
               <span class="input-group-text" id="basic-addon1">*</span>
@@ -225,32 +253,56 @@ export default {
               />
             </div>
             <div :class="[error_message ? 'active-error': '']">{{ error_message }}</div>
-            <div class="form-check stay-loggedin">
+            <div :class="[success_message ? 'active-success-message': '']">{{ success_message }}</div>
+            <div class="form-check tc ">
               <input
                 class="form-check-input"
                 type="checkbox"
-                value=""
-                id="login-checkbox"
+                value="accepted"
+                id="t&c-checkbox"
+                v-model="customerData.accepted"
               />
-              <label class="form-check-label" for="stayLoggedIn">
-                Stay logged in
+              <label class="form-check-label" for="t&c">
+                Accept T&C
               </label>
             </div>
             
-            <a href="#" class="btn btn-primary" @click="custLogin">Login</a>
+            <a href="#" class="btn btn-primary" @click="custRegister">Register</a>
           </div>
 
-          <div v-if="form_type === 'sp'" class="sp-login">
+          <div v-if="form_type === 'sp'" class="sp-registration">
+            
             <h5 class="card-title">SP Registration</h5>
+            <div class="input-group mb-3">
+              <span class="input-group-text" id="basic-addon1">*</span>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="First Name"
+                aria-label="f_name"
+                aria-describedby="basic-addon1"
+                v-model="spData.f_name"
+              />
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Last Name"
+                aria-label="l_name"
+                aria-describedby="basic-addon1"
+                v-model="spData.l_name"
+              />
+            </div>
+
+
             <div class="input-group mb-3">
               <span class="input-group-text" id="basic-addon1">@</span>
               <input
                 type="text"
                 class="form-control"
                 placeholder="Email"
-                aria-label="Username"
+                aria-label="email"
                 aria-describedby="basic-addon1"
-                v-model="email"
+                v-model="spData.email"
               />
             </div>
             <div class="input-group mb-3">
@@ -259,25 +311,35 @@ export default {
                 type="password"
                 class="form-control"
                 placeholder="Password"
-                aria-label="Password"
+                aria-label="password"
                 aria-describedby="basic-addon1"
-                v-model="password"
+                v-model="spData.password"
+              />
+              <input
+                type="password"
+                class="form-control"
+                placeholder="Confirm Password"
+                aria-label="confirm_password"
+                aria-describedby="basic-addon1"
+                v-model="spData.confirm_password"
               />
             </div>
             <div :class="[error_message ? 'active-error': '']">{{ error_message }}</div>
-            <div class="form-check stay-loggedin">
+            <div class="form-check tc ">
               <input
                 class="form-check-input"
                 type="checkbox"
-                value=""
-                id="login-checkbox"
+                value="accepted"
+                id="t&c-checkbox"
+                v-model="spData.accepted"
               />
-              <label class="form-check-label" for="stayLoggedIn">
-                Stay logged in
+              <label class="form-check-label" for="t&c">
+                Accept T&C
               </label>
             </div>
             
-            <a  class="btn btn-primary" @click="spLogin">Login</a>
+            <a href="#" class="btn btn-primary" @click="spRegister">Register</a>
+          
           
           </div>
         </div>
@@ -307,14 +369,14 @@ export default {
   cursor: pointer;
 }
 
-.stay-loggedin {
+.tc {
     /* border: 1px solid red; */
     display: flex;
     justify-items: flex-start;
     padding-bottom: 1rem;
 
 }
-.stay-loggedin * {
+.tc * {
     padding-left:  0.5rem;
 }
 

@@ -22,6 +22,13 @@ service_parser.add_argument("description")
 service_parser.add_argument("cat_id")
 service_parser.add_argument("_method")
 
+# Customer Parser
+customer_parser = reqparse.RequestParser()
+customer_parser.add_argument("f_name")
+customer_parser.add_argument("l_name")
+customer_parser.add_argument("email")
+customer_parser.add_argument("password")
+
 
 roles = {
     "rid": fields.Integer,
@@ -145,6 +152,37 @@ class CustomerResource(Resource):
         current_customer.active = current_user.active
         return current_customer, 200
     
+    def post(self):
+        args = customer_parser.parse_args()
+        f_name = args.get("f_name", None)
+        l_name = args.get("l_name", None)
+        email = args.get("email", None)
+        password = args.get("password", None)
+        if(not f_name):
+            abort(400, message = "First Name is missing")
+        if(not email):
+            abort(400, message = "Price is missing")
+        if(not password):
+            abort(400, message = "Required Time is missing")
+
+        customer = ds.find_user(email = email)
+
+        if(customer):
+            abort(400, message = "User with the email already exists")
+
+        ds.create_user(email = email, password = hash_password(password), roles = ['customer'])
+        customer_user = ds.find_user(email = email)
+        customer_data = Customer(c_id = customer_user.uid, f_name = f_name, l_name = l_name, email = email )
+        db.session.add(customer_data)
+        db.session.commit()
+
+        return "Registration Successful", 200
+
+
+
+
+
+    
 
 class AdminResource(Resource):
     @auth_required('token')
@@ -235,6 +273,7 @@ class ServiceList(Resource):
             abort(404, message = "No Services in this category")
         return services, 200
     
+
 class CustomerList(Resource):
     @auth_required('token')
     @marshal_with(customer)

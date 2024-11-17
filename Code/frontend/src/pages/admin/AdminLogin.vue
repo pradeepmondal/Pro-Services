@@ -1,6 +1,11 @@
 <script>
 export default {
   name: "Login",
+  props: {
+    setActiveSuccessMessage: {
+        type: Function
+    }
+  },
   data() {
     return {
       email: null,

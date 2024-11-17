@@ -37,7 +37,7 @@ with app.app_context():
         userdatastore.create_user(email = 'rajesh@example.com', password = hash_password('test'), roles = ['service_professional'])
         test_sp = userdatastore.find_user(email = 'rajesh@example.com')
         test_sp_service = db.session.query(Service).filter(Service.name == 'Test Service').first().s_id
-        test_sp_data = ServiceProfessional(sp_id = test_sp.uid, f_name = 'Rajesh', l_name = 'Kumar', description = 'A hardworking test SP.', service_type = test_sp_service, experience = 5)
+        test_sp_data = ServiceProfessional(sp_id = test_sp.uid, f_name = 'Rajesh', l_name = 'Kumar', email= 'rajesh@example.com', description = 'A hardworking test SP.', service_type = test_sp_service, experience = 5, submitted_doc_path = 'static/test', loc_pincode = 110001, address = 'Raj Nagar, Delhi, IN')
         db.session.add(test_sp_data)
 
     test_customer = userdatastore.find_user(email = 'krish02@example.com')
@@ -45,7 +45,7 @@ with app.app_context():
     if(not test_customer):
         userdatastore.create_user(email = 'krish02@example.com', password = hash_password('test'), roles = ['customer'])
         test_customer = userdatastore.find_user(email = 'krish02@example.com')
-        test_customer_data = Customer(c_id = test_customer.uid, f_name = 'Krish', l_name = 'Kumar', description = 'A test user')
+        test_customer_data = Customer(c_id = test_customer.uid, f_name = 'Krish', l_name = 'Kumar', email= 'krish02@example.com', description = 'A test user', address = 'Q/105 Ashok Nagar New Delhi IN', loc_pincode = 110001)
         db.session.add(test_customer_data)
 
 
