@@ -45,7 +45,7 @@ with app.app_context():
     if(not test_customer):
         userdatastore.create_user(email = 'krish02@example.com', password = hash_password('test'), roles = ['customer'])
         test_customer = userdatastore.find_user(email = 'krish02@example.com')
-        test_customer_data = Customer(c_id = test_customer.uid, f_name = 'Krish', l_name = 'Kumar', email= 'krish02@example.com', description = 'A test user', address = 'Q/105 Ashok Nagar New Delhi IN', loc_pincode = 110001)
+        test_customer_data = Customer(c_id = test_customer.uid, f_name = 'Krish', l_name = 'Kumar', email= 'krish02@example.com', description = 'A test user', addresses = [], loc_pincode = 110001)
         db.session.add(test_customer_data)
 
 

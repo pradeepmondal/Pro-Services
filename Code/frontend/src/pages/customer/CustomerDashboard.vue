@@ -1,15 +1,36 @@
 <script>
 
+import CustomerNotification from './components/CustomerNotification.vue';
+import CustomerSearch from './components/CustomerSearch.vue';
+import Navbar from './components/Navbar.vue'
+import ServiceCategories from './components/services/ServiceCategories.vue';
+
+
 export default {
 
   name: "CustomerDashboard",
+  components: {
+    Navbar,
+    CustomerSearch,
+    CustomerNotification,
+    ServiceCategories
+    
+  },
   data() {
     return {
-        name: null,
+        customer: null,
+        loading: true
     }
   },
   async created() {
-    await this.fetchCustomer()
+    try {
+      await this.fetchCustomer()
+    } catch (e) {
+      console.error(e)
+
+    } finally {
+      this.loading = false
+    }
   },
 
   methods: {
@@ -19,23 +40,14 @@ export default {
         if(res.ok){
 
             const data = await res.json()
-            this.name = data.f_name + ' ' + data.l_name
-
-
-
+            this.customer = data
+            
         }
     }catch(e){
         console.error(e)
     }
         
-        
 
-
-    },
-    customerLogout() {
-        this.$store.commit('logout')
-        localStorage.removeItem('user-type')
-        this.$router.push('/')
     }
 
   }
@@ -45,7 +57,15 @@ export default {
 
 
 <template>
-    <h1>Welcome {{ name }} !!</h1>
-    <button @click="customerLogout">Logout</button>
+  <div v-if="loading">Loading...</div>
+  <div v-else>
+  <Navbar />
+  <div class="container-fluid">
+  <CustomerNotification :customer="customer" />
+    <h1>Welcome {{ customer.f_name }} !!</h1>
+    <CustomerSearch />
+    <ServiceCategories />
+  </div>
+  </div>
 
 </template>

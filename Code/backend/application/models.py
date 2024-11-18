@@ -47,7 +47,7 @@ class Customer(db.Model):
     l_name = db.Column(db.String)
     email = db.Column(db.String, db.ForeignKey('user.email'))
     description = db.Column(db.String)
-    address = db.Column(db.String)
+    addresses = db.Column(db.JSON)
     loc_pincode = db.Column(db.Integer)
     
 
