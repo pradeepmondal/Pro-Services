@@ -14,7 +14,8 @@ const store = createStore({
         return {
             auth_token: null,
             email: null,
-            user_type: null
+            user_type: null,
+            user_details: null
 
         }
     },
@@ -34,13 +35,30 @@ const store = createStore({
             }
 
 
+
+        },
+        setUserDetails(state) {
+            try{
+                if(JSON.parse(localStorage.getItem('user-details'))){
+                    state.userDetails = JSON.parse(localStorage.getItem('user-details'))
+                }
+                
+            } catch {
+                console.log('user not logged in');
+                
+            }
+
+
+
         },
         logout(state) {
             state.auth_token = null
             state.email = null
             state.user_type = null
+            state.userDetails = null
             localStorage.removeItem('user')
             localStorage.removeItem('user-type')
+            localStorage.removeItem('user-details')
         }
     }
 })

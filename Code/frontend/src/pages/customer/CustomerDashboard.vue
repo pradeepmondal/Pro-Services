@@ -41,6 +41,8 @@ export default {
 
             const data = await res.json()
             this.customer = data
+            localStorage.setItem('user-details', JSON.stringify(this.customer))
+            this.$store.commit('setUserDetails')
             
         }
     }catch(e){

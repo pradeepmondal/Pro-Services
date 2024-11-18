@@ -2,6 +2,7 @@
 import Navbar from '../Navbar.vue';
 import CustomerSearch from '../CustomerSearch.vue';
 import Tile from '../Tile.vue';
+import ServiceBookingModal from './ServiceBookingModal.vue';
 
 
 export default {
@@ -10,7 +11,8 @@ export default {
   components: {
     Navbar,
     CustomerSearch,
-    Tile
+    Tile,
+    ServiceBookingModal
 
   },
   data(){
@@ -18,9 +20,11 @@ export default {
         email: this.$store.state.email,
         services: null,
         modal_type: null,
-        obj: null,
+        selected_service: null,
         modal_heading: null,
-        loading: false
+        loading: false,
+        show_booking_modal: false,
+        selected_service_sps: null
         
         
     }
@@ -56,22 +60,30 @@ export default {
 
 
     },
-    deleteService(service){
-        this.modal_type = "delete_form"
-        this.obj = service
-        this.modal_heading = "Delete " + service.name
-    },
 
-    editService(service){
-        this.modal_type = "edit_form"
-        this.obj = service
-        this.modal_heading = "Edit " + service.name
-    },
+    async viewService(service){
+        this.selected_service = service
+        this.show_booking_modal = true
+        await this.fetchSPs(service)
 
-    viewService(service){
-        this.modal_type = "view_form"
-        this.obj = service
-        this.modal_heading = service.name
+
+        
+    },
+    async fetchSPs(service) {
+        try{
+        const res = await fetch('http://localhost:5050' + '/sps/' + service.s_id, {method: 'GET', headers: {"content-type" : "application/json", 'auth-token': this.$store.state.auth_token}})
+        if(res.ok){
+
+            const data = await res.json()
+            this.selected_service_sps = data
+            
+            
+        }
+    }catch(e){
+        console.error(e)
+    }
+        
+
     }
 
 
@@ -81,6 +93,7 @@ export default {
 
 <template>
     <Navbar />
+    <ServiceBookingModal  :selected_service="selected_service" :service_professionals="selected_service_sps" />
     <div v-if="loading" class="loading">Loading...</div> 
     <div v-else class="container-fluid">
     
@@ -94,7 +107,7 @@ export default {
     <div class="tiles-container row">
         
         <div v-for="service in services" class="col-lg-3 col-md-6 col-12 services-container">
-            <Tile :tile_heading="service.name" :navlink="'/customer/service/'+service.s_id " />
+            <Tile :tile_heading="service.name" :viewService="viewService" :service="service"  :openModal="true" @click="viewService(service)"/>
         </div>
         </div>
 

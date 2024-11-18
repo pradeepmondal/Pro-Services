@@ -5,11 +5,19 @@ export default {
   name: "SPDashboard",
   data() {
     return {
-        name: null,
+        loading: true,
+        sp: null,
     }
   },
   async created() {
-    await this.fetchSP()
+    try {
+      await this.fetchSP()
+    } catch (e) {
+      console.error(e)
+
+    } finally {
+      this.loading = false
+    }
   },
 
   methods: {
@@ -19,7 +27,9 @@ export default {
         if(res.ok){
 
             const data = await res.json()
-            this.name = data.f_name + ' ' + data.l_name
+            this.sp = data
+            localStorage.setItem('user-details', JSON.stringify(this.sp))
+            this.$store.commit('setUserDetails')
 
 
 
@@ -45,7 +55,7 @@ export default {
 
 
 <template>
-    <h1>Welcome {{ name }} !!</h1>
+    <h1>Welcome {{ sp.f_name }} !!</h1>
     <button @click="spLogout">Logout</button>
 
 </template>

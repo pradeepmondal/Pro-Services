@@ -203,6 +203,24 @@ class SPResource(Resource):
         if not current_sp:
             abort(404, message = "Service Professional not found")
         return current_sp, 200
+    
+
+class SPList(Resource):
+    @auth_required('token')
+    @marshal_with(sp)
+    def get(self, s_id = None):
+        if s_id is None:
+            splist = db.session.query(ServiceProfessional).all()
+            if(not splist):
+                abort(404, message = "No Service Professional found")
+            return splist, 200
+        else:
+            splist = db.session.query(ServiceProfessional).filter(ServiceProfessional.service_type == s_id).all()
+            if(not splist):
+                abort(404, message = "No Service Professional found for the given service")
+            return splist, 200
+
+
 
 
 class ServiceResource(Resource):

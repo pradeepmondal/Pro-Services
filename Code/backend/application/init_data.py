@@ -28,7 +28,7 @@ with app.app_context():
 
     if(not test_service):
         test_service_cat = db.session.query(Category).filter(Category.name == 'Test Category').first().cat_id
-        test_service = Service(s_id = 'test01', name = 'Test Service', price = 500, req_time = 5, description = 'A test service.', cat_id = test_service_cat)
+        test_service = Service(name = 'Test Service', price = 500, req_time = 5, description = 'A test service.', cat_id = test_service_cat)
         db.session.add(test_service)
 
     test_sp = userdatastore.find_user(email = 'rajesh@example.com')

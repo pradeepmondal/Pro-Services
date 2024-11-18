@@ -53,7 +53,7 @@ class Customer(db.Model):
 
 class Service(db.Model):
     __tablename__ = 'service'
-    s_id = db.Column(db.String, primary_key = True)
+    s_id = db.Column(db.Integer, primary_key = True)
     name = db.Column(db.String, unique = True, nullable = False)
     price = db.Column(db.Integer, nullable = False)
     req_time = db.Column(db.Float, nullable = False)
