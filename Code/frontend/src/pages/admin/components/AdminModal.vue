@@ -30,6 +30,10 @@ export default {
     obj: {
       type: Object
     },
+    category_obj: {
+      type: Object
+    },
+
     afterAction: {
       type: Function
     }
@@ -67,7 +71,7 @@ export default {
         <AddCategoryForm v-if="modal_type === 'add_category_form'" />
         <DeleteCategoryForm v-if="modal_type === 'delete_form'" :obj="obj"/>
         <EditServiceForm v-if="modal_type === 'edit_form'" :obj="obj" :afterAction="afterAction"/>
-        <ViewForm v-if="modal_type === 'view_form'" :obj="obj" />
+        <ViewForm v-if="modal_type === 'view_form'" :obj="obj" :category_obj="category_obj" />
 
         
       </div>

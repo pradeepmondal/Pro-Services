@@ -56,7 +56,7 @@ export default {
 <tr v-for="(sp, index) in service_professionals">
   <td scope="row"><div class="sp_index" >{{ index+1 }}</div></td>
   <td>{{ sp.f_name + ' ' + sp.l_name }}</td>
-  <td>₹. Later</td>
+  <td>₹{{ sp.price }}</td>
   <td>{{ sp.rating }}</td>
   <td><div class="button-container">
     <button class="btn btn-outline-success" @click="bookService(service)">

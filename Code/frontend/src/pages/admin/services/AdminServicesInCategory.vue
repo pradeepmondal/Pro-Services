@@ -18,13 +18,16 @@ export default {
         services: null,
         modal_type: null,
         obj: null,
-        modal_heading: null
+        modal_heading: null,
+        category_obj: null,
+        
         
         
     }
   },
   async created() {
     await this.fetchServices()
+    await this.fetchCategory()
   },
 
   methods: {
@@ -47,6 +50,27 @@ export default {
 
 
     },
+    async fetchCategory() {
+      try {
+        const res = await fetch(
+          "http://localhost:5050" + "/service_category/"+this.cat_id ,
+          {
+            method: "GET",
+            headers: {
+              "content-type": "application/json",
+              "auth-token": this.$store.state.auth_token,
+            },
+          }
+        );
+        if (res.ok) {
+          const data = await res.json();
+          this.category_obj = data;
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    },
+
     deleteService(service){
         this.modal_type = "delete_form"
         this.obj = service
@@ -59,10 +83,12 @@ export default {
         this.modal_heading = "Edit " + service.name
     },
 
-    viewService(service){
+     viewService(service){
         this.modal_type = "view_form"
         this.obj = service
         this.modal_heading = service.name
+        
+        
     }
 
 
@@ -73,7 +99,7 @@ export default {
 <template>
     
     <Navbar :email/>
-    <AdminModal :modal_type="modal_type" :obj="obj" :heading="modal_heading" :afterAction="fetchServices"/>
+    <AdminModal :modal_type="modal_type" :obj="obj" :category_obj="category_obj" :heading="modal_heading" :afterAction="fetchServices"/>
 <div>
     <AdminSearch />
     
@@ -98,7 +124,7 @@ export default {
     <tr v-for="service in services">
       <td scope="row"><div class="service_id" data-bs-toggle="modal" data-bs-target="#staticBackdrop" @click="viewService(service)">{{ service.s_id }}</div></td>
       <td>{{ service.name }}</td>
-      <td>₹{{ service.price }}</td>
+      <td>₹{{ service.base_price }}</td>
       <td><div class="button-container">
         <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop" @click="editService(service)">
                     Edit

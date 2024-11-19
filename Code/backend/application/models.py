@@ -33,11 +33,13 @@ class ServiceProfessional(db.Model):
     email = db.Column(db.String, db.ForeignKey('user.email'))
     description = db.Column(db.String)
     service_type = db.Column(db.String, db.ForeignKey('service.s_id'))
+    price = db.Column(db.Integer, nullable = False)
     experience = db.Column(db.Integer, nullable = False)
     submitted_doc_path = db.Column(db.String, nullable = False)
     address = db.Column(db.String, nullable = False)
     loc_pincode = db.Column(db.Integer, nullable = False)
     rating = db.Column(db.Float) 
+
 
 class Customer(db.Model):
     __tablename__ = 'customer'
@@ -55,7 +57,7 @@ class Service(db.Model):
     __tablename__ = 'service'
     s_id = db.Column(db.Integer, primary_key = True)
     name = db.Column(db.String, unique = True, nullable = False)
-    price = db.Column(db.Integer, nullable = False)
+    base_price = db.Column(db.Integer, nullable = False)
     req_time = db.Column(db.Float, nullable = False)
     description = db.Column(db.String, nullable = False)
     cat_id = db.Column(db.Integer, db.ForeignKey('category.cat_id'))

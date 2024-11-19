@@ -20,7 +20,7 @@ export default {
       formData: {
         s_id: this.obj.s_id,
         name: this.obj.name,
-        price: this.obj.price,
+        base_price: this.obj.base_price,
         req_time: this.obj.req_time,
         description: this.obj.description,
         cat_id: this.obj.cat_id
@@ -107,8 +107,8 @@ export default {
               type="text"
               class="form-control"
               id="price"
-              name="price"
-              v-model="formData.price"
+              name="base_price"
+              v-model="formData.base_price"
               
             />
           </div>

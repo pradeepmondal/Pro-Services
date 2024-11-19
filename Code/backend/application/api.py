@@ -16,7 +16,7 @@ login_parser.add_argument("password")
 service_parser = reqparse.RequestParser()
 service_parser.add_argument("s_id")
 service_parser.add_argument("name")
-service_parser.add_argument("price")
+service_parser.add_argument("base_price")
 service_parser.add_argument("req_time")
 service_parser.add_argument("description")
 service_parser.add_argument("cat_id")
@@ -65,7 +65,9 @@ sp = {
     "l_name": fields.String,
     "description": fields.String,
     "service_type": fields.String,
-    "experience": fields.Integer
+    "experience": fields.Integer,
+    "price": fields.Integer,
+    "rating": fields.Float
 
 }
 
@@ -78,7 +80,7 @@ category = {
 service = {
     "s_id": fields.String,
     "name": fields.String,
-    "price": fields.Integer,
+    "base_price": fields.Integer,
     "req_time": fields.Float,
     "description": fields.String,
     "cat_id": fields.Integer
@@ -219,8 +221,16 @@ class SPList(Resource):
             if(not splist):
                 abort(404, message = "No Service Professional found for the given service")
             return splist, 200
+        
 
-
+class CategoryResource(Resource):
+    @auth_required('token')
+    @marshal_with(category)
+    def get(self, cat_id ):
+        cat = db.session.query(Category).filter(Category.cat_id == cat_id).first()
+        if not cat:
+            abort(404, message = "Category not found")
+        return cat, 200
 
 
 class ServiceResource(Resource):
@@ -232,7 +242,7 @@ class ServiceResource(Resource):
         
         s_id = args.get("s_id", None)
         name = args.get("name", None)
-        price = args.get("price", None)
+        base_price = args.get("base_price", None)
         req_time = args.get("req_time", None)
         description = args.get("description", None)
         cat_id = args.get("cat_id", None)
@@ -242,7 +252,7 @@ class ServiceResource(Resource):
             abort(400, message = "Service Id is missing")
         if(not name):
             abort(400, message = "Name is missing")
-        if(not price):
+        if(not base_price):
             abort(400, message = "Price is missing")
         if(not req_time):
             abort(400, message = "Required Time is missing")
@@ -256,7 +266,7 @@ class ServiceResource(Resource):
         
 
         service.name = name
-        service.price = price
+        service.base_price = base_price
         service.req_time = req_time
         service.description = description
         service.cat_id = cat_id

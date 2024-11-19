@@ -28,7 +28,7 @@ with app.app_context():
 
     if(not test_service):
         test_service_cat = db.session.query(Category).filter(Category.name == 'Test Category').first().cat_id
-        test_service = Service(name = 'Test Service', price = 500, req_time = 5, description = 'A test service.', cat_id = test_service_cat)
+        test_service = Service(name = 'Test Service', base_price = 500, req_time = 5, description = 'A test service.', cat_id = test_service_cat)
         db.session.add(test_service)
 
     test_sp = userdatastore.find_user(email = 'rajesh@example.com')
@@ -37,7 +37,7 @@ with app.app_context():
         userdatastore.create_user(email = 'rajesh@example.com', password = hash_password('test'), roles = ['service_professional'])
         test_sp = userdatastore.find_user(email = 'rajesh@example.com')
         test_sp_service = db.session.query(Service).filter(Service.name == 'Test Service').first().s_id
-        test_sp_data = ServiceProfessional(sp_id = test_sp.uid, f_name = 'Rajesh', l_name = 'Kumar', email= 'rajesh@example.com', description = 'A hardworking test SP.', service_type = test_sp_service, experience = 5, submitted_doc_path = 'static/test', loc_pincode = 110001, address = 'Raj Nagar, Delhi, IN')
+        test_sp_data = ServiceProfessional(sp_id = test_sp.uid, f_name = 'Rajesh', l_name = 'Kumar', email= 'rajesh@example.com', description = 'A hardworking test SP.', service_type = test_sp_service, price = 1000, experience = 5, submitted_doc_path = 'static/test', loc_pincode = 110001, address = 'Raj Nagar, Delhi, IN')
         db.session.add(test_sp_data)
 
     test_customer = userdatastore.find_user(email = 'krish02@example.com')
