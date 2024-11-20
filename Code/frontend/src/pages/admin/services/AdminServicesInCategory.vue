@@ -20,6 +20,7 @@ export default {
         obj: null,
         modal_heading: null,
         category_obj: null,
+      
         
         
         
@@ -66,8 +67,11 @@ export default {
           const data = await res.json();
           this.category_obj = data;
         }
+        
       } catch (e) {
-        console.error(e);
+        console.log(e);
+        
+        
       }
     },
 
@@ -101,16 +105,31 @@ export default {
     <Navbar :email/>
     <AdminModal :modal_type="modal_type" :obj="obj" :category_obj="category_obj" :heading="modal_heading" :afterAction="fetchServices"/>
 <div>
+  <div class="container">
     <AdminSearch />
     
     
-    
-    <div>Services in category {{ cat_id }}</div>
-    
-    
+    <div class="header-container">
+    <div class="heading">Services in {{ category_obj.name }}
+      <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop" @click="editCategory(category_obj)">
+                    Edit
+
+                </button>
+
+
     </div>
 
-    <div class="container services-table">
+    <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#staticBackdrop" @click="addService">
+                    Add a Service
+
+                </button>
+  </div>
+    
+    
+<div v-if="!services.length">
+  No Services Found !
+</div>
+    <div v-else class="services-table">
         <table class="table table-striped">
   <thead>
     <tr>
@@ -140,6 +159,9 @@ export default {
   </tbody>
 </table>
     </div>
+
+    </div>
+    </div>
 </template>
 
 
@@ -158,6 +180,27 @@ export default {
     text-decoration: underline;
     cursor: pointer;
 
+}
+
+.heading {
+  
+  padding: 2rem;
+  font-size: 1.5rem;
+}
+
+.heading button {
+  font-size: 0.8rem;
+  padding: 0.4rem;
+}
+
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-container > button {
+  max-height: fit-content;
 }
 
 

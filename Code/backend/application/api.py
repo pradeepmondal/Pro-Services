@@ -3,6 +3,8 @@ from flask_security import auth_required, SQLAlchemyUserDatastore, verify_passwo
 from flask_restful import Resource, fields, marshal_with, reqparse, abort
 from application.database import db
 from application.models import Customer, User, ServiceProfessional, Category, Service
+from werkzeug.utils import secure_filename
+import os
 
 
 ds : SQLAlchemyUserDatastore = app.security.datastore
@@ -11,6 +13,13 @@ ds : SQLAlchemyUserDatastore = app.security.datastore
 login_parser = reqparse.RequestParser()
 login_parser.add_argument("email")
 login_parser.add_argument("password")
+
+# Category Parser
+category_parser = reqparse.RequestParser()
+category_parser.add_argument("name", type=str, required=True)
+category_parser.add_argument("description", type=str, required=True)
+# category_parser.add_argument("thumbnail", type='FileStorage', location='files')
+
 
 # Service Parser
 service_parser = reqparse.RequestParser()
@@ -74,7 +83,8 @@ sp = {
 category = {
     "cat_id": fields.Integer,
     "name": fields.String,
-    "description": fields.String
+    "description": fields.String,
+    "thumbnail_url": fields.String
 }
 
 service = {
@@ -222,6 +232,10 @@ class SPList(Resource):
                 abort(404, message = "No Service Professional found for the given service")
             return splist, 200
         
+UPLOAD_FOLDER = 'static/service_category'
+EXTENSIONS = {'png', 'jpg', 'gif', 'jpeg'}
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
 
 class CategoryResource(Resource):
     @auth_required('token')
@@ -231,6 +245,51 @@ class CategoryResource(Resource):
         if not cat:
             abort(404, message = "Category not found")
         return cat, 200
+    
+    @auth_required('token')
+    def post(self):
+        
+        name = request.form.get('name')
+        description = request.form.get('description')
+        thumbnail = request.files.get('thumbnail')
+        thumbnail_path = None
+
+        if(not name):
+            abort(400, message = "Name is missing")
+        if(not description):
+            abort(400, message = "Description is missing")
+        if(not thumbnail):
+            abort(400, message = "Thumbnail is missing")
+
+        if thumbnail.filename.split('.')[1].lower() in EXTENSIONS:
+            path = os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(name + '.' + thumbnail.filename.split('.')[1].lower()))
+            thumbnail.save(path)
+            thumbnail_path = path
+
+        category = Category(name = name, description = description, thumbnail_url = thumbnail_path)
+
+        db.session.add(category)
+        db.session.commit()
+
+        return "Category successfully created", 200
+    
+
+    @auth_required('token')
+    def delete(self, cat_id):
+        category = db.session.query(Category).filter(Category.cat_id == cat_id).first()
+        os.remove(category.thumbnail_url)
+        db.session.delete(category)
+        db.session.commit()
+
+        return "Successfully Deleted", 200
+
+
+
+        
+
+
+
+
 
 
 class ServiceResource(Resource):
@@ -297,8 +356,7 @@ class ServiceList(Resource):
     @marshal_with(service)
     def get(self, cat_id):
         services = db.session.query(Service).filter(Service.cat_id == cat_id).all()
-        if(not services):
-            abort(404, message = "No Services in this category")
+        
         return services, 200
     
 

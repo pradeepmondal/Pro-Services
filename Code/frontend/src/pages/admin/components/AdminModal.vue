@@ -68,18 +68,18 @@ export default {
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <AddCategoryForm v-if="modal_type === 'add_category_form'" />
-        <DeleteCategoryForm v-if="modal_type === 'delete_form'" :obj="obj"/>
+        <AddCategoryForm v-if="modal_type === 'add_category_form'" :afterAction="afterAction" />
+        <DeleteCategoryForm v-if="modal_type === 'delete_form'" :obj="obj" :afterAction="afterAction" />
         <EditServiceForm v-if="modal_type === 'edit_form'" :obj="obj" :afterAction="afterAction"/>
         <ViewForm v-if="modal_type === 'view_form'" :obj="obj" :category_obj="category_obj" />
 
         
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button v-if="modal_type === 'add_category_form'" type="button" class="btn btn-success">Create</button>
-        <button v-if="modal_type === 'delete_form'" type="button" class="btn btn-danger">Delete</button>
-        <button v-if="modal_type === 'edit_form'" type="button" class="btn btn-success">Confirm Edit</button>
+        
+        
+      
+        
       </div>
     </div>
   </div>

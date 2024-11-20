@@ -36,6 +36,7 @@ class ServiceProfessional(db.Model):
     price = db.Column(db.Integer, nullable = False)
     experience = db.Column(db.Integer, nullable = False)
     submitted_doc_path = db.Column(db.String, nullable = False)
+    profile_image = db.Column(db.String)
     address = db.Column(db.String, nullable = False)
     loc_pincode = db.Column(db.Integer, nullable = False)
     rating = db.Column(db.Float) 
@@ -49,6 +50,7 @@ class Customer(db.Model):
     l_name = db.Column(db.String)
     email = db.Column(db.String, db.ForeignKey('user.email'))
     description = db.Column(db.String)
+    profile_image = db.Column(db.String)
     addresses = db.Column(db.JSON)
     loc_pincode = db.Column(db.Integer)
     
@@ -60,13 +62,17 @@ class Service(db.Model):
     base_price = db.Column(db.Integer, nullable = False)
     req_time = db.Column(db.Float, nullable = False)
     description = db.Column(db.String, nullable = False)
+    thumbnail_url = db.Column(db.String)
     cat_id = db.Column(db.Integer, db.ForeignKey('category.cat_id'))
+    sps = db.relationship('ServiceProfessional', backref='service', cascade="all, delete-orphan")
 
 class Category(db.Model):
     __tablename__ = 'category'
     cat_id = db.Column(db.Integer, primary_key = True)
     name = db.Column(db.String, unique = True, nullable = False)
     description = db.Column(db.String, nullable = False)
+    thumbnail_url = db.Column(db.String)
+    services = db.relationship('Service', backref='category', cascade="all, delete-orphan")
 
 class ServiceRequest(db.Model):
     __tablename__ = 'service_request'

@@ -72,7 +72,7 @@ export default {
 
 <template>
   <Navbar :email />
-  <AdminModal :modal_type="modal_form" :heading="modal_heading" :obj="obj" />
+  <AdminModal :modal_type="modal_form" :heading="modal_heading" :obj="obj" :afterAction="fetchServices" />
     <div class="">
       <AdminSearch />
         <div>Services</div>
