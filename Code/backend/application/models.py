@@ -51,8 +51,9 @@ class Customer(db.Model):
     email = db.Column(db.String, db.ForeignKey('user.email'))
     description = db.Column(db.String)
     profile_image = db.Column(db.String)
-    addresses = db.Column(db.JSON)
+    address = db.Column(db.String)
     loc_pincode = db.Column(db.Integer)
+
     
 
 class Service(db.Model):
@@ -77,13 +78,15 @@ class Category(db.Model):
 class ServiceRequest(db.Model):
     __tablename__ = 'service_request'
     sr_id = db.Column(db.Integer, primary_key = True)
-    s_id = db.Column(db.String, db.ForeignKey('service.s_id'), nullable = False)
+    s_id = db.Column(db.Integer, db.ForeignKey('service.s_id'), nullable = False)
     c_id = db.Column(db.Integer, db.ForeignKey('customer.c_id'), nullable = False)
     sp_id = db.Column(db.Integer, db.ForeignKey('service_professional.sp_id'), nullable = False)
+    description = db.Column(db.String)
     request_date = db.Column(db.DateTime, nullable = False, default = datetime.now())
     completion_date = db.Column(db.DateTime)
     status = db.Column(db.String, nullable = False)
     remarks = db.Column(db.String)
+    
     
 
 

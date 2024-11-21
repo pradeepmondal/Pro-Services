@@ -1,5 +1,6 @@
 <script>
 
+import AddAddressForm from './components/AddAddressForm.vue';
 import CustomerNotification from './components/CustomerNotification.vue';
 import CustomerSearch from './components/CustomerSearch.vue';
 import Navbar from './components/Navbar.vue'
@@ -13,13 +14,16 @@ export default {
     Navbar,
     CustomerSearch,
     CustomerNotification,
-    ServiceCategories
+    ServiceCategories,
+    AddAddressForm
     
   },
   data() {
     return {
         customer: null,
-        loading: true
+        loading: true,
+        show_add_address: false,
+        show_notification: true
     }
   },
   async created() {
@@ -41,8 +45,13 @@ export default {
 
             const data = await res.json()
             this.customer = data
+            
+            
             localStorage.setItem('user-details', JSON.stringify(this.customer))
             this.$store.commit('setUserDetails')
+            console.log('User details stored')
+            this.show_add_address= false
+            
             
         }
     }catch(e){
@@ -50,6 +59,10 @@ export default {
     }
         
 
+    },
+    addAddress(){
+      this.show_notification = false
+      this.show_add_address = true
     }
 
   }
@@ -63,7 +76,9 @@ export default {
   <div v-else>
   <Navbar />
   <div class="container-fluid">
-  <CustomerNotification :customer="customer" />
+  <CustomerNotification v-if="show_notification" :customer="customer" :addAddress="addAddress" />
+  <AddAddressForm v-if="show_add_address" :afterAction="fetchCustomer" />
+
     <h1>Welcome {{ customer.f_name }} !!</h1>
     <CustomerSearch />
     <ServiceCategories />

@@ -15,7 +15,7 @@ const store = createStore({
             auth_token: null,
             email: null,
             user_type: null,
-            user_details: null
+            user_details: {}
 
         }
     },
@@ -40,7 +40,7 @@ const store = createStore({
         setUserDetails(state) {
             try{
                 if(JSON.parse(localStorage.getItem('user-details'))){
-                    state.userDetails = JSON.parse(localStorage.getItem('user-details'))
+                    state.user_details = JSON.parse(localStorage.getItem('user-details'))
                 }
                 
             } catch {
@@ -55,7 +55,7 @@ const store = createStore({
             state.auth_token = null
             state.email = null
             state.user_type = null
-            state.userDetails = null
+            state.user_details = null
             localStorage.removeItem('user')
             localStorage.removeItem('user-type')
             localStorage.removeItem('user-details')
@@ -64,6 +64,8 @@ const store = createStore({
 })
 
 store.commit('setUser')
+store.commit('setUserDetails')
+
 
 
 createApp(App).use(router).use(store).mount('#app')

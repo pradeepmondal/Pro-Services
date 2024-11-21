@@ -36,7 +36,7 @@ export default {
       formData.append("name", this.formData.name)
       formData.append('description', this.formData.description)
       formData.append('thumbnail', this.formData.thumbnail)
-      console.log(formData);
+
       
       try {
         const res = await fetch(

@@ -7,11 +7,14 @@
 export default {
   name: "SPInService",
   props: {
-    service : {
+    selected_service : {
         type: Object 
     },
     service_professionals: {
         type: Object
+    },
+    bookService: {
+      type: Function
     }
   },
   components: {
@@ -22,13 +25,14 @@ export default {
 
   data(){
     return {
-      customer: this.$store.state.userDetails,
+      customer: this.$store.state.user_details,
       
 
         
         
     }
-  }
+  },
+
 };
 </script>
 
@@ -59,7 +63,7 @@ export default {
   <td>₹{{ sp.price }}</td>
   <td>{{ sp.rating }}</td>
   <td><div class="button-container">
-    <button class="btn btn-outline-success" @click="bookService(service)">
+    <button class="btn btn-outline-success" @click="bookService(sp)">
                 Book
             </button>
     

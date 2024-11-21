@@ -1,8 +1,15 @@
 <script>
 
+import Navbar from './components/Navbar.vue'
+
 export default {
 
   name: "SPDashboard",
+  components: {
+    Navbar,
+    
+    
+  },
   data() {
     return {
         loading: true,
@@ -55,7 +62,16 @@ export default {
 
 
 <template>
+  <div v-if="loading">Loading...</div>
+  <div v-else>
+    <Navbar />
     <h1>Welcome {{ sp.f_name }} !!</h1>
-    <button @click="spLogout">Logout</button>
+    
+
+
+
+  </div>
+
+    
 
 </template>

@@ -1,5 +1,6 @@
 <script>
 
+import BookingConfirmationForm from './BookingConfirmationForm.vue';
 import SPInService from './SPInService.vue';
 
 
@@ -9,7 +10,8 @@ import SPInService from './SPInService.vue';
 export default {
   name: "ServiceBookingModal",
   components: {
-    SPInService
+    SPInService,
+    BookingConfirmationForm
     
     
 
@@ -33,9 +35,11 @@ export default {
 
  data(){
     return {
-      customer: this.$store.state.userDetails,
+      customer: this.$store.state.user_details,
       show_sps: true,
-      modal_heading: 'Select Professional'
+      modal_heading: 'Select Professional',
+      show_confirm_form: false,
+      selected_sp: null
 
         
         
@@ -54,8 +58,15 @@ export default {
   },
 
   methods: {
-    
+    bookService(sp){
+      this.show_sps = false
+      this.selected_sp = sp
+      this.modal_heading = "Confirm Booking"
+      this.show_confirm_form = true
 
+      
+      
+    }
   }
 };
 </script>
@@ -77,15 +88,16 @@ export default {
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <SPInService v-if="show_sps" :selected_service="selected_service" :service_professionals="service_professionals" />
+        <SPInService v-if="show_sps" :selected_service="selected_service" :service_professionals="service_professionals" :bookService="bookService" />
+        <BookingConfirmationForm v-if="show_confirm_form" :selected_sp :selected_service="selected_service" :customer="customer" />
         
 
         
       </div>
-      <div class="modal-footer">
+      <!-- <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
         
-      </div>
+      </div> -->
     </div>
   </div>
 </div>

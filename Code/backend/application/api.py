@@ -2,7 +2,7 @@ from flask import current_app as app, jsonify, request
 from flask_security import auth_required, SQLAlchemyUserDatastore, verify_password, hash_password, current_user
 from flask_restful import Resource, fields, marshal_with, reqparse, abort
 from application.database import db
-from application.models import Customer, User, ServiceProfessional, Category, Service
+from application.models import Customer, User, ServiceProfessional, Category, Service, ServiceRequest
 from werkzeug.utils import secure_filename
 import os
 
@@ -39,6 +39,15 @@ customer_parser.add_argument("email")
 customer_parser.add_argument("password")
 
 
+# Service Request Parser
+sr_parser = reqparse.RequestParser()
+sr_parser.add_argument("s_id")
+sr_parser.add_argument("c_id")
+sr_parser.add_argument("sp_id")
+sr_parser.add_argument("description")
+sr_parser.add_argument("status")
+
+
 roles = {
     "rid": fields.Integer,
     "name": fields.String,
@@ -59,7 +68,9 @@ customer = {
     "date_created": fields.DateTime,
     "f_name": fields.String,
     "l_name": fields.String,
-    "description": fields.String
+    "description": fields.String,
+    "address": fields.String,
+    "loc_pincode": fields.String
     }
 
 admin = {
@@ -88,12 +99,24 @@ category = {
 }
 
 service = {
-    "s_id": fields.String,
+    "s_id": fields.Integer,
     "name": fields.String,
     "base_price": fields.Integer,
     "req_time": fields.Float,
     "description": fields.String,
     "cat_id": fields.Integer
+}
+
+service_request = {
+    "sr_id": fields.Integer,
+    "s_id": fields.Integer,
+    "c_id": fields.Integer,
+    "sp_id": fields.Integer,
+    "description": fields.String,
+    "request_date": fields.DateTime,
+    "completion_date": fields.DateTime,
+    "status": fields.String,
+    "remarks": fields.String
 }
 
 def check_for_role():
@@ -190,6 +213,26 @@ class CustomerResource(Resource):
 
         return "Registration Successful", 200
 
+
+
+class CustomerAddress(Resource):
+    @auth_required('token')
+    def put(self):
+        address = request.form.get('address')
+        pincode = request.form.get('pincode')
+
+        customer = db.session.query(Customer).filter(Customer.c_id == current_user.uid).first()
+
+        if not customer:
+            abort(404, "Customer Details not available")
+        
+        customer.address = address
+        customer.loc_pincode = pincode
+
+        db.session.add(customer)
+        db.session.commit()
+
+        return "Address successfully added"
 
 
 
@@ -340,6 +383,41 @@ class ServiceResource(Resource):
         return "Successfully updated", 200
 
 
+class SRResource(Resource):
+    @auth_required('token')
+    @marshal_with(service_request)
+    def get(self, sr_id):
+        service_request = db.session.query(ServiceRequest).filter(ServiceRequest.sr_id == sr_id).first()
+        if not service_request:
+            abort(404, message = "SR not found")
+        return service_request, 200
+    
+    def post(self):
+        args = sr_parser.parse_args()
+        s_id = args.get("s_id", None)
+        c_id = args.get("c_id", None)
+        sp_id = args.get("sp_id", None)
+        description = args.get("description", None)
+        status = args.get("status", None)
+        
+        if(not s_id):
+            abort(400, message = "Service Id is missing")
+        if(not c_id):
+            abort(400, message = "Customer Id is missing")
+        if(not sp_id):
+            abort(400, message = "SP Id is missing")
+        if(not description):
+            abort(400, message = "Description Id is missing")
+        if(not status):
+            abort(400, message = "Status is missing")
+
+    
+        new_sr = ServiceRequest(s_id = s_id, c_id = c_id, sp_id = sp_id, description = description, status = status )
+        db.session.add(new_sr)
+        db.session.commit()
+
+        return "Service Request Created", 200
+
 
 
 
@@ -371,3 +449,5 @@ class CustomerList(Resource):
             customer.email = db.session.query(User).filter(User.uid == customer.c_id).first().email
             customer.active = db.session.query(User).filter(User.uid == customer.c_id).first().active
         return customers, 200
+    
+

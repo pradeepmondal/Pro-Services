@@ -4,6 +4,9 @@ export default {
   props: {
     customer: {
         type: Object
+    },
+    addAddress: {
+      type: Function
     }
     
   },
@@ -16,10 +19,10 @@ export default {
 </script>
 
 <template>
-    <div class="notification">
+    <div v-if="!this.customer.address" class="notification">
         <i class="bi bi-exclamation-octagon-fill"></i>
-        <div v-if="!this.customer.addressess">No address found !! 
-            <button class="btn btn-primary add-address">Add Address</button>
+        <div v-if="!this.customer.address">No address found !! 
+            <button class="btn btn-primary add-address" @click="addAddress">Add Address</button>
         </div>
         
     </div>
