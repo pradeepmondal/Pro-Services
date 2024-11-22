@@ -76,7 +76,7 @@ export default {
     },
 
     deleteService(service){
-        this.modal_type = "delete_form"
+        this.modal_type = "delete_service_form"
         this.obj = service
         this.modal_heading = "Delete " + service.name
     },
@@ -93,7 +93,13 @@ export default {
         this.modal_heading = service.name
         
         
-    }
+    },
+    addService(){
+        this.modal_type = "add_service_form"
+        this.modal_heading = "Add a New Service"
+
+        
+    },
 
 
   }

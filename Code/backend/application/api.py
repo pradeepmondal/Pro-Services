@@ -9,6 +9,14 @@ import os
 
 ds : SQLAlchemyUserDatastore = app.security.datastore
 
+CATEGORY_UPLOAD_FOLDER = 'static/service_category'
+SERVICE_UPLOAD_FOLDER = 'static/service'
+EXTENSIONS = {'png', 'jpg', 'gif', 'jpeg'}
+app.config['CATEGORY_UPLOAD_FOLDER'] = CATEGORY_UPLOAD_FOLDER
+app.config['SERVICE_UPLOAD_FOLDER'] = SERVICE_UPLOAD_FOLDER
+
+
+
 # Login Parser
 login_parser = reqparse.RequestParser()
 login_parser.add_argument("email")
@@ -80,6 +88,8 @@ admin = {
 
 sp = {
     "sp_id": fields.Integer,
+    "email": fields.String,
+    "active": fields.Boolean,
     "date_created": fields.DateTime,
     "f_name": fields.String,
     "l_name": fields.String,
@@ -263,21 +273,28 @@ class SPResource(Resource):
 class SPList(Resource):
     @auth_required('token')
     @marshal_with(sp)
-    def get(self, s_id = None):
-        if s_id is None:
+    def get(self, s_id ):
+        splist = db.session.query(ServiceProfessional).filter(ServiceProfessional.service_type == s_id).all()
+        if(not splist):
+            abort(404, message = "No Service Professional found for the given service")
+        for sp in splist:
+            sp.email = db.session.query(User).filter(User.uid == sp.sp_id).first().email
+            sp.active = db.session.query(User).filter(User.uid == sp.sp_id).first().active
+        return splist, 200
+    
+    @auth_required('token')
+    @marshal_with(sp)
+    def get(self):
             splist = db.session.query(ServiceProfessional).all()
             if(not splist):
                 abort(404, message = "No Service Professional found")
-            return splist, 200
-        else:
-            splist = db.session.query(ServiceProfessional).filter(ServiceProfessional.service_type == s_id).all()
-            if(not splist):
-                abort(404, message = "No Service Professional found for the given service")
+            for sp in splist:
+                sp.email = db.session.query(User).filter(User.uid == sp.sp_id).first().email
+                sp.active = db.session.query(User).filter(User.uid == sp.sp_id).first().active
             return splist, 200
         
-UPLOAD_FOLDER = 'static/service_category'
-EXTENSIONS = {'png', 'jpg', 'gif', 'jpeg'}
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+        
+
 
 
 class CategoryResource(Resource):
@@ -337,8 +354,64 @@ class CategoryResource(Resource):
 
 class ServiceResource(Resource):
     @auth_required('token')
-    def put(self):
+    def post(self):
         
+        check_admin_role()
+        name = request.form.get('name')
+        base_price = request.form.get('base_price')
+        req_time = request.form.get('req_time')
+        description = request.form.get('description')
+        cat_id = request.form.get('cat_id')
+
+        thumbnail = request.files.get('thumbnail')
+
+
+
+        
+        if(not name):
+            abort(400, message = "Name is missing")
+        if(not base_price):
+            abort(400, message = "Price is missing")
+        if(not req_time):
+            abort(400, message = "Required Time is missing")
+        if(not description):
+            abort(400, message = "Description is missing")
+        if(not cat_id):
+            abort(400, message = "Category is missing")
+
+        if thumbnail.filename.split('.')[1].lower() in EXTENSIONS:
+            path = os.path.join(app.config['SERVICE_UPLOAD_FOLDER'], secure_filename(name + '.' + thumbnail.filename.split('.')[1].lower()))
+            thumbnail.save(path)
+            thumbnail_path = path
+
+
+        new_service = Service(name = name, base_price = base_price, req_time = req_time, description = description, cat_id = cat_id, thumbnail_url = thumbnail_path)
+
+        db.session.add(new_service)
+        db.session.commit()
+
+        return "Service successfully added", 200
+    
+
+    @auth_required('token')
+    def delete(self, s_id):
+        check_admin_role()
+        service = db.session.query(Service).filter(Service.s_id == s_id).first()
+        if service.thumbnail_url:
+            os.remove(service.thumbnail_url)
+        db.session.delete(service)
+        db.session.commit()
+
+        return "Successfully Deleted", 200
+
+
+
+
+
+
+    @auth_required('token')
+    def put(self):
+        check_admin_role()
         args = service_parser.parse_args()
         
         
@@ -432,6 +505,15 @@ class CategoryList(Resource):
 class ServiceList(Resource):
     @auth_required('token')
     @marshal_with(service)
+    def get(self):
+        services = db.session.query(Service).all()
+        return services, 200
+
+
+
+
+    @auth_required('token')
+    @marshal_with(service)
     def get(self, cat_id):
         services = db.session.query(Service).filter(Service.cat_id == cat_id).all()
         
@@ -450,4 +532,12 @@ class CustomerList(Resource):
             customer.active = db.session.query(User).filter(User.uid == customer.c_id).first().active
         return customers, 200
     
+
+
+# Unauthenticated resource
+class UnauthServiceList(Resource):
+    @marshal_with(service)
+    def get(self):
+        services = db.session.query(Service).all()
+        return services, 200
 

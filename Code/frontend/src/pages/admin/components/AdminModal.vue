@@ -2,8 +2,10 @@
 
 import AddCategoryForm from './service_category/AddCategoryForm.vue';
 import DeleteCategoryForm from './service_category/DeleteCategoryForm.vue';
-import EditServiceForm from './service_category/EditServiceForm.vue'
-import ViewForm from './service_category/ViewForm.vue';
+import AddServiceForm from './service_category/service/AddServiceForm.vue';
+import DeleteServiceForm from './service_category/service/DeleteServiceForm.vue';
+import EditServiceForm from './service_category/service/EditServiceForm.vue'
+import ViewForm from './service_category/service/ViewForm.vue';
 
 
 
@@ -13,7 +15,9 @@ export default {
     AddCategoryForm,
     DeleteCategoryForm,
     ViewForm,
-    EditServiceForm
+    EditServiceForm,
+    AddServiceForm,
+    DeleteServiceForm
 
   },
   props: {
@@ -72,7 +76,8 @@ export default {
         <DeleteCategoryForm v-if="modal_type === 'delete_form'" :obj="obj" :afterAction="afterAction" />
         <EditServiceForm v-if="modal_type === 'edit_form'" :obj="obj" :afterAction="afterAction"/>
         <ViewForm v-if="modal_type === 'view_form'" :obj="obj" :category_obj="category_obj" />
-
+        <AddServiceForm v-if="modal_type === 'add_service_form'" :afterAction="afterAction" :category_obj="category_obj" />
+        <DeleteServiceForm v-if="modal_type === 'delete_service_form'" :obj="obj" :afterAction="afterAction" />
         
       </div>
       <div class="modal-footer">

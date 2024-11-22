@@ -9,6 +9,8 @@ export default {
   data() {
     return {
       form_type: "customer",
+      loading: true,
+      available_services: null,
       customerData: {
         accepted : false,
         email : null,
@@ -28,7 +30,9 @@ export default {
         l_name: null,
         service_type: null,
         experience: null,
-        submitted_doc_path: null,
+        submitted_doc: null,
+        profile_image: null,
+        address: null,
         loc_pincode: null
 
       },
@@ -70,7 +74,39 @@ export default {
 
   },
 
+  async created() {
+    try {
+      await this.fetchServices()
+    } catch (e) {
+      console.error(e)
+
+    } finally {
+      this.loading = false
+    }
+  },
+
+
+
   methods: {
+    async fetchServices() {
+        try{
+        const res = await fetch('http://localhost:5050' + '/unauth_services' , {method: 'GET', headers: {"content-type" : "application/json", 'auth-token': this.$store.state.auth_token}})
+        if(res.ok){
+
+            const data = await res.json()
+            this.available_services = data
+
+
+
+        }
+    }catch(e){
+        console.error(e)
+    }
+        
+        
+
+
+    },
     changeToSPForm() {
       this.form_type = "sp";
       
@@ -136,18 +172,36 @@ export default {
       }
       if(!this.f_error_message) {
         try {
-      const res = await fetch('http://localhost:5050' + '/login', {method: 'POST', headers: {"content-type" : "application/json"}, body: JSON.stringify({email: this.email, password: this.password})})
+          const formData = new FormData()
+          formData.append('email', this.spData.email)
+          formData.append('password', this.spData.password)
+          formData.append('confirm_password', this.spData.confirm_password)
+          formData.append('f_name', this.spData.f_name)
+          formData.append('l_name', this.spData.l_name)
+          formData.append('service_type', this.spData.service_type)
+          formData.append('experience', this.spData.experience)
+          formData.append('submitted_doc', this.spData.submitted_doc)
+          formData.append('profile_image', this.spData.profile_image)
+          formData.append('address', this.spData.address)
+          formData.append('loc_pincode', this.spData.loc_pincode)
+
+          const res = await fetch('http://localhost:5050' + '/sp', {method: 'POST', body: formData})
       if(res.ok){
         const data = await res.json();
-        // console.log('success', data.roles[0].rid)
-        const roles = data.roles.map((role) => role.name)
-        if (roles.includes('service_professional')){
-            localStorage.setItem('user', JSON.stringify(data))
-            localStorage.setItem('user-type', 'sp')
-            this.$store.commit('setUser')
-            this.$router.push('/dashboard')
-
-        }
+        this.spData.accepted = false
+        this.spData.email = null
+        this.spData.password = null
+        this.spData.confirm_password = null
+        this.spData.f_name = null
+        this.spData.l_name = null
+        this.spData.service_type = null
+        this.spData.experience = null
+        this.spData.submitted_doc = null
+        this.spData.profile_image = null
+        this.spData.address = null
+        this.spData.loc_pincode = null
+        this.error_message = null
+        this.setActiveSuccessMessage(data)
         
         
         
@@ -172,7 +226,8 @@ export default {
 
 
 <template>
-    <div class="common-register">
+  <div v-if="loading">Loading...</div>
+    <div v-else class="common-register">
       <div class="card text-center common-login-inner">
         <div class="card-header">
           <ul class="nav nav-tabs card-header-tabs n-item">
@@ -324,6 +379,15 @@ export default {
                 v-model="spData.confirm_password"
               />
             </div>
+            <div class="input-group mb-3 service-selector">
+            <label for="service" class="form-label">Select Service: &nbsp;</label>
+            <select class="form-select" aria-label="Default select example" name="s_id" v-model="spData.service_type" >
+              <template v-for="service in available_services">
+                <option :value="service.s_id">{{ service.name }}</option>
+              </template>
+            </select>
+          </div>
+
             <div :class="[error_message ? 'active-error': '']">{{ error_message }}</div>
             <div class="form-check tc ">
               <input
@@ -389,6 +453,27 @@ export default {
   background-color: red;
   color: white;
   height: fit-content;
+}
+
+.service-selector {
+  display: flex;
+  align-items: center;
+  
+  
+  
+}
+
+.service-selector label {
+  font-size: 1.1rem;
+}
+
+.service-selector select{
+  
+  max-width: fit-content;
+  max-height: fit-content;
+  margin-left: 1rem;
+  
+  
 }
 
 </style>

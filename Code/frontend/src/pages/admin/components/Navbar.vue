@@ -26,8 +26,8 @@ export default {
             {{ email }} <span class="login-type">Admin</span>
           </button>
           <ul class="dropdown-menu dropdown-menu-dark d-menu">
-            <li><a class="dropdown-item" href="#">View as Customer</a></li>
-            <li><a class="dropdown-item" href="#">View as SP</a></li>
+            <!-- <li><a class="dropdown-item" href="#">View as Customer</a></li>
+            <li><a class="dropdown-item" href="#">View as SP</a></li> -->
             <li><a class="dropdown-item" @click="adminLogout">Logout</a></li>
           </ul>
         </li>
