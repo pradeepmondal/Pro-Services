@@ -4,14 +4,14 @@
 import ActiveSRs from './components/ActiveSRs.vue';
 import Navbar from './components/Navbar.vue'
 import PendingSRs from './components/AllSRs.vue';
+import AllSRs from './components/AllSRs.vue';
 
 export default {
 
   name: "SPDashboard",
   components: {
     Navbar,
-    ActiveSRs,
-    PendingSRs
+    AllSRs
     
     
   },
@@ -70,9 +70,9 @@ export default {
   <div v-if="loading">Loading...</div>
   <div v-else>
     <Navbar />
-    <h1>Welcome {{ sp.f_name }} !!</h1>
     
-    <ActiveSRs />
+    
+    <AllSRs />
 
    
 

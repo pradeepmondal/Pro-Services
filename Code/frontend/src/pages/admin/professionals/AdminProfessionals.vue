@@ -29,7 +29,7 @@ export default {
   methods: {
     async fetchSPs() {
         try{
-        const res = await fetch('http://localhost:5050' + '/sps' , {method: 'GET', headers: {"content-type" : "application/json", 'auth-token': this.$store.state.auth_token}})
+        const res = await fetch('http://localhost:5050' + '/sps/0' , {method: 'GET', headers: {"content-type" : "application/json", 'auth-token': this.$store.state.auth_token}})
         if(res.ok){
 
             const data = await res.json()

@@ -1,19 +1,20 @@
 <script>
-import AdminSearch from "../components/AdminSearch.vue"
-import Navbar from "../components/Navbar.vue"
 
-import SRActionModal from "../components/service_category/service_request/SRActionModal.vue";
+import CustomerSearch from "./components/CustomerSearch.vue";
+import Navbar from "./components/Navbar.vue";
+
+import SRActionModal from "./components/SRActionModal.vue";
 
 export default {
-  name: "AdminSRs",
+  name: "CustomerServiceHistory",
   components: {
     Navbar,
-    AdminSearch,
+    CustomerSearch,
     SRActionModal,
   },
   data() {
     return {
-      email: this.$store.state.email,
+      customer: this.$store.state.user_details,
       // loading: true,
       srs: null,
       modal_type: null,
@@ -38,7 +39,9 @@ export default {
       try {
         const res = await fetch(
           "http://localhost:5050" +
-            "/service_request/0/0",
+            "/service_request/" +
+            this.customer.c_id +
+            "/0",
           {
             method: "GET",
             headers: {
@@ -113,7 +116,7 @@ export default {
       }
     },
 
-    openDeleteModal(sr) {
+    openCancelModal(sr) {
       this.modal_type = "cancel_sr";
       this.modal_heading = "Cancel " + sr.service_name;
       this.action = this.cancelSR;
@@ -133,7 +136,7 @@ export default {
 </script>
 
 <template>
-  <Navbar :email="email" />
+  <Navbar />
 
   <SRActionModal
     :modal_type="modal_type"
@@ -142,7 +145,7 @@ export default {
     :selected_sr="selected_sr"
   />
   <div class="container-fluid">
-    <h1>Service Requests</h1>
+    <h1>Welcome {{ customer.f_name }} !!</h1>
     <CustomerSearch />
 
     <div class="container sr-table">
@@ -151,12 +154,11 @@ export default {
           <tr>
             <th scope="col">#</th>
             <th scope="col">Service Name</th>
-            <th scope="col">Customer Name</th>
             <th scope="col">Professional</th>
             <th scope="col">Price</th>
             <th scope="col">Status</th>
             <th scope="col">Ratings</th>
-            <th scope="col">Description</th>
+            <th scope="col">Action</th>
             <th scope="col">Remarks</th>
           </tr>
         </thead>
@@ -171,13 +173,32 @@ export default {
               <div class="service_name">{{ sr.service_name }}</div>
             </td>
             <td>{{ sr.professional_name }}</td>
-            <td>{{ sr.customer_name }}</td>
             <td>₹{{ sr.professional_price }}</td>
             <td>{{ sr.status }}</td>
             <td>{{ sr.rating }}</td>
 
             <td>
-              {{ sr.description }}
+              <div class="button-container">
+                <button
+                  v-if="sr.status === 'Accepted'"
+                  class="btn btn-outline-success"
+                  data-bs-toggle="modal"
+                  data-bs-target="#staticBackdrop"
+                  @click="openMarkCompleteModal(sr)"
+                >
+                  Mark Completed
+                </button>
+
+                <button
+                  v-if="sr.status !== 'Completed' && sr.status !== 'Cancelled'"
+                  class="btn btn-outline-danger"
+                  data-bs-toggle="modal"
+                  data-bs-target="#staticBackdrop"
+                  @click="openCancelModal(sr)"
+                >
+                  Cancel
+                </button>
+              </div>
             </td>
 
             <td>{{ sr.remarks }}</td>

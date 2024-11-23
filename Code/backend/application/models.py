@@ -36,10 +36,11 @@ class ServiceProfessional(db.Model):
     price = db.Column(db.Integer, nullable = False)
     experience = db.Column(db.Integer, nullable = False)
     submitted_doc_path = db.Column(db.String, nullable = False)
-    profile_image = db.Column(db.String)
+    profile_image_path = db.Column(db.String)
     address = db.Column(db.String, nullable = False)
     loc_pincode = db.Column(db.Integer, nullable = False)
     rating = db.Column(db.Float) 
+    verified = db.Column(db.Boolean, default = False)
 
 
 class Customer(db.Model):
@@ -50,7 +51,7 @@ class Customer(db.Model):
     l_name = db.Column(db.String)
     email = db.Column(db.String, db.ForeignKey('user.email'))
     description = db.Column(db.String)
-    profile_image = db.Column(db.String)
+    profile_image_path = db.Column(db.String)
     address = db.Column(db.String)
     loc_pincode = db.Column(db.Integer)
 
@@ -86,6 +87,7 @@ class ServiceRequest(db.Model):
     completion_date = db.Column(db.DateTime)
     status = db.Column(db.String, nullable = False)
     remarks = db.Column(db.String)
+    rating = db.Column(db.Integer)
     
     
 

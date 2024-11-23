@@ -1,5 +1,6 @@
 <script>
 
+
 import AddAddressForm from './components/AddAddressForm.vue';
 import CustomerNotification from './components/CustomerNotification.vue';
 import CustomerSearch from './components/CustomerSearch.vue';
@@ -15,7 +16,8 @@ export default {
     CustomerSearch,
     CustomerNotification,
     ServiceCategories,
-    AddAddressForm
+    AddAddressForm,
+    
     
   },
   data() {

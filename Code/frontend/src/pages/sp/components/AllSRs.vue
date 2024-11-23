@@ -1,19 +1,18 @@
 <script>
-import AdminSearch from "../components/AdminSearch.vue"
-import Navbar from "../components/Navbar.vue"
 
-import SRActionModal from "../components/service_category/service_request/SRActionModal.vue";
+import SPSearch from "./SPSearch.vue";
+import SRActionModal from "./SRActionModal.vue";
 
 export default {
-  name: "AdminSRs",
+  name: "AllSRs",
   components: {
-    Navbar,
-    AdminSearch,
+
+    SPSearch,
     SRActionModal,
   },
   data() {
     return {
-      email: this.$store.state.email,
+      sp: this.$store.state.user_details,
       // loading: true,
       srs: null,
       modal_type: null,
@@ -38,7 +37,8 @@ export default {
       try {
         const res = await fetch(
           "http://localhost:5050" +
-            "/service_request/0/0",
+            "/service_request/0/" +
+            this.sp.sp_id,
           {
             method: "GET",
             headers: {
@@ -50,16 +50,17 @@ export default {
         if (res.ok) {
           const data = await res.json();
           this.srs = data;
+          
         }
       } catch (e) {
         console.error(e);
       }
     },
 
-    async markComplete(sr, rating) {
+    async markClose(sr, remarks) {
 
-        sr.status = "Completed";
-        sr.rating = rating;
+        sr.status = "Closed";
+        sr.remarks = remarks
 
       {
         try {
@@ -87,8 +88,9 @@ export default {
 
     },
 
-    async cancelSR(sr) {
-      sr.status = "Cancelled";
+    async acceptSR(sr, remarks) {
+      sr.status = "Accepted";
+      sr.remarks = remarks
 
       {
         try {
@@ -113,18 +115,53 @@ export default {
       }
     },
 
-    openDeleteModal(sr) {
-      this.modal_type = "cancel_sr";
-      this.modal_heading = "Cancel " + sr.service_name;
-      this.action = this.cancelSR;
+    async rejectSR(sr, remarks) {
+      sr.status = "Reject";
+      sr.remarks = remarks
+
+      {
+        try {
+          const res = await fetch(
+            "http://localhost:5050" + "/service_request/" + sr.sr_id,
+            {
+              method: "PUT",
+              headers: {
+                "content-type": "application/json",
+                "auth-token": this.$store.state.auth_token,
+              },
+
+              body: JSON.stringify(sr),
+            }
+          );
+          if (res.ok) {
+            const data = await res.json();
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }
+    },
+
+    openAcceptModal(sr) {
+      this.modal_type = "accept_sr";
+      this.modal_heading = "Accept SR #" + sr.sr_id;
+      this.action = this.acceptSR;
       this.show_modal = true;
       this.selected_sr = sr;
     },
 
-    openMarkCompleteModal(sr) {
-      this.modal_type = "mark_complete_sr";
-      this.modal_heading = "Mark Complete " + sr.service_name;
-      this.action = this.markComplete;
+    openRejectModal(sr) {
+      this.modal_type = "reject_sr";
+      this.modal_heading = "Reject SR #" + sr.sr_id;
+      this.action = this.rejectSR;
+      this.show_modal = true;
+      this.selected_sr = sr;
+    },
+
+    openMarkCloseModal(sr) {
+      this.modal_type = "mark_close_sr";
+      this.modal_heading = "Mark Close SR #" + sr.sr_id;
+      this.action = this.markClose;
       this.show_modal = true;
       this.selected_sr = sr;
     },
@@ -133,7 +170,7 @@ export default {
 </script>
 
 <template>
-  <Navbar :email="email" />
+  <Navbar />
 
   <SRActionModal
     :modal_type="modal_type"
@@ -142,21 +179,21 @@ export default {
     :selected_sr="selected_sr"
   />
   <div class="container-fluid">
-    <h1>Service Requests</h1>
-    <CustomerSearch />
-
+    
+    <SPSearch />
+    
+    <h2>Service History</h2>
     <div class="container sr-table">
       <table class="table table-striped">
         <thead>
           <tr>
             <th scope="col">#</th>
-            <th scope="col">Service Name</th>
             <th scope="col">Customer Name</th>
-            <th scope="col">Professional</th>
-            <th scope="col">Price</th>
+            <th scope="col">Description</th>
+            
             <th scope="col">Status</th>
             <th scope="col">Ratings</th>
-            <th scope="col">Description</th>
+            <th scope="col">Action</th>
             <th scope="col">Remarks</th>
           </tr>
         </thead>
@@ -168,19 +205,49 @@ export default {
               </div>
             </td>
             <td>
-              <div class="service_name">{{ sr.service_name }}</div>
+              <div class="service_name">{{ sr.customer_name }}</div>
             </td>
-            <td>{{ sr.professional_name }}</td>
-            <td>{{ sr.customer_name }}</td>
-            <td>₹{{ sr.professional_price }}</td>
+            <td>{{ sr.description }}</td>
+            
             <td>{{ sr.status }}</td>
             <td>{{ sr.rating }}</td>
 
             <td>
-              {{ sr.description }}
-            </td>
+              <div class="button-container">
+                <button
+                  v-if="sr.status === 'Completed'"
+                  class="btn btn-outline-secondary"
+                  data-bs-toggle="modal"
+                  data-bs-target="#staticBackdrop"
+                  @click="openMarkCloseModal(sr)"
+                >
+                  Mark Close
+                </button>
 
-            <td>{{ sr.remarks }}</td>
+                <button
+                  v-if="sr.status ==='Requested'"
+                  class="btn btn-outline-success"
+                  data-bs-toggle="modal"
+                  data-bs-target="#staticBackdrop"
+                  @click="openAcceptModal(sr)"
+                >
+                  Accept
+                </button>
+
+                <button
+                  v-if="sr.status ==='Requested'"
+                  class="btn btn-outline-danger"
+                  data-bs-toggle="modal"
+                  data-bs-target="#staticBackdrop"
+                  @click="openRejectModal(sr)"
+                >
+                  Reject
+                </button>
+
+                
+              </div>
+            </td>
+            <td><label> {{ sr.remarks }}</label> </td>
           </tr>
         </tbody>
       </table>

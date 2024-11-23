@@ -11,9 +11,14 @@ ds : SQLAlchemyUserDatastore = app.security.datastore
 
 CATEGORY_UPLOAD_FOLDER = 'static/service_category'
 SERVICE_UPLOAD_FOLDER = 'static/service'
+SP_IMAGE_UPLOAD_FOLDER = 'static/sp/image'
+SP_DOC_UPLOAD_FOLDER = 'static/sp/doc'
 EXTENSIONS = {'png', 'jpg', 'gif', 'jpeg'}
+DOC_EXTENSIONS = {'pdf'}
 app.config['CATEGORY_UPLOAD_FOLDER'] = CATEGORY_UPLOAD_FOLDER
 app.config['SERVICE_UPLOAD_FOLDER'] = SERVICE_UPLOAD_FOLDER
+app.config['SP_IMAGE_UPLOAD_FOLDER'] = SP_IMAGE_UPLOAD_FOLDER
+app.config['SP_DOC_UPLOAD_FOLDER'] = SP_DOC_UPLOAD_FOLDER
 
 
 
@@ -54,6 +59,8 @@ sr_parser.add_argument("c_id")
 sr_parser.add_argument("sp_id")
 sr_parser.add_argument("description")
 sr_parser.add_argument("status")
+sr_parser.add_argument("remarks", required=False)
+sr_parser.add_argument("rating", required=False)
 
 
 roles = {
@@ -114,7 +121,8 @@ service = {
     "base_price": fields.Integer,
     "req_time": fields.Float,
     "description": fields.String,
-    "cat_id": fields.Integer
+    "cat_id": fields.Integer,
+    "base_price": fields.Integer
 }
 
 service_request = {
@@ -126,7 +134,12 @@ service_request = {
     "request_date": fields.DateTime,
     "completion_date": fields.DateTime,
     "status": fields.String,
-    "remarks": fields.String
+    "remarks": fields.String,
+    "customer_name": fields.String,
+    "service_name": fields.String,
+    "professional_name": fields.String,
+    "professional_price": fields.Integer,
+    "rating": fields.Integer
 }
 
 def check_for_role():
@@ -206,9 +219,9 @@ class CustomerResource(Resource):
         if(not f_name):
             abort(400, message = "First Name is missing")
         if(not email):
-            abort(400, message = "Price is missing")
+            abort(400, message = "Email is missing")
         if(not password):
-            abort(400, message = "Required Time is missing")
+            abort(400, message = "Password is missing")
 
         customer = ds.find_user(email = email)
 
@@ -270,28 +283,94 @@ class SPResource(Resource):
         return current_sp, 200
     
 
+    def post(self):
+        
+        f_name = request.form.get('f_name')
+        l_name = request.form.get('l_name')
+        email = request.form.get('email')
+        password = request.form.get('password')
+        service_type = request.form.get('service_type')
+        price = request.form.get('price')
+        experience = request.form.get('experience')
+        address = request.form.get('address')
+        loc_pincode = request.form.get('loc_pincode')
+        profile_image_path = None
+        submitted_doc_path = None
+
+        submitted_doc = request.files.get('submitted_doc')
+        profile_image = request.files.get('profile_image')
+
+
+        if(not f_name):
+            abort(400, message = "First Name is missing")
+        if(not email):
+            abort(400, message = "Email is missing")
+        if(not password):
+            abort(400, message = "Password is missing")
+        if(not service_type):
+            abort(400, message = "service_type is missing")
+        if(not price):
+            abort(400, message = "price is missing")
+        if(not experience):
+            abort(400, message = "experience is missing")
+        if(not address):
+            abort(400, message = "address is missing")
+        if(not loc_pincode):
+            abort(400, message = "loc_pincode is missing")
+
+
+        if(not submitted_doc):
+            abort(400, message = "submitted_doc is missing")
+        if(not profile_image):
+            abort(400, message = "profile_image is missing")
+        
+
+        
+
+        sp = ds.find_user(email = email)
+
+        if(sp):
+            abort(400, message = "User with the email already exists")
+
+        if profile_image.filename.split('.')[1].lower() in EXTENSIONS:
+            path = os.path.join(app.config['SP_IMAGE_UPLOAD_FOLDER'], secure_filename(email + '.' + profile_image.filename.split('.')[1].lower()))
+            profile_image.save(path)
+            profile_image_path = path
+
+        if submitted_doc.filename.split('.')[1].lower() in DOC_EXTENSIONS:
+            path = os.path.join(app.config['SP_DOC_UPLOAD_FOLDER'], secure_filename(email + '.' + submitted_doc.filename.split('.')[1].lower()))
+            submitted_doc.save(path)
+            submitted_doc_path = path
+
+        ds.create_user(email = email, password = hash_password(password), roles = ['service_professional'])
+        sp_user = ds.find_user(email = email)
+        sp_data = ServiceProfessional(sp_id = sp_user.uid, f_name = f_name, l_name = l_name, email = email, service_type = service_type, price = price, experience = experience, submitted_doc_path = submitted_doc_path, profile_image_path = profile_image_path, address = address, loc_pincode = loc_pincode )
+        db.session.add(sp_data)
+        db.session.commit()
+
+        return "Registration Successful", 200
+    
+
+
+    
+
 class SPList(Resource):
     @auth_required('token')
     @marshal_with(sp)
     def get(self, s_id ):
-        splist = db.session.query(ServiceProfessional).filter(ServiceProfessional.service_type == s_id).all()
+
+        if s_id == 0:
+            splist = db.session.query(ServiceProfessional).all()
+        else:
+            splist = db.session.query(ServiceProfessional).filter(ServiceProfessional.service_type == s_id).all()
         if(not splist):
-            abort(404, message = "No Service Professional found for the given service")
+            abort(404, message = "No Service Professional found")
         for sp in splist:
             sp.email = db.session.query(User).filter(User.uid == sp.sp_id).first().email
             sp.active = db.session.query(User).filter(User.uid == sp.sp_id).first().active
         return splist, 200
     
-    @auth_required('token')
-    @marshal_with(sp)
-    def get(self):
-            splist = db.session.query(ServiceProfessional).all()
-            if(not splist):
-                abort(404, message = "No Service Professional found")
-            for sp in splist:
-                sp.email = db.session.query(User).filter(User.uid == sp.sp_id).first().email
-                sp.active = db.session.query(User).filter(User.uid == sp.sp_id).first().active
-            return splist, 200
+    
         
         
 
@@ -463,8 +542,18 @@ class SRResource(Resource):
         service_request = db.session.query(ServiceRequest).filter(ServiceRequest.sr_id == sr_id).first()
         if not service_request:
             abort(404, message = "SR not found")
+        rel_service = db.session.query(Service).filter(Service.s_id == service_request.s_id).first()
+        rel_customer = db.session.query(Customer).filter(Customer.c_id == service_request.c_id).first()
+        rel_professional = db.session.query(ServiceProfessional).filter(ServiceProfessional.sp_id == service_request.sp_id).first()
+
+        service_request.service_name = rel_service.name
+        service_request.customer_name = rel_customer.f_name + ' ' + rel_customer.l_name
+        service_request.professional_name = rel_professional.f_name + ' ' + rel_professional.l_name
+        service_request.professional_price = rel_professional.price
         return service_request, 200
     
+
+    @auth_required('token')
     def post(self):
         args = sr_parser.parse_args()
         s_id = args.get("s_id", None)
@@ -472,6 +561,8 @@ class SRResource(Resource):
         sp_id = args.get("sp_id", None)
         description = args.get("description", None)
         status = args.get("status", None)
+        remarks = args.get("remarks", None)
+        rating = args.get("rating", None)
         
         if(not s_id):
             abort(400, message = "Service Id is missing")
@@ -485,11 +576,89 @@ class SRResource(Resource):
             abort(400, message = "Status is missing")
 
     
-        new_sr = ServiceRequest(s_id = s_id, c_id = c_id, sp_id = sp_id, description = description, status = status )
+        new_sr = ServiceRequest(s_id = s_id, c_id = c_id, sp_id = sp_id, description = description, status = status, remarks = remarks, rating = rating )
         db.session.add(new_sr)
         db.session.commit()
 
         return "Service Request Created", 200
+    
+    @auth_required('token')
+    def put(self, sr_id):
+        args = sr_parser.parse_args()
+        s_id = args.get("s_id", None)
+        c_id = args.get("c_id", None)
+        sp_id = args.get("sp_id", None)
+        description = args.get("description", None)
+        status = args.get("status", None)
+        remarks = args.get("remarks", None)
+        rating = args.get("rating", None)
+
+        if(not s_id):
+            abort(400, message = "Service Id is missing")
+        if(not c_id):
+            abort(400, message = "Customer Id is missing")
+        if(not sp_id):
+            abort(400, message = "SP Id is missing")
+        if(not description):
+            abort(400, message = "Description Id is missing")
+        if(not status):
+            abort(400, message = "Status is missing")
+
+
+        service_request = db.session.query(ServiceRequest).filter(ServiceRequest.sr_id == sr_id).first()
+
+        if not service_request:
+            abort(400, message="Service Request not found")
+
+        service_request.s_id = s_id
+        service_request.c_id = c_id
+        service_request.sp_id = sp_id
+        service_request.description = description
+        service_request.status = status
+        service_request.remarks = remarks
+        service_request.rating = rating
+
+        db.session.add(service_request)
+        db.session.commit()
+
+        return "Service Request Updated", 200
+
+
+
+class SRListResource(Resource):
+    @auth_required('token')
+    @marshal_with(service_request)
+    def get(self, c_id , sp_id):
+        if c_id == 0:
+            if sp_id == 0:
+
+                sr_list = db.session.query(ServiceRequest).all()
+                
+            
+            else:
+                sr_list = db.session.query(ServiceRequest).filter(ServiceRequest.sp_id == sp_id).all()
+                
+        else:
+            if sp_id == 0:
+
+                sr_list = db.session.query(ServiceRequest).filter(ServiceRequest.c_id == c_id).all()
+                
+            else:
+
+                sr_list = db.session.query(ServiceRequest).filter((ServiceRequest.sp_id == sp_id) & (ServiceRequest.c_id == c_id) ).all()
+                
+        for service_request in sr_list:
+            rel_service = db.session.query(Service).filter(Service.s_id == service_request.s_id).first()
+            rel_customer = db.session.query(Customer).filter(Customer.c_id == service_request.c_id).first()
+            rel_professional = db.session.query(ServiceProfessional).filter(ServiceProfessional.sp_id == service_request.sp_id).first()
+
+            service_request.service_name = rel_service.name
+            service_request.customer_name = rel_customer.f_name + ' ' + rel_customer.l_name
+            service_request.professional_name = rel_professional.f_name + ' ' + rel_professional.l_name
+            service_request.professional_price = rel_professional.price
+
+
+        return sr_list, 200
 
 
 

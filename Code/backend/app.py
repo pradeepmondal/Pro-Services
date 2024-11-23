@@ -30,7 +30,7 @@ def create_app():
 app, api = create_app()
 
 import application.init_data
-from application.api import Welcome, Login, CustomerResource, AdminResource, SPResource, CategoryList, ServiceList, CustomerList, ServiceResource, SPList, CategoryResource, SRResource, CustomerAddress, UnauthServiceList
+from application.api import Welcome, Login, CustomerResource, AdminResource, SPResource, CategoryList, ServiceList, CustomerList, ServiceResource, SPList, CategoryResource, SRResource, CustomerAddress, UnauthServiceList, SRListResource
 
 
 
@@ -47,9 +47,9 @@ api.add_resource(CategoryList, '/service_categories', endpoint = 'service_catego
 api.add_resource(ServiceResource, '/service', '/service/<int:s_id>', endpoint='service')
 api.add_resource(ServiceList, '/services','/services/<int:cat_id>', endpoint='service_list')
 api.add_resource(CustomerList, '/customers', endpoint = 'customer_list')
-api.add_resource(SPList, '/sps', '/sps/<int:s_id>', endpoint = 'sp_list')
+api.add_resource(SPList, '/sps/<int:s_id>', endpoint = 'sp_list')
 api.add_resource(SRResource, '/service_request/<int:sr_id>', '/service_request', endpoint = 'service_request')
-
+api.add_resource(SRListResource, '/service_request/<int:c_id>/<int:sp_id>', endpoint = 'sr_list')
 api.add_resource(UnauthServiceList, '/unauth_services', endpoint='unauth_service_list')
 
 if __name__ == '__main__':

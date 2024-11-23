@@ -29,6 +29,7 @@ export default {
         f_name: null,
         l_name: null,
         service_type: null,
+        price: null,
         experience: null,
         submitted_doc: null,
         profile_image: null,
@@ -60,6 +61,88 @@ export default {
         return 'Confirm the password'
 
       } 
+
+      if (this.customerData.password !== this.customerData.confirm_password){
+        return "Passwords do not match"
+
+      } 
+
+      if (!this.customerData.accepted){
+        return 'Accept T&C'
+
+      } 
+      
+      if (this.password & this.email) {
+        return null
+      }
+
+    },
+
+
+
+    f_sp_error_message() {
+      this.b_error_message = null
+      if (!this.spData.f_name){
+        return 'First name is missing'
+
+      } 
+      if (!this.spData.email){
+        return 'Email is missing'
+      } 
+      if (!this.spData.password){
+        return 'Password is missing'
+
+      } 
+
+      if (!this.spData.confirm_password){
+        return 'Confirm the password'
+
+      } 
+
+      if (this.spData.password !== this.spData.confirm_password){
+        return "Passwords do not match"
+
+      } 
+
+      if (!this.spData.service_type){
+        return 'Select a service'
+
+      } 
+
+      if (!this.spData.experience){
+        return 'Experience is missing'
+
+      } 
+
+      if (!this.spData.price){
+        return 'Fill in price'
+
+      } 
+
+      if (!this.spData.address){
+        return 'Address is missing'
+
+      } 
+
+      if (!this.spData.loc_pincode){
+        return 'Pincode is missing'
+
+      } 
+
+      if (!this.spData.submitted_doc){
+        return 'Document is missing'
+
+      } 
+
+      if (!this.spData.profile_image){
+        return 'Profile image is missing'
+
+      } 
+
+      if (!this.spData.accepted){
+        return 'Accept T&C'
+
+      } 
       
       if (this.password & this.email) {
         return null
@@ -68,9 +151,16 @@ export default {
     },
 
     error_message() {
-      let error = this.f_error_message || this.b_error_message
+      let error = this.f_error_message || this.b_error_message 
       return error
-    }
+    },
+
+    sp_error_message() {
+      let error = this.f_sp_error_message || this.b_error_message 
+      return error
+
+    },
+
 
   },
 
@@ -163,14 +253,8 @@ export default {
 
     },
     async spRegister() {
-      if (!this.email){
-        this.f_error_message = 'Email is missing'
-      }
-      if (!this.password){
-        this.f_error_message = 'Password is missing'
-
-      }
-      if(!this.f_error_message) {
+      
+      if(!this.f_sp_error_message) {
         try {
           const formData = new FormData()
           formData.append('email', this.spData.email)
@@ -178,6 +262,7 @@ export default {
           formData.append('confirm_password', this.spData.confirm_password)
           formData.append('f_name', this.spData.f_name)
           formData.append('l_name', this.spData.l_name)
+          formData.append('price', this.spData.price)
           formData.append('service_type', this.spData.service_type)
           formData.append('experience', this.spData.experience)
           formData.append('submitted_doc', this.spData.submitted_doc)
@@ -219,7 +304,18 @@ export default {
   }
 
 
-    }
+    },
+
+
+    
+    handleDocumentUpload(event) {
+      this.spData.submitted_doc = event.target.files[0]
+    },
+
+    handleImageUpload(event) {
+      this.spData.profile_image = event.target.files[0]
+    },
+    
   },
 };
 </script>
@@ -280,7 +376,7 @@ export default {
             <div class="input-group mb-3">
               <span class="input-group-text" id="basic-addon1">@</span>
               <input
-                type="text"
+                type="email"
                 class="form-control"
                 placeholder="Email"
                 aria-label="email"
@@ -352,7 +448,7 @@ export default {
             <div class="input-group mb-3">
               <span class="input-group-text" id="basic-addon1">@</span>
               <input
-                type="text"
+                type="email"
                 class="form-control"
                 placeholder="Email"
                 aria-label="email"
@@ -380,7 +476,8 @@ export default {
               />
             </div>
             <div class="input-group mb-3 service-selector">
-            <label for="service" class="form-label">Select Service: &nbsp;</label>
+              <div class="selector">
+            <label for="service" class="form-label">Select Service: &nbsp; </label>
             <select class="form-select" aria-label="Default select example" name="s_id" v-model="spData.service_type" >
               <template v-for="service in available_services">
                 <option :value="service.s_id">{{ service.name }}</option>
@@ -388,7 +485,89 @@ export default {
             </select>
           </div>
 
-            <div :class="[error_message ? 'active-error': '']">{{ error_message }}</div>
+            <div v-for="service in available_services" class="service-base-price">
+              <label v-if="service.s_id === spData.service_type" >Base Price: {{ service.base_price }}</label>
+            </div>
+          </div>
+
+          <div class="input-group mb-3">
+              <span class="input-group-text" id="basic-addon1">E</span>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Experience"
+                aria-label="experience"
+                aria-describedby="basic-addon1"
+                v-model="spData.experience"
+              />
+
+
+              <span class="input-group-text" id="basic-addon1">₹</span>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Price"
+                aria-label="price"
+                aria-describedby="basic-addon1"
+                v-model="spData.price"
+              />
+             
+            </div>
+
+            <div class="input-group mb-3">
+              <span class="input-group-text" id="basic-addon1">A</span>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Address"
+                aria-label="experience"
+                aria-describedby="basic-addon1"
+                v-model="spData.address"
+              />
+
+              <span class="input-group-text" id="basic-addon1">P</span>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Pincode"
+                aria-label="pincode"
+                aria-describedby="basic-addon1"
+                v-model="spData.loc_pincode"
+              />
+             
+            </div>
+
+            <div class="input-group  p-2 service-selector">
+              <label for="doc" class="form-label">Attach Document: &nbsp; </label>
+              <input
+                type="file"
+                class="form-control"
+                placeholder="Experience"
+                aria-label="experience"
+                aria-describedby="basic-addon1"
+                @change="handleDocumentUpload"
+              />
+             
+            </div>
+
+            <div class="input-group p-2 service-selector">
+              <label for="doc" class="form-label">Profile Image: &nbsp; </label>
+              <input
+                type="file"
+                class="form-control"
+                placeholder="Experience"
+                aria-label="experience"
+                aria-describedby="basic-addon1"
+                @change="handleImageUpload"
+              />
+             
+            </div>
+
+
+
+
+
+            <div :class="[error_message ? 'active-error': '']">{{ sp_error_message }}</div>
             <div class="form-check tc ">
               <input
                 class="form-check-input"
@@ -458,6 +637,16 @@ export default {
 .service-selector {
   display: flex;
   align-items: center;
+  justify-content: space-around;
+  
+  
+  
+}
+
+.service-selector .selector {
+  display: flex;
+  align-items: center;
+  
   
   
   
@@ -465,13 +654,14 @@ export default {
 
 .service-selector label {
   font-size: 1.1rem;
+  
 }
 
 .service-selector select{
   
   max-width: fit-content;
   max-height: fit-content;
-  margin-left: 1rem;
+  
   
   
 }

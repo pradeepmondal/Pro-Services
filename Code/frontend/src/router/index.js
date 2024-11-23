@@ -6,6 +6,8 @@ import SignUp from '../pages/SignUp.vue'
 import AdminDisplayCategory from '../pages/admin/AdminDisplayCategory.vue'
 import AdminServicesInCategory from '../pages/admin/services/AdminServicesInCategory.vue'
 import ServicesInCategory from '../pages/customer/components/services/ServicesInCategory.vue'
+import CustomerServiceHistory from '../pages/customer/CustomerServiceHistory.vue'
+import SPServiceHistory from '../pages/sp/SPServiceHistory.vue'
 
 
 const routes = [
@@ -15,7 +17,8 @@ const routes = [
     { path: '/admin/:category', component: AdminDisplayCategory, props: true , meta: {roles: ['admin']}},
     { path: '/admin/service_category/:cat_id', component: AdminServicesInCategory, props: true , meta: {roles: ['admin']}},
     { path: '/customer/service_category/:cat_id', component: ServicesInCategory, props: true , meta: {roles: ['customer']}},
-
+    { path: '/customer/service_history', component: CustomerServiceHistory, props: true , meta: {roles: ['customer']}},
+    { path: '/sp/service_history', component: SPServiceHistory, props: true , meta: {roles: ['sp']}},
     
 
 
