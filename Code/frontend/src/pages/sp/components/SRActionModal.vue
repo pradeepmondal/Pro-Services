@@ -83,7 +83,7 @@ export default {
         
          <div v-if="modal_type === 'accept_sr'">Accept SR #{{ selected_sr.sr_id }} by {{ selected_sr.customer_name }} </div>
          <div v-if="modal_type === 'reject_sr'">Reject SR #{{ selected_sr.sr_id }} by {{ selected_sr.customer_name }} </div>
-         <div v-if="modal_type === 'mark_close_sr'">Mark {{ selected_sr.service_name }} by {{ selected_sr.professional_name }} as closed</div>
+         <div v-if="modal_type === 'mark_close_sr'">Mark SR #{{ selected_sr.sr_id }} by {{ selected_sr.customer_name }} as closed</div>
          <div class="remarks-container" >
             <label>Remarks:</label>
             <input type="text" v-model="remarks" />

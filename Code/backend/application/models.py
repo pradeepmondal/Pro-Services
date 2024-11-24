@@ -67,6 +67,7 @@ class Service(db.Model):
     thumbnail_url = db.Column(db.String)
     cat_id = db.Column(db.Integer, db.ForeignKey('category.cat_id'))
     sps = db.relationship('ServiceProfessional', backref='service', cascade="all, delete-orphan")
+    srs = db.relationship('ServiceRequest', backref='service', cascade="all, delete-orphan")
 
 class Category(db.Model):
     __tablename__ = 'category'

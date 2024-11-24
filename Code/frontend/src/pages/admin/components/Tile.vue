@@ -13,6 +13,11 @@ export default {
     navlink: {
         type: String
     },
+
+    statlink: {
+        type: String
+
+    },
     stats: {
         type: Boolean,
         required: true
@@ -32,7 +37,8 @@ export default {
     },
     obj: {
         type: Object
-    }
+    },
+
     
   },
   data(){
@@ -46,7 +52,7 @@ export default {
         this.$router.push(this.navlink)
     },
     statNavigate() {
-        this.$router.push('/admin/stat/' + this.category)
+        this.$router.push(this.statlink)
     }
   }
 };

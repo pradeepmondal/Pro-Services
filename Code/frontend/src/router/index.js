@@ -5,6 +5,7 @@ import Dashboard from '../pages/Dashboard.vue'
 import SignUp from '../pages/SignUp.vue'
 import AdminDisplayCategory from '../pages/admin/AdminDisplayCategory.vue'
 import AdminServicesInCategory from '../pages/admin/services/AdminServicesInCategory.vue'
+import AdminDisplayStats from '../pages/admin/AdminDisplayStats.vue'
 import ServicesInCategory from '../pages/customer/components/services/ServicesInCategory.vue'
 import CustomerServiceHistory from '../pages/customer/CustomerServiceHistory.vue'
 import SPServiceHistory from '../pages/sp/SPServiceHistory.vue'
@@ -17,6 +18,7 @@ const routes = [
     { path: '/signup', component: SignUp },
     { path: '/dashboard', component: Dashboard },
     { path: '/admin/:category', component: AdminDisplayCategory, props: true , meta: {roles: ['admin']}},
+    { path: '/admin/stats/:category', component: AdminDisplayStats , props: true , meta: {roles: ['admin']}},
     { path: '/admin/service_category/:cat_id', component: AdminServicesInCategory, props: true , meta: {roles: ['admin']}},
     { path: '/customer/service_category/:cat_id', component: ServicesInCategory, props: true , meta: {roles: ['customer']}},
     { path: '/customer/service_history', component: CustomerServiceHistory, props: true , meta: {roles: ['customer']}},

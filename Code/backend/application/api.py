@@ -61,6 +61,17 @@ customer_update_parser.add_argument("loc_pincode")
 customer_update_parser.add_argument("description")
 
 
+# SP Update Parser
+sp_update_parser = reqparse.RequestParser()
+sp_update_parser.add_argument("f_name")
+sp_update_parser.add_argument("l_name")
+sp_update_parser.add_argument("address")
+sp_update_parser.add_argument("loc_pincode")
+sp_update_parser.add_argument("price")
+sp_update_parser.add_argument("description")
+
+
+
 # Service Request Parser
 sr_parser = reqparse.RequestParser()
 sr_parser.add_argument("s_id")
@@ -102,20 +113,7 @@ admin = {
     "email": fields.String, 
 }
 
-sp = {
-    "sp_id": fields.Integer,
-    "email": fields.String,
-    "active": fields.Boolean,
-    "date_created": fields.DateTime,
-    "f_name": fields.String,
-    "l_name": fields.String,
-    "description": fields.String,
-    "service_type": fields.String,
-    "experience": fields.Integer,
-    "price": fields.Integer,
-    "rating": fields.Float
 
-}
 
 category = {
     "cat_id": fields.Integer,
@@ -132,6 +130,24 @@ service = {
     "description": fields.String,
     "cat_id": fields.Integer,
     "base_price": fields.Integer
+}
+
+sp = {
+    "sp_id": fields.Integer,
+    "email": fields.String,
+    "active": fields.Boolean,
+    "date_created": fields.DateTime,
+    "f_name": fields.String,
+    "l_name": fields.String,
+    "description": fields.String,
+    "service_type": fields.String,
+    "experience": fields.Integer,
+    "price": fields.Integer,
+    "rating": fields.Float,
+    "service": fields.Nested(service),
+    "address": fields.String,
+    "loc_pincode": fields.Integer
+
 }
 
 service_request = {
@@ -318,6 +334,8 @@ class SPResource(Resource):
     @marshal_with(sp)
     def get(self):
         current_sp = db.session.query(ServiceProfessional).filter(ServiceProfessional.sp_id == current_user.uid).first()
+        rel_service = db.session.query(Service).filter(Service.s_id == current_sp.service_type).first()
+        current_sp.service = rel_service
         if not current_sp:
             abort(404, message = "Service Professional not found")
         return current_sp, 200
@@ -389,6 +407,42 @@ class SPResource(Resource):
         db.session.commit()
 
         return "Registration Successful", 200
+    
+
+
+
+    @auth_required('token')
+    def put(self):
+        args = sp_update_parser.parse_args()
+        f_name = args.get("f_name", None)
+        l_name = args.get("l_name", None)
+        address = args.get("address", None)
+        price = args.get("price", None)
+        loc_pincode = args.get("loc_pincode", None)
+        description = args.get("description", None)
+        if(not f_name):
+            abort(400, message = "First Name is missing")
+        
+
+        sp = ds.find_user(email = current_user.email)
+
+        if(not sp):
+            abort(400, message = "SP not found")
+
+        
+        
+        sp_data = db.session.query(ServiceProfessional).filter(ServiceProfessional.sp_id == current_user.uid).first()
+
+        sp_data.f_name = f_name
+        sp_data.l_name = l_name
+        sp_data.address = address
+        sp_data.loc_pincode = loc_pincode
+        sp_data.description = description
+        sp_data.price = price
+        db.session.add(sp_data)
+        db.session.commit()
+
+        return "Professional Successfully Updated", 200
     
 
 
