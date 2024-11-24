@@ -57,7 +57,7 @@ export default {
     <div class="container-fluid">
       
       
-      <AdminSearch />
+    
       <AdminTiles />
     </div>
     

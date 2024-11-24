@@ -20,6 +20,8 @@ export default {
         obj: null,
         modal_heading: null,
         category_obj: null,
+        search_mode: false,
+        search_query: null
       
         
         
@@ -29,6 +31,24 @@ export default {
   async created() {
     await this.fetchServices()
     await this.fetchCategory()
+  },
+
+  computed: {
+    final_services(){
+      if(!this.search_mode){
+        return this.services
+      }
+      else{
+        let search_query = this.search_query.toLowerCase()
+        let regex = new RegExp(search_query, 'i')
+        return this.services.filter((service) => {
+          return (
+            regex.test(service.name) || regex.test(service.description) 
+          )
+        })
+
+      }
+    }
   },
 
   methods: {
@@ -51,6 +71,20 @@ export default {
 
 
     },
+
+
+    updateSearchQuery(search_input){
+      this.search_mode = true
+      this.search_query = search_input
+    },
+
+    clearSearch(){
+      this.search_mode = false
+    },
+
+
+
+
     async fetchCategory() {
       try {
         const res = await fetch(
@@ -112,7 +146,7 @@ export default {
     <AdminModal :modal_type="modal_type" :obj="obj" :category_obj="category_obj" :heading="modal_heading" :afterAction="fetchServices"/>
 <div>
   <div class="container">
-    <AdminSearch />
+    <AdminSearch search_placeholder="Search in Services" :updateSearchQuery="updateSearchQuery" :search_mode="search_mode" :clearSearch="clearSearch" />
     
     
     <div class="header-container">
@@ -146,7 +180,7 @@ export default {
     </tr>
   </thead>
   <tbody>
-    <tr v-for="service in services">
+    <tr v-for="service in final_services">
       <td scope="row"><div class="service_id" data-bs-toggle="modal" data-bs-target="#staticBackdrop" @click="viewService(service)">{{ service.s_id }}</div></td>
       <td>{{ service.name }}</td>
       <td>₹{{ service.base_price }}</td>

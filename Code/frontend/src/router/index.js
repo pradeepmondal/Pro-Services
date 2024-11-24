@@ -8,6 +8,8 @@ import AdminServicesInCategory from '../pages/admin/services/AdminServicesInCate
 import ServicesInCategory from '../pages/customer/components/services/ServicesInCategory.vue'
 import CustomerServiceHistory from '../pages/customer/CustomerServiceHistory.vue'
 import SPServiceHistory from '../pages/sp/SPServiceHistory.vue'
+import CustomerProfile from '../pages/customer/CustomerProfile.vue'
+import SPProfile from '../pages/sp/SPProfile.vue'
 
 
 const routes = [
@@ -19,7 +21,8 @@ const routes = [
     { path: '/customer/service_category/:cat_id', component: ServicesInCategory, props: true , meta: {roles: ['customer']}},
     { path: '/customer/service_history', component: CustomerServiceHistory, props: true , meta: {roles: ['customer']}},
     { path: '/sp/service_history', component: SPServiceHistory, props: true , meta: {roles: ['sp']}},
-    
+    { path: '/customer/profile', component: CustomerProfile, props: true , meta: {roles: ['customer']}},
+    { path: '/sp/profile', component: SPProfile, props: true , meta: {roles: ['sp']}},
 
 
 

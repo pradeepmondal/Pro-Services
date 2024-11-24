@@ -52,6 +52,15 @@ customer_parser.add_argument("email")
 customer_parser.add_argument("password")
 
 
+# Customer Update Parser
+customer_update_parser = reqparse.RequestParser()
+customer_update_parser.add_argument("f_name")
+customer_update_parser.add_argument("l_name")
+customer_update_parser.add_argument("address")
+customer_update_parser.add_argument("loc_pincode")
+customer_update_parser.add_argument("description")
+
+
 # Service Request Parser
 sr_parser = reqparse.RequestParser()
 sr_parser.add_argument("s_id")
@@ -235,6 +244,37 @@ class CustomerResource(Resource):
         db.session.commit()
 
         return "Registration Successful", 200
+    
+    @auth_required('token')
+    def put(self):
+        args = customer_update_parser.parse_args()
+        f_name = args.get("f_name", None)
+        l_name = args.get("l_name", None)
+        address = args.get("address", None)
+        loc_pincode = args.get("loc_pincode", None)
+        description = args.get("description", None)
+        if(not f_name):
+            abort(400, message = "First Name is missing")
+        
+
+        customer = ds.find_user(email = current_user.email)
+
+        if(not customer):
+            abort(400, message = "Customer not found")
+
+        
+        
+        customer_data = db.session.query(Customer).filter(Customer.c_id == current_user.uid).first()
+
+        customer_data.f_name = f_name
+        customer_data.l_name = l_name
+        customer_data.address = address
+        customer_data.loc_pincode = loc_pincode
+        customer_data.description = description
+        db.session.add(customer_data)
+        db.session.commit()
+
+        return "Customer Successfully Updated", 200
 
 
 

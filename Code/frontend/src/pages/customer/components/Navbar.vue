@@ -21,6 +21,9 @@ export default {
     },
     navigateServiceHistory() {
       this.$router.push('/customer/service_history')
+    },
+    navigateProfile() {
+      this.$router.push('/customer/profile')
     }
   }
 };
@@ -35,7 +38,7 @@ export default {
             {{ email }} 
           </button>
           <ul class="dropdown-menu dropdown-menu-dark d-menu">
-            <li><a class="dropdown-item" href="#">View Profile</a></li>
+            <li><a class="dropdown-item" @click="navigateProfile">View Profile</a></li>
             <li><a class="dropdown-item" @click="navigateServiceHistory">Service History</a></li>
             <li><a class="dropdown-item" href="#">Summary</a></li>
             <li><a class="dropdown-item" @click="customerLogout">Logout</a></li>
