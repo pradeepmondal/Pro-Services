@@ -1,7 +1,7 @@
 <script>
 import Navbar from '../components/Navbar.vue';
 import Chart from 'chart.js/auto'
-import 'chartjs-plugin-colorschemes';
+
 
 export default {
   name: "Pie",

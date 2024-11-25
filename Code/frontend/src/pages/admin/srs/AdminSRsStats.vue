@@ -1,7 +1,9 @@
 <script>
+
 import Navbar from '../components/Navbar.vue';
 import Chart from 'chart.js/auto'
-import 'chartjs-plugin-colorschemes';
+
+
 
 export default {
   name: "Pie",
@@ -37,6 +39,8 @@ export default {
 
 
   async created() {
+
+    
     try {
       await this.fetchData();
       this.renderChart()
@@ -122,6 +126,7 @@ export default {
 
 
     renderChart() {
+      
       new Chart(this.$refs.pie,
         {
           type: 'pie',
@@ -134,7 +139,7 @@ export default {
             }]
           },
 
-          options: { responsive: true, maintainAspectRatio: false, plugins: { colorschemes: { scheme: 'brewer.Paired12' } } }
+          options: { responsive: true, maintainAspectRatio: false, plugins: { colorschemes: { scheme: 'brewer.Set1' } } }
         }
       )
 

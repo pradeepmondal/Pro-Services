@@ -11,6 +11,9 @@ class Config():
     SQLALCHEMY_DATABASE_URI = "sqlite:///" + prod_db_d_path + "/prodDB.sqlite3"
     SECURITY_TOKEN_AUTHENTICATION_HEADER = 'auth-token'
     SECURITY_TOKEN_MAX_AGE = 7200
+    CACHE_TYPE = "RedisCache"
+    CACHE_DEFAULT_TIMEOUT = 30
+    CACHE_REDIS_PORT = 6379
     
 
 class DevConfig(Config):

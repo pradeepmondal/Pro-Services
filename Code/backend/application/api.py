@@ -5,6 +5,7 @@ from application.database import db
 from application.models import Customer, User, ServiceProfessional, Category, Service, ServiceRequest
 from werkzeug.utils import secure_filename
 import os
+from datetime import datetime
 
 
 ds : SQLAlchemyUserDatastore = app.security.datastore
@@ -20,7 +21,12 @@ app.config['SERVICE_UPLOAD_FOLDER'] = SERVICE_UPLOAD_FOLDER
 app.config['SP_IMAGE_UPLOAD_FOLDER'] = SP_IMAGE_UPLOAD_FOLDER
 app.config['SP_DOC_UPLOAD_FOLDER'] = SP_DOC_UPLOAD_FOLDER
 
+cache = app.cache
 
+# @app.get('/cache')
+# @cache.cached(timeout = 10)
+# def check_cache():
+#     return str(datetime.now())
 
 # Login Parser
 login_parser = reqparse.RequestParser()
@@ -228,6 +234,7 @@ class Register(Resource):
     
 class CustomerResource(Resource):
     @auth_required('token')
+    @cache.cached(timeout = 5, key_prefix='customer_cache' )
     @marshal_with(customer)
     def get(self):
         current_customer = db.session.query(Customer).filter(Customer.c_id == current_user.uid).first()
@@ -238,6 +245,7 @@ class CustomerResource(Resource):
         return current_customer, 200
     
     def post(self):
+        cache.delete('customer_cache')
         args = customer_parser.parse_args()
         f_name = args.get("f_name", None)
         l_name = args.get("l_name", None)
@@ -265,6 +273,7 @@ class CustomerResource(Resource):
     
     @auth_required('token')
     def put(self):
+        cache.delete('customer_cache')
         args = customer_update_parser.parse_args()
         f_name = args.get("f_name", None)
         l_name = args.get("l_name", None)
@@ -299,6 +308,7 @@ class CustomerResource(Resource):
 class CustomerAddress(Resource):
     @auth_required('token')
     def put(self):
+        cache.delete('customer_cache')
         address = request.form.get('address')
         pincode = request.form.get('pincode')
 
@@ -322,6 +332,7 @@ class CustomerAddress(Resource):
 
 class AdminResource(Resource):
     @auth_required('token')
+    @cache.cached(timeout = 5, key_prefix='admin_cache' )
     @marshal_with(admin)
     def get(self):
         check_for_role()
@@ -333,6 +344,7 @@ class AdminResource(Resource):
 
 class SPResource(Resource):
     @auth_required('token')
+    @cache.cached(timeout = 5, key_prefix='sp_cache')
     @marshal_with(sp)
     def get(self):
         current_sp = db.session.query(ServiceProfessional).filter(ServiceProfessional.sp_id == current_user.uid).first()
@@ -357,7 +369,8 @@ class SPResource(Resource):
     
 
     def post(self):
-        
+        cache.delete('sp_cache')
+        cache.delete_memoized(SPList.get)
         f_name = request.form.get('f_name')
         l_name = request.form.get('l_name')
         email = request.form.get('email')
@@ -428,6 +441,8 @@ class SPResource(Resource):
 
     @auth_required('token')
     def put(self):
+        cache.delete('sp_cache')
+        cache.delete_memoized(SPList.get)
         args = sp_update_parser.parse_args()
         f_name = args.get("f_name", None)
         l_name = args.get("l_name", None)
@@ -465,6 +480,7 @@ class SPResource(Resource):
 
 class SPList(Resource):
     @auth_required('token')
+    @cache.memoize(timeout = 5 )
     @marshal_with(sp)
     def get(self, s_id ):
 
@@ -498,6 +514,7 @@ class SPList(Resource):
 
 class CategoryResource(Resource):
     @auth_required('token')
+    @cache.memoize(timeout = 5)
     @marshal_with(category)
     def get(self, cat_id ):
         cat = db.session.query(Category).filter(Category.cat_id == cat_id).first()
@@ -507,7 +524,7 @@ class CategoryResource(Resource):
     
     @auth_required('token')
     def post(self):
-        
+        cache.delete_memoized(CategoryResource.get)
         name = request.form.get('name')
         description = request.form.get('description')
         thumbnail = request.files.get('thumbnail')
@@ -535,6 +552,7 @@ class CategoryResource(Resource):
 
     @auth_required('token')
     def delete(self, cat_id):
+        cache.delete_memoized(CategoryResource.get)
         category = db.session.query(Category).filter(Category.cat_id == cat_id).first()
         os.remove(category.thumbnail_url)
         db.session.delete(category)
@@ -657,6 +675,7 @@ class ServiceResource(Resource):
 
 class SRResource(Resource):
     @auth_required('token')
+    @cache.memoize(timeout = 5)
     @marshal_with(service_request)
     def get(self, sr_id):
         service_request = db.session.query(ServiceRequest).filter(ServiceRequest.sr_id == sr_id).first()
@@ -675,6 +694,8 @@ class SRResource(Resource):
 
     @auth_required('token')
     def post(self):
+        cache.delete_memoized(SRResource.get)
+        cache.delete_memoized(SRListResource.get)
         args = sr_parser.parse_args()
         s_id = args.get("s_id", None)
         c_id = args.get("c_id", None)
@@ -704,6 +725,8 @@ class SRResource(Resource):
     
     @auth_required('token')
     def put(self, sr_id):
+        cache.delete_memoized(SRResource.get)
+        cache.delete_memoized(SRListResource.get)
         args = sr_parser.parse_args()
         s_id = args.get("s_id", None)
         c_id = args.get("c_id", None)
@@ -747,8 +770,10 @@ class SRResource(Resource):
 
 class SRListResource(Resource):
     @auth_required('token')
+    @cache.memoize(timeout = 5)
     @marshal_with(service_request)
     def get(self, c_id , sp_id):
+        
         if c_id == 0:
             if sp_id == 0:
 
@@ -785,6 +810,7 @@ class SRListResource(Resource):
 
 class CategoryList(Resource):
     @auth_required('token')
+    @cache.cached(timeout = 5)
     @marshal_with(category)
     def get(self):
         cat_list = db.session.query(Category).all()
@@ -793,6 +819,7 @@ class CategoryList(Resource):
 
 class ServiceList(Resource):
     @auth_required('token')
+    @cache.memoize(timeout = 5)
     @marshal_with(service)
     def get(self, cat_id):
 
@@ -806,6 +833,7 @@ class ServiceList(Resource):
 
 class CustomerList(Resource):
     @auth_required('token')
+    @cache.cached(timeout = 5)
     @marshal_with(customer)
     def get(self):
         customers = db.session.query(Customer).all()

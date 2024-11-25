@@ -6,6 +6,7 @@ from application.models import User, Role
 from flask_security import Security, SQLAlchemyUserDatastore
 from flask_restful import Api, Resource
 from flask_cors import CORS
+from flask_caching import Cache
 
 
 app = None
@@ -21,7 +22,11 @@ def create_app():
     datastore = SQLAlchemyUserDatastore(db, User, Role)
 
     db.init_app(app)
+    cache = Cache(app)
+
+    app.cache = cache
     app.security = Security(app, datastore=datastore, register_blueprint=False)
+
     CORS(app)
     api = Api(app)
     app.app_context().push()
