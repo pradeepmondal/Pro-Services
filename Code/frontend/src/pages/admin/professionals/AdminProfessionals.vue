@@ -96,6 +96,8 @@ export default {
             <th scope="col">#</th>
             <th scope="col">Email</th>
             <th scope="col">Professional Name</th>
+            <th scope="col">Service Name</th>
+            <th scope="col">Rating</th>
             <th scope="col">Action</th>
           </tr>
         </thead>
@@ -108,6 +110,8 @@ export default {
             </td>
             <td><div class="sp_email" data-bs-toggle="modal" data-bs-target="#staticBackdrop" @click="viewSP(sp)">{{ sp.email }}</div></td>
             <td>{{ sp.f_name + ' ' + sp.l_name }}</td>
+            <td>{{ sp.service.name }}</td>
+            <td>{{ sp.rating }}</td>
             <td>
               <div class="button-container">
                 <button

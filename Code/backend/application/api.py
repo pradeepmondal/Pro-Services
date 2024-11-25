@@ -129,7 +129,8 @@ service = {
     "req_time": fields.Float,
     "description": fields.String,
     "cat_id": fields.Integer,
-    "base_price": fields.Integer
+    "base_price": fields.Integer,
+    "category": fields.Nested(category)
 }
 
 sp = {
@@ -164,7 +165,8 @@ service_request = {
     "service_name": fields.String,
     "professional_name": fields.String,
     "professional_price": fields.Integer,
-    "rating": fields.Integer
+    "rating": fields.Integer,
+    "service": fields.Nested(service)
 }
 
 def check_for_role():
@@ -335,6 +337,19 @@ class SPResource(Resource):
     def get(self):
         current_sp = db.session.query(ServiceProfessional).filter(ServiceProfessional.sp_id == current_user.uid).first()
         rel_service = db.session.query(Service).filter(Service.s_id == current_sp.service_type).first()
+        rel_srs = current_sp.srs
+        rating_c = 0
+        rating_s = 0
+        current_sp.rating = 0
+        for sr in rel_srs:
+            if(sr.status == 'Completed'):
+                rating_c += 1
+                rating_s += sr.rating
+        if(rating_c > 0):
+            current_sp.rating = rating_s/rating_c
+
+
+
         current_sp.service = rel_service
         if not current_sp:
             abort(404, message = "Service Professional not found")
@@ -462,6 +477,17 @@ class SPList(Resource):
         for sp in splist:
             sp.email = db.session.query(User).filter(User.uid == sp.sp_id).first().email
             sp.active = db.session.query(User).filter(User.uid == sp.sp_id).first().active
+
+            rel_srs = sp.srs
+            rating_c = 0
+            rating_s = 0
+            sp.rating = 0
+            for sr in rel_srs:
+                if(sr.status == 'Completed'):
+                    rating_c += 1
+                    rating_s += sr.rating
+            if(rating_c > 0):
+                sp.rating = rating_s/rating_c
         return splist, 200
     
     
@@ -495,7 +521,7 @@ class CategoryResource(Resource):
             abort(400, message = "Thumbnail is missing")
 
         if thumbnail.filename.split('.')[1].lower() in EXTENSIONS:
-            path = os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(name + '.' + thumbnail.filename.split('.')[1].lower()))
+            path = os.path.join(app.config['CATEGORY_UPLOAD_FOLDER'], secure_filename(name + '.' + thumbnail.filename.split('.')[1].lower()))
             thumbnail.save(path)
             thumbnail_path = path
 
@@ -768,17 +794,12 @@ class CategoryList(Resource):
 class ServiceList(Resource):
     @auth_required('token')
     @marshal_with(service)
-    def get(self):
-        services = db.session.query(Service).all()
-        return services, 200
-
-
-
-
-    @auth_required('token')
-    @marshal_with(service)
     def get(self, cat_id):
-        services = db.session.query(Service).filter(Service.cat_id == cat_id).all()
+
+        if cat_id != 0:
+            services = db.session.query(Service).filter(Service.cat_id == cat_id).all()
+        else:
+            services = db.session.query(Service).all()
         
         return services, 200
     

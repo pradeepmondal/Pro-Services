@@ -1,5 +1,5 @@
 <script>
-import Navbar from '../components/Navbar.vue';
+import Navbar from './components/Navbar.vue';
 import Chart from 'chart.js/auto'
 import 'chartjs-plugin-colorschemes';
 
@@ -15,9 +15,10 @@ export default {
   data(){
     return {
         email : this.$store.state.email,
-        professionals: null,
+        sp: this.$store.state.user_details,
+        service_requests: null,
 
-        category_wise_chart: {
+        request_dist_chart: {
 
           chart_data: [],
         chart_labels: [],
@@ -53,39 +54,69 @@ export default {
   methods: {
     async fetchData() {
         try{
-        const res = await fetch('http://localhost:5050' + '/sps/0', {method: 'GET', headers: {"content-type" : "application/json", 'auth-token': this.$store.state.auth_token}})
+        const res = await fetch('http://localhost:5050' + '/service_request/0/' + this.sp.sp_id , {method: 'GET', headers: {"content-type" : "application/json", 'auth-token': this.$store.state.auth_token}})
         if(res.ok){
 
             const data = await res.json()
-            this.professionals = data
+            this.service_requests = data
 
-            let cat_sp_obj = {}
+            let month_wise_req_obj = { 
+              January: 0,
+              February: 0,
+              March: 0,
+              April: 0,
+              May: 0, 
+              June: 0, 
+              July: 0, 
+              August: 0, 
+              September: 0, 
+              October: 0, 
+              November: 0, 
+              December: 0 
+            }
 
-            this.professionals.forEach(sp => {
-              if (sp.service.category.name in cat_sp_obj) {
-                cat_sp_obj[sp.service.category.name] += 1
+            let month_num_to_name = {
+              0: 'January',
+              1: 'February',
+              2: 'March',
+              3: 'April',
+              4: 'May',
+              5: 'June',
+              6: 'July',
+              7: 'August',
+              8: 'September',
+              9: 'October',
+              10: 'November',
+              11: 'December',
+
+            }
+
+            this.service_requests.forEach(sr => {
+              let request_date = new Date(sr.request_date)
+              let request_month = month_num_to_name[request_date.getMonth()]
+
+              if (request_month in month_wise_req_obj) {
+                month_wise_req_obj[request_month] += 1
               }
               else {
-                cat_sp_obj[sp.service.category.name] = 1
+                month_wise_req_obj[request_month] = 1
 
               }
               
             });
 
-            for (const cat in cat_sp_obj) {
-              this.category_wise_chart.chart_labels.push(cat)
-              this.category_wise_chart.chart_data.push(cat_sp_obj[cat])
+            for (const request_month in month_wise_req_obj) {
+              this.request_dist_chart.chart_labels.push(request_month)
+              this.request_dist_chart.chart_data.push(month_wise_req_obj[request_month])
 
             }
 
+
+
             let rating_sr_obj = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
 
-            this.professionals.forEach(sr => {
-
-
+            this.service_requests.forEach(sr => {
               if (sr.rating > 0) {
-
-                sr.rating = Math.round(sr.rating)
               if (sr.rating in rating_sr_obj) {
                 rating_sr_obj[sr.rating] += 1
               }
@@ -126,19 +157,27 @@ export default {
 
 
     renderChart() {
-      new Chart(this.$refs.pie,
+      new Chart(this.$refs.line,
         {
-          type: 'pie',
+          type: 'line',
           data: {
             
-            labels: this.category_wise_chart.chart_labels,
+            labels: this.request_dist_chart.chart_labels,
             datasets: [{
-              data: this.category_wise_chart.chart_data,
+              label: 'No. of Requests Created',
+              data: this.request_dist_chart.chart_data,
               
             }]
           },
 
-          options: { responsive: true, maintainAspectRatio: false, plugins: { colorschemes: { scheme: 'brewer.Paired12' } } }
+          options: { scales: {
+            y: {
+              ticks: {
+                stepSize: 1
+              }
+            }
+
+          }, responsive: true, maintainAspectRatio: false, plugins: { colorschemes: { scheme: 'brewer.Paired12' } } }
         }
       )
 
@@ -150,20 +189,19 @@ export default {
           
             labels: this.rating_dist_chart.chart_labels,
             datasets: [{
-              label: 'Professional Count',
+              label: 'SR Count',
               data: this.rating_dist_chart.chart_data,
               
             }]
           },
 
           options: { responsive: true, maintainAspectRatio: false,
-            
+
             scales: {
               x: {
-
                 title: {
                   display: true,
-                  text: 'Ratings'
+                  text: 'SR count'
                 },
                 
                 ticks: {
@@ -174,15 +212,16 @@ export default {
               y: {
                 title: {
                   display: true,
-                  text: 'Professional Count'
+                  text: 'Ratings'
                 },
-                
                 ticks: {
                   stepSize: 1
                 },
               },
             },
-            indexAxis: 'x',
+            
+            
+            indexAxis: 'y',
             skipNull: true,
             
             
@@ -209,34 +248,36 @@ export default {
 <template>
 <Navbar :email="email"/>
 
-<label class="services-stats-label">Professional Stats</label>
+<label class="services-stats-label">{{ sp.f_name }}'s Stats</label>
 
 <div class="chart-container">
 
   <div class="chart1">
 
+<div class="category-wise-service-distribution">
+<canvas id="pie_chart" width="600" ref="bar"></canvas>
+
+</div>
+
+<label class="pie-label">Ratings distribution across SRs</label>
+
+
+</div>
+
+
+  <div class="chart2">
+
     <div class="category-wise-service-distribution">
-  <canvas id="pie_chart" width="400" ref="pie"></canvas>
+  <canvas id="pie_chart" width="600" ref="line"></canvas>
   
 </div>
 
-<label class="pie-label">Category wise Professionals distribution</label>
+<label class="pie-label">Month-wise Request Distribution</label>
 
 
 
   </div>
 
-  <div class="chart2">
-
-    <div class="category-wise-service-distribution">
-  <canvas id="pie_chart" width="700" ref="bar"></canvas>
-  
-</div>
-
-<label class="pie-label">Ratings distribution across Professionals</label>
-
-
-</div>
 
 
 
@@ -270,6 +311,7 @@ export default {
 
 .chart-container {
   display: flex;
+ 
   justify-content: space-around;
 }
 

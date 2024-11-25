@@ -11,6 +11,7 @@ class User(db.Model, UserMixin):
     active = db.Column(db.Boolean, nullable = False, default = True)
     fs_uniquifier = db.Column(db.String, unique = True, nullable = False)
     roles = db.Relationship('Role', backref = 'bearers', secondary = 'user_roles')
+    
 
 class Role(db.Model, RoleMixin):
     __tablename__ = 'role'
@@ -41,6 +42,7 @@ class ServiceProfessional(db.Model):
     loc_pincode = db.Column(db.Integer, nullable = False)
     rating = db.Column(db.Float) 
     verified = db.Column(db.Boolean, default = False)
+    srs = db.relationship('ServiceRequest', backref='sp', cascade="all, delete-orphan")
 
 
 class Customer(db.Model):
@@ -54,6 +56,7 @@ class Customer(db.Model):
     profile_image_path = db.Column(db.String)
     address = db.Column(db.String)
     loc_pincode = db.Column(db.Integer)
+    srs = db.relationship('ServiceRequest', backref='customer', cascade="all, delete-orphan")
 
     
 
@@ -89,6 +92,7 @@ class ServiceRequest(db.Model):
     status = db.Column(db.String, nullable = False)
     remarks = db.Column(db.String)
     rating = db.Column(db.Integer)
+    
     
     
 

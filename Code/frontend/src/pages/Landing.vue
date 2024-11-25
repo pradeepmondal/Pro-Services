@@ -1,13 +1,13 @@
 <script>
 import Login from "./Login.vue";
-import AdminLogin from "./admin/AdminLogin.vue";
+
 import Register from "./Register.vue";
 
 
 export default {
   components: {
     Login,
-    AdminLogin,
+
     Register
   },
   name: "Landing",
@@ -66,7 +66,7 @@ export default {
       </div>
       <div class="login-button-container">
         <a
-          v-if="!(show_login_form) & !(show_admin_login_form) & !(show_register_form)"
+          v-if="!(show_login_form) & !(show_register_form)"
           
           class="btn btn-primary"
           @click="showLoginForm"
@@ -74,12 +74,7 @@ export default {
         >
         
 
-        <a
-          v-if="!(show_login_form) & (show_admin_login_form)"
-          class="btn btn-primary"
-          @click="showLoginForm"
-          >Customer/SP Login</a
-        >
+        
 
         <a
           v-if="!(show_login_form) & (show_register_form)"
@@ -88,19 +83,9 @@ export default {
           >Go to Login</a
         >
 
-        <a
-          v-if="!(show_admin_login_form) & show_login_form"
-          class="btn btn-primary"
-          @click="showAdminLoginForm"
-          >Admin Login</a
-        >
+        
 
-        <a
-          v-if="!(show_login_form) & !(show_admin_login_form) & !(show_register_form) "
-          class="btn btn-primary"
-          @click="showRegisterForm"
-          >New? Register Here !</a
-        >
+        
 
         <a
           v-if="(show_login_form) & !(show_register_form) "
@@ -110,7 +95,7 @@ export default {
         >
 
         <a
-          v-if="(show_admin_login_form) & !(show_register_form) "
+          v-if="!(show_register_form) & !(show_login_form) "
           class="btn btn-primary"
           @click="showRegisterForm"
           >New? Register Here !</a

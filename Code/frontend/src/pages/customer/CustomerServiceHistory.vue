@@ -64,6 +64,7 @@ export default {
         sr.status = "Completed";
         sr.rating = rating;
 
+
       {
         try {
           const res = await fetch(
@@ -89,6 +90,10 @@ export default {
 
 
     },
+
+
+
+
 
     async cancelSR(sr) {
       sr.status = "Cancelled";

@@ -24,7 +24,12 @@ export default {
     },
     navigateProfile() {
       this.$router.push('/customer/profile')
-    }
+    },
+
+    navigateSummary() {
+      this.$router.push('/customer/summary')
+    },
+
   }
 };
 </script>
@@ -40,7 +45,7 @@ export default {
           <ul class="dropdown-menu dropdown-menu-dark d-menu">
             <li><a class="dropdown-item" @click="navigateProfile">View Profile</a></li>
             <li><a class="dropdown-item" @click="navigateServiceHistory">Service History</a></li>
-            <li><a class="dropdown-item" href="#">Summary</a></li>
+            <li><a class="dropdown-item" @click="navigateSummary">Summary</a></li>
             <li><a class="dropdown-item" @click="customerLogout">Logout</a></li>
           </ul>
         </li>

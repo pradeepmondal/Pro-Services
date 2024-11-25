@@ -11,6 +11,8 @@ import CustomerServiceHistory from '../pages/customer/CustomerServiceHistory.vue
 import SPServiceHistory from '../pages/sp/SPServiceHistory.vue'
 import CustomerProfile from '../pages/customer/CustomerProfile.vue'
 import SPProfile from '../pages/sp/SPProfile.vue'
+import CustomerSummary from '../pages/customer/CustomerSummary.vue'
+import SPSummary from '../pages/sp/SPSummary.vue'
 
 
 const routes = [
@@ -22,7 +24,9 @@ const routes = [
     { path: '/admin/service_category/:cat_id', component: AdminServicesInCategory, props: true , meta: {roles: ['admin']}},
     { path: '/customer/service_category/:cat_id', component: ServicesInCategory, props: true , meta: {roles: ['customer']}},
     { path: '/customer/service_history', component: CustomerServiceHistory, props: true , meta: {roles: ['customer']}},
+    { path: '/customer/summary', component: CustomerSummary, props: true , meta: {roles: ['customer']}},
     { path: '/sp/service_history', component: SPServiceHistory, props: true , meta: {roles: ['sp']}},
+    { path: '/sp/summary', component: SPSummary, props: true , meta: {roles: ['sp']}},
     { path: '/customer/profile', component: CustomerProfile, props: true , meta: {roles: ['customer']}},
     { path: '/sp/profile', component: SPProfile, props: true , meta: {roles: ['sp']}},
 

@@ -11,6 +11,7 @@ export default {
       form_type: "customer",
       loading: true,
       available_services: null,
+
       customerData: {
         accepted : false,
         email : null,
@@ -119,6 +120,11 @@ export default {
 
       } 
 
+      if ((this.spData.price < this.selected_service_base_price)){
+        return 'Price should be at least the service base price'
+
+      } 
+
       if (!this.spData.address){
         return 'Address is missing'
 
@@ -161,6 +167,17 @@ export default {
 
     },
 
+    selected_service_base_price() {
+      if(!this.spData.service_type){
+        return 0
+      }
+      else {
+        return this.available_services.filter((s) => s.s_id === this.spData.service_type)[0].base_price
+      }
+    }
+
+    
+
 
   },
 
@@ -197,6 +214,8 @@ export default {
 
 
     },
+
+
     changeToSPForm() {
       this.form_type = "sp";
       
@@ -486,7 +505,7 @@ export default {
           </div>
 
             <div v-for="service in available_services" class="service-base-price">
-              <label v-if="service.s_id === spData.service_type" >Base Price: {{ service.base_price }}</label>
+              <label v-if="service.s_id === spData.service_type" >Base Price: ₹{{ service.base_price }} </label>
             </div>
           </div>
 
@@ -664,6 +683,10 @@ export default {
   
   
   
+}
+
+.base-price {
+  max-width: 7rem;
 }
 
 </style>

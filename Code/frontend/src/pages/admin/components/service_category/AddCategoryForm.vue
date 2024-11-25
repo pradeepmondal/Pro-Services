@@ -109,6 +109,7 @@ export default {
               type="file"
               id="thumbnail"
               name="thumbnail"
+              class="form-control"
               @change="handleImageUpload"
               
               
