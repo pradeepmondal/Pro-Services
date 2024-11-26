@@ -7,6 +7,9 @@ export default {
     Tile
   },
   props: {
+    exportSRCSV: {
+        type: Function
+    }
     
   },
   data(){
@@ -26,7 +29,7 @@ export default {
 
 
         <div class="col-lg-3 col-md-6 col-12 requests-container">
-            <Tile tile_heading="SRs" :goto="true"navlink="/admin/srs" stats="true" statlink="/admin/stats/srs" />
+            <Tile tile_heading="SRs" :goto="true"navlink="/admin/srs" stats="true" statlink="/admin/stats/srs" :export_csv="true" :exportSRCSV="exportSRCSV" />
         </div>
 
 

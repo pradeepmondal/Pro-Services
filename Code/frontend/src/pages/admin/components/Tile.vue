@@ -38,6 +38,12 @@ export default {
     obj: {
         type: Object
     },
+    export_csv: {
+        type: Boolean
+    },
+    exportSRCSV: {
+        type: Function
+    }
 
     
   },
@@ -73,6 +79,11 @@ export default {
 
                 <button v-if="stats" class="stats btn btn-outline-primary" @click="statNavigate">
                     View Stats
+
+                </button>
+
+                <button v-if="export_csv" class="stats btn btn-outline-success" @click="exportSRCSV">
+                    Export SR Report
 
                 </button>
 

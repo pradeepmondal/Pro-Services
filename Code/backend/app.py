@@ -2,12 +2,13 @@ from flask import Flask, jsonify
 import os
 from application.config import DevConfig, Config
 from application.database import db
-from application.models import User, Role
+from application.models import *
 from flask_security import Security, SQLAlchemyUserDatastore
 from flask_restful import Api, Resource
 from flask_cors import CORS
 from flask_caching import Cache
-
+from application.celery.celery_creator import celery_init_app
+import flask_excel as excel
 
 app = None
 
@@ -15,15 +16,17 @@ def create_app():
     app = Flask(__name__)
 
     if(os.getenv("ENV") == "dev"):
-        app.config.from_object(DevConfig)
+        app.config.from_object(Config)
     else:
         app.config.from_object(Config)
 
     datastore = SQLAlchemyUserDatastore(db, User, Role)
 
     db.init_app(app)
+    celery_app = celery_init_app(app)
     cache = Cache(app)
-
+    
+    app.celery_app = celery_app
     app.cache = cache
     app.security = Security(app, datastore=datastore, register_blueprint=False)
 
@@ -33,6 +36,11 @@ def create_app():
     return app, api
     
 app, api = create_app()
+
+
+celery_app = app.celery_app
+
+
 
 import application.init_data
 from application.api import Welcome, Login, CustomerResource, AdminResource, SPResource, CategoryList, ServiceList, CustomerList, ServiceResource, SPList, CategoryResource, SRResource, CustomerAddress, UnauthServiceList, SRListResource
@@ -57,7 +65,10 @@ api.add_resource(SRResource, '/service_request/<int:sr_id>', '/service_request',
 api.add_resource(SRListResource, '/service_request/<int:c_id>/<int:sp_id>', endpoint = 'sr_list')
 api.add_resource(UnauthServiceList, '/unauth_services', endpoint='unauth_service_list')
 
+excel.init_excel(app)
+
 if __name__ == '__main__':
+    
     app.run(port=5050)
 
 

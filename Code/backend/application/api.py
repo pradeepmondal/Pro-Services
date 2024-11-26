@@ -1,4 +1,4 @@
-from flask import current_app as app, jsonify, request
+from flask import current_app as app, jsonify, request, send_file
 from flask_security import auth_required, SQLAlchemyUserDatastore, verify_password, hash_password, current_user
 from flask_restful import Resource, fields, marshal_with, reqparse, abort
 from application.database import db
@@ -6,6 +6,8 @@ from application.models import Customer, User, ServiceProfessional, Category, Se
 from werkzeug.utils import secure_filename
 import os
 from datetime import datetime
+from application.celery.tasks import subtract, create_sr_csv
+from celery.result import AsyncResult
 
 
 ds : SQLAlchemyUserDatastore = app.security.datastore
@@ -27,6 +29,48 @@ cache = app.cache
 # @cache.cached(timeout = 10)
 # def check_cache():
 #     return str(datetime.now())
+
+
+
+
+@app.get('/celery')
+def celery_task():
+    task = subtract.delay(20, 10)
+    return {'Task_Id:': task.id}, 200
+
+@app.get('/get-celery-data/<id>')
+def getData(id):
+    result = AsyncResult(id)
+    if(result.ready()):
+        return {'result': result.result}
+    else:
+        return {'message' : 'Task Not Ready'}, 405
+
+@auth_required('token')
+@app.get('/celery/create_sr_export_request')
+def create_export_sr_task():
+    task = create_sr_csv.delay()
+    return {'task_id': task.id}, 200
+
+
+
+@app.get('/celery/check_sr_export/<id>')
+def check_sr_export(id):
+    result = AsyncResult(id)
+    if(result.ready()):
+        return {'status' : 'ready'}, 200
+    else:
+        return {'status' : 'not ready'}, 405
+    
+@app.get('/celery/get_sr_export/<id>')
+def get_sr_export(id):
+    result = AsyncResult(id)
+    if(result.ready()):
+        return send_file(result.result)
+    else:
+        return {'status' : 'not ready'}, 405
+
+
 
 # Login Parser
 login_parser = reqparse.RequestParser()
