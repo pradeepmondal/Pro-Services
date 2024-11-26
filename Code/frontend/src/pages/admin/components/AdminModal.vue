@@ -6,6 +6,7 @@ import AddServiceForm from './service_category/service/AddServiceForm.vue';
 import DeleteServiceForm from './service_category/service/DeleteServiceForm.vue';
 import EditServiceForm from './service_category/service/EditServiceForm.vue'
 import ViewForm from './service_category/service/ViewForm.vue';
+import ViewCustomer from './customer_category/ViewCustomer.vue';
 
 
 
@@ -17,7 +18,8 @@ export default {
     ViewForm,
     EditServiceForm,
     AddServiceForm,
-    DeleteServiceForm
+    DeleteServiceForm,
+    ViewCustomer
 
   },
   props: {
@@ -78,7 +80,7 @@ export default {
         <ViewForm v-if="modal_type === 'view_form'" :obj="obj" :category_obj="category_obj" />
         <AddServiceForm v-if="modal_type === 'add_service_form'" :afterAction="afterAction" :category_obj="category_obj" />
         <DeleteServiceForm v-if="modal_type === 'delete_service_form'" :obj="obj" :afterAction="afterAction" />
-        
+        <ViewCustomer v-if="modal_type === 'view_customer_form'" :customer="obj" />
       </div>
       <div class="modal-footer">
         

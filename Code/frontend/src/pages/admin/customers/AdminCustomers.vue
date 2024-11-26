@@ -59,7 +59,7 @@ export default {
     },
 
     viewCustomer(customer){
-        this.modal_type = "view_form"
+        this.modal_type = "view_customer_form"
         this.obj = customer
         this.modal_heading = customer.f_name
     },

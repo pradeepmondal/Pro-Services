@@ -59,9 +59,9 @@ export default {
     },
 
     viewSP(customer){
-        this.modal_type = "view_form"
-        this.obj = customer
-        this.modal_heading = customer.f_name
+        this.modal_type = "view_sp_form"
+        this.obj = sp
+        this.modal_heading = sp.f_name
     },
 
     deleteSP(customer){
