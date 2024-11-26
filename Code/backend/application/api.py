@@ -8,6 +8,7 @@ import os
 from datetime import datetime
 from application.celery.tasks import subtract, create_sr_csv
 from celery.result import AsyncResult
+import base64
 
 
 ds : SQLAlchemyUserDatastore = app.security.datastore
@@ -155,7 +156,8 @@ customer = {
     "l_name": fields.String,
     "description": fields.String,
     "address": fields.String,
-    "loc_pincode": fields.String
+    "loc_pincode": fields.String,
+    "profile_image": fields.String(default=None)
     }
 
 admin = {
@@ -169,7 +171,8 @@ category = {
     "cat_id": fields.Integer,
     "name": fields.String,
     "description": fields.String,
-    "thumbnail_url": fields.String
+    "thumbnail_url": fields.String,
+    "thumbnail": fields.String(default=None)
 }
 
 service = {
@@ -180,7 +183,8 @@ service = {
     "description": fields.String,
     "cat_id": fields.Integer,
     "base_price": fields.Integer,
-    "category": fields.Nested(category)
+    "category": fields.Nested(category),
+    "thumbnail": fields.String(default=None)
 }
 
 sp = {
@@ -197,7 +201,8 @@ sp = {
     "rating": fields.Float,
     "service": fields.Nested(service),
     "address": fields.String,
-    "loc_pincode": fields.Integer
+    "loc_pincode": fields.Integer,
+    "profile_image": fields.String(default=None)
 
 }
 
@@ -564,6 +569,11 @@ class CategoryResource(Resource):
         cat = db.session.query(Category).filter(Category.cat_id == cat_id).first()
         if not cat:
             abort(404, message = "Category not found")
+        if(cat.thumbnail_url):
+            thumbnail = open(cat.thumbnail_url, "rb")
+            encoded_thumbnail = base64.b64encode(thumbnail.read()).decode('utf-8')
+            cat.thumbnail = encoded_thumbnail
+            thumbnail.close()
         return cat, 200
     
     @auth_required('token')
@@ -796,6 +806,10 @@ class SRResource(Resource):
 
         if not service_request:
             abort(400, message="Service Request not found")
+        
+        if service_request.status != 'Completed':
+            if status == 'Completed':
+                service_request.completion_date = datetime.now()
 
         service_request.s_id = s_id
         service_request.c_id = c_id
@@ -858,6 +872,12 @@ class CategoryList(Resource):
     @marshal_with(category)
     def get(self):
         cat_list = db.session.query(Category).all()
+        for cat in cat_list:
+            if(cat.thumbnail_url):
+                thumbnail = open(cat.thumbnail_url, "rb")
+                encoded_thumbnail = base64.b64encode(thumbnail.read()).decode('utf-8')
+                cat.thumbnail = encoded_thumbnail
+                thumbnail.close()
         return cat_list, 200
 
 

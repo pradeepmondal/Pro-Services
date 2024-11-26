@@ -3,138 +3,215 @@ export default {
   name: "Tile",
   props: {
     tile_heading: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     goto: {
-        type: Boolean,
-        required: true
+      type: Boolean,
+      required: true,
     },
     navlink: {
-        type: String
+      type: String,
     },
 
     statlink: {
-        type: String
-
+      type: String,
     },
     stats: {
-        type: Boolean,
-        required: true
-
+      type: Boolean,
+      required: true,
     },
     delete: {
-        type: Boolean,
+      type: Boolean,
     },
     create: {
-        type: Boolean
+      type: Boolean,
     },
-    addCategory : {
-        type: Function,
+    addCategory: {
+      type: Function,
     },
-    deleteCategory : {
-        type: Function
+    deleteCategory: {
+      type: Function,
     },
     obj: {
-        type: Object
+      type: Object,
     },
     export_csv: {
-        type: Boolean
+      type: Boolean,
     },
     exportSRCSV: {
-        type: Function
-    }
-
-    
+      type: Function,
+    },
   },
-  data(){
-    return {
-        
-        
-    }
+  data() {
+    return {};
   },
   methods: {
     gotoNavigate() {
-        this.$router.push(this.navlink)
+      this.$router.push(this.navlink);
     },
     statNavigate() {
-        this.$router.push(this.statlink)
-    }
-  }
+      this.$router.push(this.statlink);
+    },
+  },
 };
 </script>
 
 <template>
-    <div class="tile">
-
-            <div class="tile-heading">
-                {{ tile_heading }}
-            </div>
-
-            <div class="tile-buttons">
-                <button v-if="goto" class="goto btn btn-outline-primary" @click="gotoNavigate">
-                    Go to {{ tile_heading }}
-
-                </button>
-
-                <button v-if="stats" class="stats btn btn-outline-primary" @click="statNavigate">
-                    View Stats
-
-                </button>
-
-                <button v-if="export_csv" class="stats btn btn-outline-success" @click="exportSRCSV">
-                    Export SR Report
-
-                </button>
-
-                <button v-if="delete" class="stats btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#staticBackdrop" @click="deleteCategory(obj)">
-                    Delete
-
-                </button>
-
-                <button v-if="create" class="stats btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#staticBackdrop" @click="addCategory">
-                    Add
-
-                </button>
-            </div>
-
-        
+  <div
+    v-if="obj"
+    class="tile background-image"
+    :style="{ backgroundImage: `url(data:image/png;base64,${obj.thumbnail})` }"
+  ><div class="overlay">
+    <div class="tile-heading">
+      {{ tile_heading }}
     </div>
 
+    <div class="tile-buttons">
+      <button
+        v-if="goto"
+        class="goto btn btn-outline-primary"
+        @click="gotoNavigate"
+      >
+        Go to {{ tile_heading }}
+      </button>
 
+      <button
+        v-if="stats"
+        class="stats btn btn-outline-primary"
+        @click="statNavigate"
+      >
+        View Stats
+      </button>
+
+      <button
+        v-if="export_csv"
+        class="stats btn btn-outline-success"
+        @click="exportSRCSV"
+      >
+        Export SR Report
+      </button>
+
+      <button
+        v-if="delete"
+        class="stats btn btn-outline-danger"
+        data-bs-toggle="modal"
+        data-bs-target="#staticBackdrop"
+        @click="deleteCategory(obj)"
+      >
+        Delete
+      </button>
+
+      <button
+        v-if="create"
+        class="stats btn btn-outline-success"
+        data-bs-toggle="modal"
+        data-bs-target="#staticBackdrop"
+        @click="addCategory"
+      >
+        Add
+      </button>
+    </div>
+</div>
+  </div>
+
+  <div v-else class="tile">
+    <div class="tile-heading">
+      {{ tile_heading }}
+    </div>
+
+    <div class="tile-buttons">
+      <button
+        v-if="goto"
+        class="goto btn btn-outline-primary"
+        @click="gotoNavigate"
+      >
+        Go to {{ tile_heading }}
+      </button>
+
+      <button
+        v-if="stats"
+        class="stats btn btn-outline-primary"
+        @click="statNavigate"
+      >
+        View Stats
+      </button>
+
+      <button
+        v-if="export_csv"
+        class="stats btn btn-outline-success"
+        @click="exportSRCSV"
+      >
+        Export SR Report
+      </button>
+
+      <button
+        v-if="delete"
+        class="stats btn btn-outline-danger"
+        data-bs-toggle="modal"
+        data-bs-target="#staticBackdrop"
+        @click="deleteCategory(obj)"
+      >
+        Delete
+      </button>
+
+      <button
+        v-if="create"
+        class="stats btn btn-outline-success"
+        data-bs-toggle="modal"
+        data-bs-target="#staticBackdrop"
+        @click="addCategory"
+      >
+        Add
+      </button>
+    </div>
+  </div>
 </template>
-
 
 <style scoped>
 .tile {
-    display: flex;
-    flex-direction: column;
-    border: 1px solid black;
-    width: 18rem;
-    height: 15rem;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid black;
+  width: 18rem;
+  height: 15rem;
 
-    justify-content: space-around;
-    align-items: center;
+  justify-content: space-around;
+  align-items: center;
+
+  width: 100%;
+  height: 200px;
+  background-size: cover;
+  background-position: center;
+
+  
+  
+}
+
+.overlay {
+    background: rgba(255, 255, 255, 0.813);
+    z-index: 1;
+    position: absolute;
+    padding: 1rem;
+    
+    
 
 }
 
 .tile-heading {
-
-    padding: 0.5rem 0.5rem;
-    max-height: max-content;
-    max-width: max-content;
-    font-size: 1.5rem;
+  padding: 0.5rem 0.5rem;
+  max-height: max-content;
+  max-width: max-content;
+  font-size: 1.5rem;
 }
 
 .tile-buttons {
-    display: flex;
-    justify-content: space-between;
-    flex-direction: column;
-
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
 }
 
 .tile-buttons button {
-    margin: 0.2rem;
+  margin: 0.2rem;
 }
-
 </style>
