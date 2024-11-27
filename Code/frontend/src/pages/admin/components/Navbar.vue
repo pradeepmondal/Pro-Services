@@ -12,6 +12,10 @@ export default {
         this.$store.commit('logout')
         localStorage.removeItem('user-type')
         this.$router.push('/')
+    },
+
+    navigateHome() {
+      this.$router.push('/dashboard')
     }
   }
 };
@@ -19,9 +23,10 @@ export default {
 
 <template>
   <div class="nav-container">
-    <div class="user-label">
-        <ul class="navbar-nav">
-        <li class="nav-item dropdown-center d-container">
+   
+        <ul class="menu-container">
+          <li class="home-button"><button class="btn"><i class="bi bi-house-door-fill" @click="navigateHome"> Home</i></button></li>
+        <li class="nav-item dropdown-center ">
           <button class="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
             {{ email }} <span class="login-type">Admin</span>
           </button>
@@ -34,7 +39,7 @@ export default {
       </ul>
 
       
-    </div>
+
   </div>
 
   
@@ -46,8 +51,9 @@ export default {
   background-color: black;
   color: white;
   width: 100%;
-  height: 5rem;
+  height: 4rem;
   justify-content: space-between;
+  align-items:center;
 }
 .login-type {
   background-color: red;
@@ -56,13 +62,10 @@ export default {
   border-radius: 0.5rem;
 }
 
-.user-label {
-  align-self: center;
-  margin-left: auto;
-}
+
 .d-container {
     display: flex;
-    justify-content: flex-end;
+    
     margin-left: auto;
 }
 
@@ -74,5 +77,20 @@ export default {
 
 .d-menu li {
     cursor: pointer;
+}
+
+.menu-container {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  
+}
+
+.nav-container ul {
+  list-style-type: none;
+}
+
+.home-button button {
+  color: white;
 }
 </style>

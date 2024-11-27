@@ -21,6 +21,12 @@ export default {
       action: null,
       show_modal: false,
       selected_sr: null,
+      search_mode: false,
+      search_query: null,
+      search_param: null
+
+
+
     };
   },
   async created() {
@@ -31,6 +37,37 @@ export default {
     } finally {
       this.loading = false;
     }
+  },
+
+  computed: {
+    final_srs(){
+      if(!this.search_mode){
+        return this.srs
+      }
+      else{
+        let search_query = this.search_query.toLowerCase()
+        let search_param = this.search_param
+        let regex = new RegExp(search_query, 'i')
+        return this.srs.filter((sr) => {
+            if(search_param === 'customer_name'){
+              return regex.test(sr.customer_name )
+            }
+            else if(search_param === 'professional_name'){
+              return regex.test(sr.professional_name)
+            }
+            else if(search_param === 'service_name'){
+              return regex.test(sr.service_name)
+            }
+            else if(search_param === 'description'){
+              return regex.test(sr.description)
+            }
+             
+         
+        })
+
+      }
+    }
+
   },
 
   methods: {
@@ -55,6 +92,17 @@ export default {
         console.error(e);
       }
     },
+
+    updateSearchQuery(search_input, search_param){
+      this.search_mode = true
+      this.search_query = search_input
+      this.search_param = search_param
+    },
+
+    clearSearch(){
+      this.search_mode = false
+    },
+
 
     async markComplete(sr, rating) {
 
@@ -82,7 +130,6 @@ export default {
           console.error(e);
         }
       }
-
 
 
     },
@@ -143,7 +190,7 @@ export default {
   />
   <div class="container-fluid">
     <h1>Service Requests</h1>
-    <CustomerSearch />
+    <AdminSearch search_placeholder="Search in Service Requests" :updateSearchQuery="updateSearchQuery" :clearSearch="clearSearch" :search_mode="search_mode" search_param_req="true" search_in="admin_srs" />
 
     <div class="container sr-table">
       <table class="table table-striped">
@@ -161,7 +208,7 @@ export default {
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(sr, index) in srs">
+          <tr v-for="(sr, index) in final_srs">
             <td scope="row">
               <div>
                 {{ sr.sr_id }}

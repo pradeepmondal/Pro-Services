@@ -53,10 +53,10 @@ from application.api import Welcome, Login, CustomerResource, AdminResource, SPR
 
 api.add_resource(Welcome, '/')
 api.add_resource(Login, '/login')
-api.add_resource(CustomerResource, '/customer', endpoint = 'customer')
+api.add_resource(CustomerResource, '/customer','/customer/<int:c_id>' , endpoint = 'customer')
 api.add_resource(CustomerAddress, '/customer_address', endpoint = 'customer_address')
 api.add_resource(AdminResource, '/admin', endpoint = 'admin')
-api.add_resource(SPResource, '/sp', endpoint = 'sp')
+api.add_resource(SPResource, '/sp', '/sp/<int:sp_id>', endpoint = 'sp')
 api.add_resource(CategoryResource, '/service_category', '/service_category/<int:cat_id>', endpoint = 'service_category')
 api.add_resource(CategoryList, '/service_categories', endpoint = 'service_categories')
 api.add_resource(ServiceResource, '/service', '/service/<int:s_id>', endpoint='service')

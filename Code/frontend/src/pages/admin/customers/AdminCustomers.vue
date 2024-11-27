@@ -18,8 +18,47 @@ export default {
       modal_type: null,
       obj: null,
       modal_heading: null,
-      s_no: 0
+      s_no: 0,
+      search_mode: false,
+      search_query: null,
+      search_param: null
     };
+  },
+
+  computed: {
+    final_customers(){
+      if(!this.search_mode){
+        return this.customers
+      }
+      else{
+        let search_query = this.search_query.toLowerCase()
+        let search_param = this.search_param
+        let regex = new RegExp(search_query, 'i')
+        return this.customers.filter((customer) => {
+            if(search_param === 'customer_name'){
+              return regex.test(customer.f_name + ' ' + customer.l_name )
+            }
+            else if(search_param === 'email'){
+              return regex.test(customer.email)
+            }
+            else if(search_param === 'address'){
+              return regex.test(customer.address)
+            }
+            else if(search_param === 'pincode'){
+              return regex.test(customer.loc_pincode)
+            }
+             
+         
+        })
+
+      }
+    },
+
+    incrementedSno(){
+      this.s_no++
+      return this.s_no
+    }
+
   },
 
   async created() {
@@ -46,14 +85,28 @@ export default {
 
 
     },
+
+    updateSearchQuery(search_input, search_param){
+      this.search_mode = true
+      this.search_query = search_input
+      this.search_param = search_param
+    },
+
+    clearSearch(){
+      this.search_mode = false
+    },
+
+
+
+
     blockCustomer(customer){
-        this.modal_type = "block_form"
+        this.modal_type = "block_customer_form"
         this.obj = customer
         this.modal_heading = "Block " + customer.f_name
     },
 
     unblockCustomer(customer){
-        this.modal_type = "unblock_form"
+        this.modal_type = "unblock_customer_form"
         this.obj = customer
         this.modal_heading = "Edit " + customer.f_name
     },
@@ -65,7 +118,7 @@ export default {
     },
 
     deleteCustomer(customer){
-      this.modal_type = "delete_form"
+      this.modal_type = "delete_customer_form"
       this.obj = customer
       this.modal_heading = "Delete " + customer.f_name
 
@@ -73,20 +126,15 @@ export default {
 
 
   },
-  computed: {
-    incrementedSno(){
-      this.s_no++
-      return this.s_no
-    }
-  }
+
 };
 </script>
 
 <template>
   <Navbar :email />
-  <AdminModal :modal_type="modal_type" :obj="obj" :heading="modal_heading" />
+  <AdminModal :modal_type="modal_type" :obj="obj" :heading="modal_heading" :afterAction="fetchCustomers" />
   <div class="">
-    <AdminSearch />
+    <AdminSearch search_placeholder="Search in Customers" :updateSearchQuery="updateSearchQuery" :clearSearch="clearSearch" :search_mode="search_mode" search_param_req="true" search_in="admin_customers"/>
     <div>Customers</div>
 
     <div class="container services-table">
@@ -96,11 +144,13 @@ export default {
             <th scope="col">#</th>
             <th scope="col">Email</th>
             <th scope="col">Customer Name</th>
+            <th scope="col">Address</th>
+            <th scope="col">Pincode</th>
             <th scope="col">Action</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(customer, index) in customers">
+          <tr v-for="(customer, index) in final_customers">
             <td scope="row">
               <div>
                 {{ index+1 }}
@@ -108,6 +158,8 @@ export default {
             </td>
             <td><div class="customer_email" data-bs-toggle="modal" data-bs-target="#staticBackdrop" @click="viewCustomer(customer)">{{ customer.email }}</div></td>
             <td>{{ customer.f_name + ' ' + customer.l_name }}</td>
+            <td>{{ customer.address }}</td>
+            <td>{{ customer.loc_pincode }}</td>
             <td>
               <div class="button-container">
                 <button
@@ -140,6 +192,7 @@ export default {
                 </button>
               </div>
             </td>
+            
           </tr>
         </tbody>
       </table>

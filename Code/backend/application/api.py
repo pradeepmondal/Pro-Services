@@ -110,6 +110,7 @@ customer_update_parser.add_argument("l_name")
 customer_update_parser.add_argument("address")
 customer_update_parser.add_argument("loc_pincode")
 customer_update_parser.add_argument("description")
+customer_update_parser.add_argument("active", required=False)
 
 
 # SP Update Parser
@@ -120,7 +121,8 @@ sp_update_parser.add_argument("address")
 sp_update_parser.add_argument("loc_pincode")
 sp_update_parser.add_argument("price")
 sp_update_parser.add_argument("description")
-
+sp_update_parser.add_argument("active", required=False)
+sp_update_parser.add_argument("verified", required=False)
 
 
 # Service Request Parser
@@ -321,7 +323,7 @@ class CustomerResource(Resource):
         return "Registration Successful", 200
     
     @auth_required('token')
-    def put(self):
+    def put(self, c_id=None):
         cache.delete('customer_cache')
         args = customer_update_parser.parse_args()
         f_name = args.get("f_name", None)
@@ -329,28 +331,65 @@ class CustomerResource(Resource):
         address = args.get("address", None)
         loc_pincode = args.get("loc_pincode", None)
         description = args.get("description", None)
+        active = args.get("active", None)
         if(not f_name):
             abort(400, message = "First Name is missing")
         
 
-        customer = ds.find_user(email = current_user.email)
+        
+
+        if c_id is None:
+            customer = ds.find_user(email = current_user.email)
+            customer_data = db.session.query(Customer).filter(Customer.c_id == current_user.uid).first()
+        else:
+            check_admin_role()
+            customer = ds.find_user(uid = c_id)
+            customer_data = db.session.query(Customer).filter(Customer.c_id == c_id).first()
+
+        if active is not None:
+            
+            if active == 'block':
+                check_admin_role()
+                customer.active = False
+            if active == 'unblock':
+                check_admin_role()
+                customer.active = True
+                
+            
 
         if(not customer):
             abort(400, message = "Customer not found")
 
         
-        
-        customer_data = db.session.query(Customer).filter(Customer.c_id == current_user.uid).first()
+       
 
         customer_data.f_name = f_name
         customer_data.l_name = l_name
         customer_data.address = address
         customer_data.loc_pincode = loc_pincode
         customer_data.description = description
+        db.session.add(customer)
         db.session.add(customer_data)
         db.session.commit()
 
         return "Customer Successfully Updated", 200
+    
+    @auth_required('token')
+    def delete(self, c_id):
+        cache.delete('customer_cache')
+        check_admin_role()
+        
+        customer = db.session.query(Customer).filter(Customer.c_id == c_id).first()
+        customer_user = db.session.query(User).filter(User.uid == customer.c_id).first()
+        if customer.profile_image_path:
+            os.remove(customer.profile_image_path)
+        db.session.delete(customer)
+        db.session.delete(customer_user)
+        db.session.commit()
+
+        return "Successfully Deleted", 200
+
+
 
 
 
@@ -489,7 +528,7 @@ class SPResource(Resource):
 
 
     @auth_required('token')
-    def put(self):
+    def put(self, sp_id=None):
         cache.delete('sp_cache')
         cache.delete_memoized(SPList.get)
         args = sp_update_parser.parse_args()
@@ -499,18 +538,35 @@ class SPResource(Resource):
         price = args.get("price", None)
         loc_pincode = args.get("loc_pincode", None)
         description = args.get("description", None)
+        active = args.get("active", None)
         if(not f_name):
             abort(400, message = "First Name is missing")
         
+        
+        
 
-        sp = ds.find_user(email = current_user.email)
+        if sp_id is None:
+            sp = ds.find_user(email = current_user.email)
+            sp_data = db.session.query(ServiceProfessional).filter(ServiceProfessional.sp_id == current_user.uid).first()
+        else:
+            check_admin_role()
+            sp = ds.find_user(uid = sp_id)
+            sp_data = db.session.query(ServiceProfessional).filter(ServiceProfessional.sp_id == sp_id).first()
 
         if(not sp):
             abort(400, message = "SP not found")
+        
+        if active is not None:
+            if active == 0:
+                check_admin_role()
+            if sp.active == 0:
+                if active == 1:
+                    check_admin_role()
+            sp.active = active
 
         
         
-        sp_data = db.session.query(ServiceProfessional).filter(ServiceProfessional.sp_id == current_user.uid).first()
+
 
         sp_data.f_name = f_name
         sp_data.l_name = l_name
@@ -518,6 +574,7 @@ class SPResource(Resource):
         sp_data.loc_pincode = loc_pincode
         sp_data.description = description
         sp_data.price = price
+        db.session.add(sp)
         db.session.add(sp_data)
         db.session.commit()
 

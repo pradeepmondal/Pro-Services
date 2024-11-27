@@ -7,6 +7,9 @@ import DeleteServiceForm from './service_category/service/DeleteServiceForm.vue'
 import EditServiceForm from './service_category/service/EditServiceForm.vue'
 import ViewForm from './service_category/service/ViewForm.vue';
 import ViewCustomer from './customer_category/ViewCustomer.vue';
+import DeleteCustomer from './customer_category/DeleteCustomer.vue';
+import BlockCustomer from './customer_category/BlockCustomer.vue';
+import UnblockCustomer from './customer_category/UnblockCustomer.vue';
 
 
 
@@ -19,7 +22,10 @@ export default {
     EditServiceForm,
     AddServiceForm,
     DeleteServiceForm,
-    ViewCustomer
+    ViewCustomer,
+    DeleteCustomer,
+    BlockCustomer,
+    UnblockCustomer
 
   },
   props: {
@@ -81,6 +87,9 @@ export default {
         <AddServiceForm v-if="modal_type === 'add_service_form'" :afterAction="afterAction" :category_obj="category_obj" />
         <DeleteServiceForm v-if="modal_type === 'delete_service_form'" :obj="obj" :afterAction="afterAction" />
         <ViewCustomer v-if="modal_type === 'view_customer_form'" :customer="obj" />
+        <DeleteCustomer v-if="modal_type === 'delete_customer_form'" :obj="obj" :afterAction="afterAction" />
+        <BlockCustomer v-if="modal_type === 'block_customer_form'" :obj="obj" :afterAction="afterAction" />
+        <UnblockCustomer v-if="modal_type === 'unblock_customer_form'" :obj="obj" :afterAction="afterAction" />
       </div>
       <div class="modal-footer">
         
