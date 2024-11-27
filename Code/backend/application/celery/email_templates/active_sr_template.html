@@ -1,0 +1,91 @@
+<html>
+    <head>
+
+
+
+    </head>
+
+
+    <body>
+        <header>
+            <h1>Pro Services</h1>
+            <p>One stop solution for all your household services</p>
+        </header>
+
+        <main>
+            <br />
+            Hello {{ sp.f_name }},
+
+            <p>Greetings from Pro services!<br />There are Active Requests that you need to take action on.<br /> Here are the details: </p>
+
+            <table border="1">
+                <thead>
+                    <th>
+                        Service Id
+                    </th>
+                    <th>
+                        Customer Name
+                    </th>
+                    <th>
+                        Status
+                    </th>
+                    <th>
+                        Address
+                    </th>
+                    <th>
+                        Description
+                    </th>
+                </thead>
+
+
+                <tbody>
+                    {% for sr in service_requests %}
+                    <tr>
+                        <td>
+                            {{ sr.sr_id }}
+                        </td>
+                        <td>
+                            {{ sr.customer.f_name + ' ' + sr.customer.l_name }}
+                        </td>
+                        <td>
+                            {{ sr.status }}
+                        </td>
+                        <td>
+                            {{ sr.customer.address }} {{ sr.customer.loc_pincode }}
+                        </td>
+                        <td>
+                            {{ sr.description }}
+                        </td>
+
+
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <br />
+            <br />
+
+            Thanks & Regards <br />
+            Team Pro Services
+
+
+
+
+        </main>
+
+        <footer>
+            <br />
+            &copy; 2024 Pro Services.
+        </footer>
+
+
+
+
+    </body>
+
+
+
+
+
+</html>

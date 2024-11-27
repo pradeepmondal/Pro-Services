@@ -1,0 +1,140 @@
+<html>
+    <head>
+
+
+
+    </head>
+
+
+    <body>
+        <header>
+            <h1>Pro Services</h1>
+            <p>One stop solution for all your household services</p>
+        </header>
+
+        <main>
+            <br />
+            Hello {{ customer.f_name }},
+
+            <p>Greetings from Pro services!<br /> Here is your monthly activity report: </p>
+
+
+            <table border="1">
+                <thead>
+                    <th>
+                        Total Requests Created
+                    </th>
+                    <th>
+                        Requests Completed
+                    </th>
+                    <th>
+                        Requests Active
+                    </th>
+                    
+                </thead>
+
+
+                <tbody>
+                    
+                    <tr>
+                        <td>
+                            {{ customer_total_requests }}
+                        </td>
+                        <td>
+                            {{ customer_completed_requests }}
+                        </td>
+                        <td>
+                            {{ customer_active_requests }}
+                        </td>
+                       
+
+
+                    </tr>
+                    
+                </tbody>
+            </table>
+
+            <br />
+            
+            Here is your detailed report: 
+
+            <br />
+            <br />
+
+
+            <table border="1">
+                <thead>
+                    <th>
+                        Request Id
+                    </th>
+                    <th>
+                        Service Name
+                    </th>
+                    <th>
+                        Date Created
+                    </th>
+                    <th>
+                        Date Completed
+                    </th>
+                    <th>
+                        Professional
+                    </th>
+                    <th>
+                        Price
+                    </th>
+                </thead>
+
+
+                <tbody>
+                    {% for sr in service_requests %}
+                    <tr>
+                        <td>
+                            {{ sr.sr_id }}
+                        </td>
+                        <td>
+                            {{ sr.service.name }}
+                        </td>
+                        <td>
+                            {{ sr.request_date }}
+                        </td>
+                        <td>
+                            {{ sr.completion_date }}
+                        </td>
+                        <td>
+                            {{ sr.sp.f_name + ' ' + sr.sp.l_name }}
+                        </td>
+                        <td>
+                            ₹{{ sr.sp.price }}
+                        </td>
+
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <br />
+            <br />
+
+            Thanks & Regards <br />
+            Team Pro Services
+
+
+
+
+        </main>
+
+        <footer>
+            <br />
+            &copy; 2024 Pro Services.
+        </footer>
+
+
+
+
+    </body>
+
+
+
+
+
+</html>

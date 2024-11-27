@@ -52,7 +52,7 @@ export default {
         if (res.ok) {
           const data = await res.json();
           this.srs = data;
-          this.srs_active = this.srs.filter((sr) => ((sr.status === 'Accepted') || (sr.status === 'Completed')))
+          this.srs_active = this.srs.filter((sr) => ((sr.status === 'In Progress') || (sr.status === 'Completed')))
           this.srs_pending = this.srs.filter((sr) => (sr.status === 'Requested'))
           
         }
@@ -94,7 +94,7 @@ export default {
     },
 
     async acceptSR(sr, remarks) {
-      sr.status = "Accepted";
+      sr.status = "In Progress";
       sr.remarks = remarks
 
       {

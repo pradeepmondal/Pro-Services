@@ -21,4 +21,4 @@ def send_email(to, subject, content):
     client.quit()
     
 
-send_email(to="krish02@example.com", subject="Reminder", content="<h1> Today's Reminders</h1>")
+# send_email(to="krish02@example.com", subject="Reminder", content="<h1> Today's Reminders</h1>")

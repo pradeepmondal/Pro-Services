@@ -185,7 +185,7 @@ export default {
             <td>
               <div class="button-container">
                 <button
-                  v-if="sr.status === 'Accepted'"
+                  v-if="sr.status === 'In Progress'"
                   class="btn btn-outline-success"
                   data-bs-toggle="modal"
                   data-bs-target="#staticBackdrop"

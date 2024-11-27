@@ -40,6 +40,8 @@ app, api = create_app()
 
 celery_app = app.celery_app
 
+import application.celery.celery_scheduler
+
 
 
 import application.init_data
