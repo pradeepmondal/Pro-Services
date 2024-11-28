@@ -204,6 +204,7 @@ service_request = {
     "status": fields.String,
     "remarks": fields.String,
     "customer_name": fields.String,
+    "customer": fields.Nested(customer),
     "service_name": fields.String,
     "professional_name": fields.String,
     "professional_price": fields.Integer,
@@ -268,6 +269,7 @@ class Login(Resource):
         email = cred.get("email", None)
         password = cred.get("password", None)
 
+
         if email is None:
             abort(400, message = "Email is missing")
         
@@ -276,10 +278,23 @@ class Login(Resource):
         
         user = ds.find_user(email = email)
 
+    
+
+
+
         if (not user):
             abort(404, message = "Invalid Credentials")
         
         if(verify_password(password, user.password)):
+            if(not user.active):
+                abort(401, message = "User is blocked")
+            if('service_professional' in user.roles):
+                sp = db.session.query(ServiceProfessional).filter(ServiceProfessional.sp_id == user.uid).first()
+                if(sp.verification_status == 'Pending'):
+                    abort(401, message = "Your Application is under verification")
+                elif(sp.verification_status == 'Rejected'):
+                    abort(401, message = "Your Application is rejected")
+            
             user.token = user.get_auth_token()
             return user, 200
         else:
@@ -675,6 +690,45 @@ class CategoryResource(Resource):
         return cat, 200
     
     @auth_required('token')
+    def put(self, cat_id):
+        cache.delete_memoized(CategoryResource.get)
+        name = request.form.get('name')
+        description = request.form.get('description')
+        thumbnail = None
+        if request.files:
+            thumbnail = request.files.get('thumbnail')
+        thumbnail_path = None
+
+        if(not name):
+            abort(400, message = "Name is missing")
+        if(not description):
+            abort(400, message = "Description is missing")
+        
+        category = db.session.query(Category).filter(Category.cat_id == cat_id).first()
+
+        if not category:
+            abort(404, message = "Category Not Found")
+
+        if thumbnail:
+
+            if thumbnail.filename.split('.')[1].lower() in EXTENSIONS:
+                path = os.path.join(app.config['CATEGORY_UPLOAD_FOLDER'], secure_filename(name + '.' + thumbnail.filename.split('.')[1].lower()))
+                thumbnail.save(path)
+                thumbnail_path = path
+        else:
+            thumbnail_path = category.thumbnail_url
+        
+        category.name = name
+        category.description = description
+        category.thumbnail_url = thumbnail_path
+
+        db.session.add(category)
+        db.session.commit()
+
+        return "Category successfully updated", 200
+    
+
+    @auth_required('token')
     def post(self):
         cache.delete_memoized(CategoryResource.get)
         name = request.form.get('name')
@@ -795,21 +849,22 @@ class ServiceResource(Resource):
 
 
     @auth_required('token')
-    def put(self):
+    def put(self, s_id):
         check_admin_role()
-        args = service_parser.parse_args()
-        
-        
-        s_id = args.get("s_id", None)
-        name = args.get("name", None)
-        base_price = args.get("base_price", None)
-        req_time = args.get("req_time", None)
-        description = args.get("description", None)
-        cat_id = args.get("cat_id", None)
-        
+        name = request.form.get('name')
+        base_price = request.form.get('base_price')
+        req_time = request.form.get('req_time')
+        description = request.form.get('description')
+        cat_id = request.form.get('cat_id')
+        thumbnail = None
+        if request.files:
+            thumbnail = request.files.get('thumbnail')
 
-        if(not s_id):
-            abort(400, message = "Service Id is missing")
+        thumbnail_path = None
+
+
+
+        
         if(not name):
             abort(400, message = "Name is missing")
         if(not base_price):
@@ -820,8 +875,24 @@ class ServiceResource(Resource):
             abort(400, message = "Description is missing")
         if(not cat_id):
             abort(400, message = "Category is missing")
+
         
         service = db.session.query(Service).filter(Service.s_id == s_id).first()
+
+        if not service:
+            abort(404, message = "Service Not Found")
+
+
+        if thumbnail:
+
+
+            if thumbnail.filename.split('.')[1].lower() in EXTENSIONS:
+                path = os.path.join(app.config['SERVICE_UPLOAD_FOLDER'], secure_filename(name + '.' + thumbnail.filename.split('.')[1].lower()))
+                thumbnail.save(path)
+                thumbnail_path = path
+        
+        else:
+            thumbnail_path = service.thumbnail_url
 
         
 
@@ -830,6 +901,7 @@ class ServiceResource(Resource):
         service.req_time = req_time
         service.description = description
         service.cat_id = cat_id
+        service.thumbnail_url = thumbnail_path
 
         # if(_method == 'POST'):
         #     service = Service(s_id = 'abcd', name = name, price = price, req_time = req_time, description = description, cat_id = cat_id)
@@ -838,7 +910,7 @@ class ServiceResource(Resource):
         db.session.add(service)
         db.session.commit()
 
-        return "Successfully updated", 200
+        return "Service successfully updated", 200
 
 
 class SRResource(Resource):
@@ -855,6 +927,7 @@ class SRResource(Resource):
 
         service_request.service_name = rel_service.name
         service_request.customer_name = rel_customer.f_name + ' ' + rel_customer.l_name
+        service_request.customer = rel_customer
         service_request.professional_name = rel_professional.f_name + ' ' + rel_professional.l_name
         service_request.professional_price = rel_professional.price
         return service_request, 200
@@ -971,6 +1044,7 @@ class SRListResource(Resource):
 
             service_request.service_name = rel_service.name
             service_request.customer_name = rel_customer.f_name + ' ' + rel_customer.l_name
+            service_request.customer = rel_customer
             service_request.professional_name = rel_professional.f_name + ' ' + rel_professional.l_name
             service_request.professional_price = rel_professional.price
 

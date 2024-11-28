@@ -15,6 +15,7 @@ import VerifyProfessional from './sp_category/VerifyProfessional.vue';
 import BlockProfessional from './sp_category/BlockProfessional.vue';
 import UnblockProfessional from './sp_category/UnblockProfessional.vue';
 import DeleteProfessional from './sp_category/DeleteProfessional.vue';
+import EditCategoryForm from './service_category/EditCategoryForm.vue';
 
 
 
@@ -22,6 +23,7 @@ export default {
   name: "AdminModal",
   components: {
     AddCategoryForm,
+    EditCategoryForm,
     DeleteCategoryForm,
     ViewForm,
     EditServiceForm,
@@ -58,6 +60,9 @@ export default {
 
     afterAction: {
       type: Function
+    },
+    afterAction2: {
+      type: Function
     }
 
   },
@@ -91,6 +96,7 @@ export default {
       </div>
       <div class="modal-body">
         <AddCategoryForm v-if="modal_type === 'add_category_form'" :afterAction="afterAction" />
+        <EditCategoryForm v-if="modal_type === 'edit_category_form'" :afterAction="afterAction2" :category_obj="category_obj" />
         <DeleteCategoryForm v-if="modal_type === 'delete_form'" :obj="obj" :afterAction="afterAction" />
         <EditServiceForm v-if="modal_type === 'edit_form'" :obj="obj" :afterAction="afterAction"/>
         <ViewForm v-if="modal_type === 'view_form'" :obj="obj" :category_obj="category_obj" />

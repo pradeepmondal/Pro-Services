@@ -146,6 +146,7 @@ export default {
             <th scope="col">Customer Name</th>
             <th scope="col">Address</th>
             <th scope="col">Pincode</th>
+            
             <th scope="col">Action</th>
           </tr>
         </thead>

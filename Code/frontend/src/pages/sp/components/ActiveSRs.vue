@@ -22,7 +22,91 @@ export default {
       action: null,
       show_modal: false,
       selected_sr: null,
+      search_mode: false,
+      search_query: null,
+      search_param: null
     };
+  },
+
+  computed: {
+    final_srs(){
+      if(!this.search_mode){
+        return this.srs
+      }
+      else{
+        let search_query = this.search_query.toLowerCase()
+        let search_param = this.search_param
+        let regex = new RegExp(search_query, 'i')
+        return this.srs.filter((sr) => {
+            if(search_param === 'status'){
+              return regex.test(sr.status )
+            }
+            else if(search_param === 'customer_name'){
+              return regex.test(sr.customer_name)
+            }
+            else if(search_param === 'address'){
+              return regex.test(sr.customer.address + ', ' + sr.customer.loc_pincode)
+            }
+            
+             
+         
+        })
+
+      }
+    },
+
+    final_srs_active(){
+      if(!this.search_mode){
+        return this.srs_active
+      }
+      else{
+        let search_query = this.search_query.toLowerCase()
+        let search_param = this.search_param
+        let regex = new RegExp(search_query, 'i')
+        return this.srs_active.filter((sr) => {
+            if(search_param === 'status'){
+              return regex.test(sr.status )
+            }
+            else if(search_param === 'customer_name'){
+              return regex.test(sr.customer_name)
+            }
+            else if(search_param === 'address'){
+              return regex.test(sr.customer.address + ', ' + sr.customer.loc_pincode)
+            }
+            
+             
+         
+        })
+
+      }
+    },
+
+    final_srs_pending(){
+      if(!this.search_mode){
+        return this.srs_pending
+      }
+      else{
+        let search_query = this.search_query.toLowerCase()
+        let search_param = this.search_param
+        let regex = new RegExp(search_query, 'i')
+        return this.srs_pending.filter((sr) => {
+            if(search_param === 'status'){
+              return regex.test(sr.status )
+            }
+            else if(search_param === 'customer_name'){
+              return regex.test(sr.customer_name)
+            }
+            else if(search_param === 'address'){
+              return regex.test(sr.customer.address + ', ' + sr.customer.loc_pincode)
+            }
+            
+             
+         
+        })
+
+      }
+    }
+
   },
   async created() {
     try {
@@ -172,6 +256,22 @@ export default {
       this.show_modal = true;
       this.selected_sr = sr;
     },
+
+    handleDate(dateString){
+      let date = new Date(dateString)
+      return date.getFullYear()+'-'+(date.getMonth()+1)+'-' + date.getDate()
+    },
+
+        updateSearchQuery(search_input, search_param){
+      this.search_mode = true
+      this.search_query = search_input
+      this.search_param = search_param
+    },
+
+    clearSearch(){
+      this.search_mode = false
+    },
+
   },
 };
 </script>
@@ -186,7 +286,7 @@ export default {
   />
   <div class="container-fluid">
     
-    <SPSearch />
+    <SPSearch search_placeholder="Search in Service Requests" :updateSearchQuery="updateSearchQuery" :clearSearch="clearSearch" :search_mode="search_mode" search_param_req="true" search_in="sp_srs" />
     
     <h2>Active Requests</h2>
     <div class="container sr-table">
@@ -194,9 +294,10 @@ export default {
         <thead>
           <tr>
             <th scope="col">#</th>
+            <th scope="col">Request Date</th>
             <th scope="col">Customer Name</th>
             <th scope="col">Description</th>
-            
+            <th scope="col">Address</th>
             <th scope="col">Status</th>
             <th scope="col">Ratings</th>
             <th scope="col">Action</th>
@@ -204,17 +305,19 @@ export default {
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(sr, index) in srs_active">
+          <tr v-for="(sr, index) in final_srs_active">
             <td scope="row">
               <div>
                 {{ sr.sr_id }}
               </div>
             </td>
+
+            <td>{{ handleDate(sr.request_date) }}</td>
             <td>
               <div class="service_name">{{ sr.customer_name }}</div>
             </td>
             <td>{{ sr.description }}</td>
-            
+            <td>{{ sr.customer.address + ', ' + sr.customer.loc_pincode }}</td>
             <td>{{ sr.status }}</td>
             <td>{{ sr.rating }}</td>
 
@@ -265,29 +368,32 @@ export default {
         <thead>
           <tr>
             <th scope="col">#</th>
+            <th scope="col">Request Date</th>
             <th scope="col">Customer Name</th>
             <th scope="col">Description</th>
-            
+            <th scope="col">Address</th>
             <th scope="col">Status</th>
-            <th scope="col">Ratings</th>
+           
             <th scope="col">Action</th>
             <th scope="col">Remarks</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(sr, index) in srs_pending">
+          <tr v-for="(sr, index) in final_srs_pending">
             <td scope="row">
               <div>
                 {{ sr.sr_id }}
               </div>
             </td>
+            <td>{{ handleDate(sr.request_date) }}</td>
+
             <td>
               <div class="service_name">{{ sr.customer_name }}</div>
             </td>
             <td>{{ sr.description }}</td>
-            
+            <td>{{ sr.customer.address + ', ' + sr.customer.loc_pincode }}</td>
             <td>{{ sr.status }}</td>
-            <td>{{ sr.rating }}</td>
+           
 
             <td>
               <div class="button-container">

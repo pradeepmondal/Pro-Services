@@ -23,7 +23,8 @@ export default {
         base_price: this.obj.base_price,
         req_time: this.obj.req_time,
         description: this.obj.description,
-        cat_id: this.obj.cat_id
+        cat_id: this.obj.cat_id,
+        thumbnail: null
       }
     };
   },
@@ -53,16 +54,25 @@ export default {
     },
 
     async submitForm() {
+      const formData = new FormData()
+      formData.append("name", this.formData.name)
+      formData.append("base_price", this.formData.base_price)
+      formData.append("req_time", this.formData.req_time)
+      formData.append("cat_id", this.formData.cat_id)
+      formData.append('description', this.formData.description)
+      formData.append('thumbnail', this.formData.thumbnail)
+
+      
       try {
         const res = await fetch(
-          "http://localhost:5050" + "/service",
+          "http://localhost:5050" + "/service/"+this.formData.s_id,
           {
             method: "PUT",
             headers: {
-              "content-type": "application/json",
+
               "auth-token": this.$store.state.auth_token,
             },
-            body: JSON.stringify(this.formData)
+            body: formData
           }
         );
         if (res.ok) {
@@ -74,7 +84,10 @@ export default {
       } catch (e) {
         console.error(e);
       }
-    }
+    },
+    handleImageUpload(event) {
+      this.formData.thumbnail = event.target.files[0]
+    },
   },
 };
 </script>
@@ -156,6 +169,21 @@ export default {
             
           ></textarea>
         </div>
+
+        <div class="thumbnail-container">
+          <div class="time">
+            <label for="thumbnail" class="form-label">Change Thumbnail</label>
+            <input
+              type="file"
+              id="thumbnail"
+              name="thumbnail"
+              class="form-control"
+              @change="handleImageUpload"
+              
+              
+            >
+          </div>
+          </div>
       </div>
       <div v-if="message">{{ message }}</div>
 

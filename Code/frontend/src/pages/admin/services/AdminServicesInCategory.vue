@@ -121,6 +121,12 @@ export default {
         this.modal_heading = "Edit " + service.name
     },
 
+    editCategory(category_obj){
+        this.modal_type = "edit_category_form"
+        this.obj = category_obj
+        this.modal_heading = "Edit " + category_obj.name
+    },
+
      viewService(service){
         this.modal_type = "view_form"
         this.obj = service
@@ -143,7 +149,7 @@ export default {
 <template>
     
     <Navbar :email/>
-    <AdminModal :modal_type="modal_type" :obj="obj" :category_obj="category_obj" :heading="modal_heading" :afterAction="fetchServices"/>
+    <AdminModal :modal_type="modal_type" :obj="obj" :category_obj="category_obj" :heading="modal_heading" :afterAction="fetchServices" :afterAction2="fetchCategory"/>
 <div>
   <div class="container">
     <AdminSearch search_placeholder="Search in Services" :updateSearchQuery="updateSearchQuery" :search_mode="search_mode" :clearSearch="clearSearch" />
@@ -175,15 +181,19 @@ export default {
     <tr>
       <th scope="col">#</th>
       <th scope="col">Service Name</th>
+      <th scope="col">Time Required</th>
       <th scope="col">Base Price</th>
+      <th scope="col">Description</th>
       <th scope="col">Action</th>
     </tr>
   </thead>
   <tbody>
     <tr v-for="service in final_services">
-      <td scope="row"><div class="service_id" data-bs-toggle="modal" data-bs-target="#staticBackdrop" @click="viewService(service)">{{ service.s_id }}</div></td>
+      <td scope="row"><div class="service_id"  >{{ service.s_id }}</div></td>
       <td>{{ service.name }}</td>
+      <td>{{ service.req_time }} hour</td>
       <td>₹{{ service.base_price }}</td>
+      <td>{{ service.description }}</td>
       <td><div class="button-container">
         <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop" @click="editService(service)">
                     Edit
