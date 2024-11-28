@@ -84,7 +84,7 @@ export default {
       <AddAddressForm v-if="show_add_address" :afterAction="fetchCustomer" />
 
       <h1>Welcome {{ customer.f_name }} !!</h1>
-      <CustomerSearch />
+      
       <ServiceCategories />
     </div>
   </div>

@@ -1,6 +1,7 @@
 <script>
 
 import BookingConfirmationForm from './BookingConfirmationForm.vue';
+import ServiceDetailsForm from './ServiceDetailsForm.vue';
 import SPInService from './SPInService.vue';
 
 
@@ -11,7 +12,8 @@ export default {
   name: "ServiceBookingModal",
   components: {
     SPInService,
-    BookingConfirmationForm
+    BookingConfirmationForm,
+    ServiceDetailsForm
     
     
 
@@ -36,8 +38,9 @@ export default {
  data(){
     return {
       customer: this.$store.state.user_details,
-      show_sps: true,
-      modal_heading: 'Select Professional',
+      show_service_details: true,
+      show_sps: false,
+      modal_heading: 'Service Details',
       show_confirm_form: false,
       selected_sp: null
 
@@ -66,6 +69,13 @@ export default {
 
       
       
+    },
+
+    showSPs(service){
+      this.show_service_details = false
+      this.show_sps = true
+      this.modal_heading = "Select professional"
+
     }
   }
 };
@@ -88,9 +98,10 @@ export default {
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
+        
         <SPInService v-if="show_sps" :selected_service="selected_service" :service_professionals="service_professionals" :bookService="bookService" />
         <BookingConfirmationForm v-if="show_confirm_form" :selected_sp :selected_service="selected_service" :customer="customer" />
-        
+        <ServiceDetailsForm v-if="show_service_details" :selected_service="selected_service" :service_professionals="service_professionals" :bookService="bookService" :showSPs="showSPs" />
 
         
       </div>

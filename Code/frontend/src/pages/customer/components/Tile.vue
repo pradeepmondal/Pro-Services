@@ -43,6 +43,8 @@ export default {
   <div v-if="!openModal" class="tile" @click="gotoNavigate">
     <div class="tile-heading">
       {{ tile_heading }}
+
+      
     </div>
   </div>
 </template>

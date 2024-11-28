@@ -10,6 +10,11 @@ import ViewCustomer from './customer_category/ViewCustomer.vue';
 import DeleteCustomer from './customer_category/DeleteCustomer.vue';
 import BlockCustomer from './customer_category/BlockCustomer.vue';
 import UnblockCustomer from './customer_category/UnblockCustomer.vue';
+import ViewProfessional from './sp_category/ViewProfessional.vue';
+import VerifyProfessional from './sp_category/VerifyProfessional.vue';
+import BlockProfessional from './sp_category/BlockProfessional.vue';
+import UnblockProfessional from './sp_category/UnblockProfessional.vue';
+import DeleteProfessional from './sp_category/DeleteProfessional.vue';
 
 
 
@@ -25,7 +30,12 @@ export default {
     ViewCustomer,
     DeleteCustomer,
     BlockCustomer,
-    UnblockCustomer
+    UnblockCustomer,
+    ViewProfessional,
+    VerifyProfessional,
+    BlockProfessional,
+    UnblockProfessional,
+    DeleteProfessional
 
   },
   props: {
@@ -90,6 +100,11 @@ export default {
         <DeleteCustomer v-if="modal_type === 'delete_customer_form'" :obj="obj" :afterAction="afterAction" />
         <BlockCustomer v-if="modal_type === 'block_customer_form'" :obj="obj" :afterAction="afterAction" />
         <UnblockCustomer v-if="modal_type === 'unblock_customer_form'" :obj="obj" :afterAction="afterAction" />
+        <ViewProfessional v-if="modal_type === 'view_sp_form'" :sp="obj" :afterAction="afterAction" />
+        <VerifyProfessional v-if="modal_type === 'verify_sp_form'" :sp="obj" :afterAction="afterAction" />
+        <BlockProfessional v-if="modal_type === 'block_sp_form'" :obj="obj" :afterAction="afterAction" />
+        <UnblockProfessional v-if="modal_type === 'unblock_sp_form'" :obj="obj" :afterAction="afterAction" />
+        <DeleteProfessional v-if="modal_type === 'delete_sp_form'" :obj="obj" :afterAction="afterAction" />
       </div>
       <div class="modal-footer">
         

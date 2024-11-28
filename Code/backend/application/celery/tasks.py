@@ -8,35 +8,45 @@ from application.celery.mail import send_email
 from flask import current_app as app
 from jinja2 import Environment, FileSystemLoader
 
-@shared_task(ignore_result = False)
-def subtract(x, y):
-    time.sleep(10)
-    return x-y
+
 
 @shared_task(ignore_result = False)
-def create_sr_csv():
+def create_sr_csv(sp_id=None):
     with app.app_context():
-       
-        srs = ServiceRequest.query.all()
-        
-        for sr in srs:
-            sr.service_name = sr.service.name
-            sr.customer_name = sr.customer.f_name + ' ' + sr.customer.l_name
-            sr.service_professional = sr.sp.f_name + ' ' + sr.sp.l_name
-        
-        column_names = ['sr_id', 's_id', 'service_name', 'c_id', 'customer_name', 'sp_id',  'service_professional', 'description', 'request_date', 'completion_date', 'status', 'remarks', 'rating']
+        if sp_id is None:
+            srs = ServiceRequest.query.all()
+        else:
+            srs = ServiceRequest.query.filter((ServiceRequest.sp_id == sp_id) & ((ServiceRequest.status == 'Completed') | (ServiceRequest.status == 'Closed'))).all()
 
+        if srs:
         
+            for sr in srs:
+                sr.service_name = sr.service.name
+                sr.customer_name = sr.customer.f_name + ' ' + sr.customer.l_name
+                sr.service_professional = sr.sp.f_name + ' ' + sr.sp.l_name
+            
+            column_names = ['sr_id', 's_id', 'service_name', 'c_id', 'customer_name', 'sp_id',  'service_professional', 'description', 'request_date', 'completion_date', 'status', 'remarks', 'rating']
 
-        csv = excel.make_response_from_query_sets(query_sets= srs, column_names = column_names, file_type = 'csv')
+            
+
+            csv = excel.make_response_from_query_sets(query_sets= srs, column_names = column_names, file_type = 'csv')
+
 
     
+        if sp_id is None:
+            file_path = './application/celery/admin_downloads/sr_report.csv'
+        else:
+            file_path = f'./application/celery/admin_downloads/professionals_reports/{sp_id}_sr_report.csv'
 
-        file_path = './application/celery/admin_downloads/sr_report.csv'
+        if srs:
+            file = open(file_path, 'wb')
+            file.write(csv.data)
+            file.close()
+        else:
+            file = open(file_path, 'w')
+            file.write('No Service Requests')
+            file.close()
 
-        file = open(file_path, 'wb')
-        file.write(csv.data)
-        file.close()
 
         return file_path
 

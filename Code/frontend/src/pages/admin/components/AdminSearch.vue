@@ -83,6 +83,14 @@ export default {
               <option value="address" selected>Address</option>
               <option value="pincode" selected>Pincode</option>
               </select>
+
+
+              <select v-if="search_in === 'admin_professionals'"  class="form-select " v-model="search_param" @change="updateSearchQuery(search_input, search_param)" >
+              <option value="email" selected>Email</option>
+              <option value="professional_name">Professional Name</option>
+              <option value="service_name">Service Name</option>
+              <option value="pincode">Pincode</option>
+              </select>
             </div>
         
     </div>

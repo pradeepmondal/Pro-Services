@@ -22,6 +22,10 @@ export default {
       action: null,
       show_modal: false,
       selected_sr: null,
+
+      search_mode: false,
+      search_query: null,
+      search_param: null
     };
   },
   async created() {
@@ -32,6 +36,35 @@ export default {
     } finally {
       this.loading = false;
     }
+  },
+
+  computed: {
+    final_srs(){
+      if(!this.search_mode){
+        return this.srs
+      }
+      else{
+        let search_query = this.search_query.toLowerCase()
+        let search_param = this.search_param
+        let regex = new RegExp(search_query, 'i')
+        return this.srs.filter((sr) => {
+            if(search_param === 'status'){
+              return regex.test(sr.status )
+            }
+            else if(search_param === 'professional_name'){
+              return regex.test(sr.professional_name)
+            }
+            else if(search_param === 'service_name'){
+              return regex.test(sr.service_name)
+            }
+            
+             
+         
+        })
+
+      }
+    }
+
   },
 
   methods: {
@@ -121,6 +154,17 @@ export default {
       }
     },
 
+    updateSearchQuery(search_input, search_param){
+      this.search_mode = true
+      this.search_query = search_input
+      this.search_param = search_param
+    },
+
+    clearSearch(){
+      this.search_mode = false
+    },
+
+
     openCancelModal(sr) {
       this.modal_type = "cancel_sr";
       this.modal_heading = "Cancel " + sr.service_name;
@@ -136,6 +180,11 @@ export default {
       this.show_modal = true;
       this.selected_sr = sr;
     },
+
+    handleDate(dateString){
+      let date = new Date(dateString)
+      return date.getFullYear()+'-'+(date.getMonth()+1)+'-' + date.getDate()
+    }
   },
 };
 </script>
@@ -151,7 +200,7 @@ export default {
   />
   <div class="container-fluid">
     <h1>Welcome {{ customer.f_name }} !!</h1>
-    <CustomerSearch />
+    <CustomerSearch search_placeholder="Search in Service Requests" :updateSearchQuery="updateSearchQuery" :clearSearch="clearSearch" :search_mode="search_mode" search_param_req="true" search_in="customer_srs" />
 
     <div class="container sr-table">
       <table class="table table-striped">
@@ -162,13 +211,13 @@ export default {
             <th scope="col">Professional</th>
             <th scope="col">Price</th>
             <th scope="col">Status</th>
-            <th scope="col">Ratings</th>
+            <th scope="col">Request Date</th>
             <th scope="col">Action</th>
             <th scope="col">Remarks</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(sr, index) in srs">
+          <tr v-for="(sr, index) in final_srs">
             <td scope="row">
               <div>
                 {{ sr.sr_id }}
@@ -180,7 +229,7 @@ export default {
             <td>{{ sr.professional_name }}</td>
             <td>₹{{ sr.professional_price }}</td>
             <td>{{ sr.status }}</td>
-            <td>{{ sr.rating }}</td>
+            <td>{{ handleDate(sr.request_date) }}</td>
 
             <td>
               <div class="button-container">
@@ -195,7 +244,7 @@ export default {
                 </button>
 
                 <button
-                  v-if="sr.status !== 'Completed' && sr.status !== 'Cancelled'"
+                  v-if="sr.status !== 'Closed' && sr.status !== 'Completed' && sr.status !== 'Cancelled'"
                   class="btn btn-outline-danger"
                   data-bs-toggle="modal"
                   data-bs-target="#staticBackdrop"

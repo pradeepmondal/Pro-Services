@@ -1,23 +1,47 @@
 <script>
 
 import Tile from '../Tile.vue';
+import CustomerSearch from '../CustomerSearch.vue';
 
 
 export default {
   name: "Services",
   components: {
-    Tile
+    Tile,
+    CustomerSearch
   },
 
   data(){
     return {
       loading: false,
       categories: null,
+      search_mode: false,
+      search_query: null
       
         
         
     }
   },
+
+  computed: {
+    final_categories(){
+      if(!this.search_mode){
+        return this.categories
+      }
+      else{
+        let search_query = this.search_query.toLowerCase()
+        let regex = new RegExp(search_query, 'i')
+        return this.categories.filter((cat) => {
+          return (
+            regex.test(cat.name) || regex.test(cat.description)
+          )
+        })
+
+      }
+    }
+
+  },
+
   async created() {
     try {
       await this.fetchCategories()
@@ -52,6 +76,15 @@ export default {
 
 
     },
+
+    updateSearchQuery(search_input){
+      this.search_mode = true
+      this.search_query = search_input
+    },
+
+    clearSearch(){
+      this.search_mode = false
+    },
   }
 };
 </script>
@@ -62,9 +95,10 @@ export default {
         <div v-if="loading">Loading...</div>
         <div v-else>
         <div>Explore service categories</div>
+        <CustomerSearch search_placeholder="Search in Service Categories" :updateSearchQuery="updateSearchQuery" :clearSearch="clearSearch" :search_mode="search_mode" />
         <div class="tiles-container row">
         
-        <div v-for="cat in categories" class="col-lg-3 col-md-6 col-12 services-container">
+        <div v-for="cat in final_categories" class="col-lg-3 col-md-6 col-12 services-container">
             <Tile :tile_heading="cat.name" :navlink="'/customer/service_category/'+cat.cat_id " />
         </div>
     </div>

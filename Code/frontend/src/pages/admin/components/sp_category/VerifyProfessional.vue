@@ -6,7 +6,7 @@
 
 
 export default {
-  name: "ViewProfessional",
+  name: "VerifyProfessional",
   components: {
 
 
@@ -72,12 +72,10 @@ export default {
 
 
 
-    async updateProfile() {
-      if(this.sp.price < this.sp.service.base_price ){
-        this.message = "Price cannot be lower than the base price: " + this.sp.base_price
-      }
+    async approveSP() {
+      this.sp_obj.verified = 'verified'
+      this.sp_obj.verification_status = 'Approved'
 
-      else {
       try {
         const res = await fetch(
           "http://localhost:5050" + "/sp/"+this.sp.sp_id,
@@ -101,7 +99,38 @@ export default {
         console.error(e);
       }
 
-    }
+    
+    },
+
+
+    async rejectSP() {
+      this.sp_obj.verified = 'rejected'
+      this.sp_obj.verification_status = 'Rejected'
+
+      try {
+        const res = await fetch(
+          "http://localhost:5050" + "/sp/"+this.sp.sp_id,
+          {
+            method: "PUT",
+            headers: {
+              "content-type": "application/json",
+              "auth-token": this.$store.state.auth_token,
+            },
+            body: JSON.stringify(this.sp_obj)
+          }
+        );
+        if (res.ok) {
+          const data = await res.json();
+          this.message = data
+          this.afterAction()
+          
+
+        }
+      } catch (e) {
+        console.error(e);
+      }
+
+    
     },
 
     async downloadDoc() {
@@ -234,17 +263,7 @@ export default {
             
           </div>
 
-          <div class="rating-container">
-            <label for="price" class="form-label">Current rating:</label>
-            <input
-              type="text"
-              class="form-control"
-              id="price"
-              name="price"
-              v-model="sp_obj.rating"
-              disabled
-            />
-          </div>
+    
 
         </div>
 
@@ -295,8 +314,10 @@ export default {
         </div>
       </div>
       <div v-if="message">{{ message }}</div>
-
-      <button type="submit" class="btn btn-success" @click="updateProfile">Update</button>
+      <div class="button-container">
+      <button type="submit" class="btn btn-outline-success" @click="approveSP">Approve</button>
+      <button type="submit" class="btn btn-outline-danger" @click="rejectSP">Reject</button>
+    </div>
     </form>
   </div>
 
@@ -339,6 +360,15 @@ export default {
     margin: auto;
     padding: 1rem;
     
+}
+.button-container {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+}
+
+.button-container * {
+  margin: 0.7rem;
 }
 </style>
 

@@ -43,6 +43,7 @@ class ServiceProfessional(db.Model):
     loc_pincode = db.Column(db.Integer, nullable = False)
     rating = db.Column(db.Float) 
     verified = db.Column(db.Boolean, default = False)
+    verification_status = db.Column(db.String, nullable = False, default='Pending')
     srs = db.relationship('ServiceRequest', backref='sp', cascade="all, delete-orphan")
 
 

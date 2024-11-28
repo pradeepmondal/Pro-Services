@@ -24,11 +24,33 @@ export default {
         modal_heading: null,
         loading: false,
         show_booking_modal: false,
-        selected_service_sps: null
+        show_service_modal: false,
+        selected_service_sps: null,
+        search_mode: false,
+        search_query: null
         
         
     }
   },
+
+  computed: {
+    final_services(){
+      if(!this.search_mode){
+        return this.services
+      }
+      else{
+        let search_query = this.search_query.toLowerCase()
+        let regex = new RegExp(search_query, 'i')
+        return this.services.filter((service) => {
+          return (
+            regex.test(service.name) || regex.test(service.description) 
+          )
+        })
+
+      }
+    }
+  },
+
   async created() {
     try {
       await this.fetchServices()
@@ -61,14 +83,32 @@ export default {
 
     },
 
-    async viewService(service){
-        this.selected_service = service
+
+
+    async selectProfessional(service){
+
         this.show_booking_modal = true
         await this.fetchSPs(service)
+        await this.fetchSelectedService(service)
 
 
         
     },
+
+    async viewService(service){
+        
+        this.show_booking_modal = true
+
+        await this.fetchSPs(service)
+        await this.fetchSelectedService(service)
+        
+
+
+        
+    },
+
+
+
     async fetchSPs(service) {
         try{
         const res = await fetch('http://localhost:5050' + '/sps/' + service.s_id, {method: 'GET', headers: {"content-type" : "application/json", 'auth-token': this.$store.state.auth_token}})
@@ -84,7 +124,39 @@ export default {
     }
         
 
+    },
+
+    async fetchSelectedService(service) {
+        try{
+        const res = await fetch('http://localhost:5050' + '/service/' + service.s_id , {method: 'GET', headers: {"content-type" : "application/json", 'auth-token': this.$store.state.auth_token}})
+        if(res.ok){
+
+            const data = await res.json()
+            this.selected_service = data
+
+
+
+
+
+        }
+    }catch(e){
+        console.error(e)
     }
+        
+        
+
+
+    },
+
+    updateSearchQuery(search_input){
+      this.search_mode = true
+      this.search_query = search_input
+    },
+
+    clearSearch(){
+      this.search_mode = false
+    },
+
 
 
   }
@@ -99,15 +171,15 @@ export default {
     
     
     
-    <CustomerSearch />
+    <CustomerSearch search_placeholder="Search in Services" :updateSearchQuery="updateSearchQuery" :search_mode="search_mode" :clearSearch="clearSearch" />
     
     
     
     <div>Services in category {{ cat_id }}</div>
     <div class="tiles-container row">
         
-        <div v-for="service in services" class="col-lg-3 col-md-6 col-12 services-container">
-            <Tile :tile_heading="service.name" :viewService="viewService" :service="service"  :openModal="true" @click="viewService(service)"/>
+        <div v-for="service in final_services" class="col-lg-3 col-md-6 col-12 services-container">
+            <Tile :tile_heading="service.name" :viewService="viewService" :service="service"  :openModal="true" />
         </div>
         </div>
 

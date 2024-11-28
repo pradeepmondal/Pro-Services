@@ -104,7 +104,9 @@ export default {
           }
         );
         if (res.ok) {
-          window.open('http://localhost:5050/celery/get_sr_export/' + this.pending_task_id)
+          const blob = await res.blob()
+          const download_url = window.URL.createObjectURL(blob)
+          window.open(download_url)
 
           this.pending_task = false
           this.pending_task_id = null

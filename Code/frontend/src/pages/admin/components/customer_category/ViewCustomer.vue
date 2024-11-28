@@ -6,7 +6,7 @@
 
 
 export default {
-  name: "CustomerServiceHistory",
+  name: "ViewCustomer",
   components: {
 
 

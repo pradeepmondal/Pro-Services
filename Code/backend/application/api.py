@@ -6,7 +6,7 @@ from application.models import Customer, User, ServiceProfessional, Category, Se
 from werkzeug.utils import secure_filename
 import os
 from datetime import datetime
-from application.celery.tasks import subtract, create_sr_csv
+from application.celery.tasks import create_sr_csv
 from celery.result import AsyncResult
 import base64
 
@@ -34,23 +34,18 @@ cache = app.cache
 
 
 
-@app.get('/celery')
-def celery_task():
-    task = subtract.delay(20, 10)
-    return {'Task_Id:': task.id}, 200
 
-@app.get('/get-celery-data/<id>')
-def getData(id):
-    result = AsyncResult(id)
-    if(result.ready()):
-        return {'result': result.result}
-    else:
-        return {'message' : 'Task Not Ready'}, 405
 
 @auth_required('token')
 @app.get('/celery/create_sr_export_request')
 def create_export_sr_task():
     task = create_sr_csv.delay()
+    return {'task_id': task.id}, 200
+
+@auth_required('token')
+@app.get('/celery/create_sp_sr_export_request/<int:sp_id>')
+def create_export_sp_sr_task(sp_id):
+    task = create_sr_csv.delay(sp_id)
     return {'task_id': task.id}, 200
 
 
@@ -70,6 +65,14 @@ def get_sr_export(id):
         return send_file(result.result)
     else:
         return {'status' : 'not ready'}, 405
+    
+
+@app.post('/admin/download')
+def download_file():
+    check_admin_role()
+    data = request.get_json()
+    file_path = data.get("submitted_doc_path")
+    return send_file(file_path)
 
 
 
@@ -123,6 +126,7 @@ sp_update_parser.add_argument("price")
 sp_update_parser.add_argument("description")
 sp_update_parser.add_argument("active", required=False)
 sp_update_parser.add_argument("verified", required=False)
+sp_update_parser.add_argument("verification_status", required=False)
 
 
 # Service Request Parser
@@ -189,25 +193,6 @@ service = {
     "thumbnail": fields.String(default=None)
 }
 
-sp = {
-    "sp_id": fields.Integer,
-    "email": fields.String,
-    "active": fields.Boolean,
-    "date_created": fields.DateTime,
-    "f_name": fields.String,
-    "l_name": fields.String,
-    "description": fields.String,
-    "service_type": fields.String,
-    "experience": fields.Integer,
-    "price": fields.Integer,
-    "rating": fields.Float,
-    "service": fields.Nested(service),
-    "address": fields.String,
-    "loc_pincode": fields.Integer,
-    "profile_image": fields.String(default=None)
-
-}
-
 service_request = {
     "sr_id": fields.Integer,
     "s_id": fields.Integer,
@@ -225,6 +210,30 @@ service_request = {
     "rating": fields.Integer,
     "service": fields.Nested(service)
 }
+
+sp = {
+    "sp_id": fields.Integer,
+    "email": fields.String,
+    "active": fields.Boolean,
+    "date_created": fields.DateTime,
+    "f_name": fields.String,
+    "l_name": fields.String,
+    "description": fields.String,
+    "service_type": fields.String,
+    "experience": fields.Integer,
+    "price": fields.Integer,
+    "rating": fields.Float,
+    "service": fields.Nested(service),
+    "service_requests": fields.List(fields.Nested(service_request)),
+    "address": fields.String,
+    "loc_pincode": fields.Integer,
+    "profile_image": fields.String(default=None),
+    "submitted_doc_path": fields.String(default=None),
+    "verification_status": fields.String
+
+}
+
+
 
 def check_for_role():
     if request.endpoint in ['admin']:
@@ -451,6 +460,7 @@ class SPResource(Resource):
 
 
         current_sp.service = rel_service
+        current_sp.service_requests = rel_srs
         if not current_sp:
             abort(404, message = "Service Professional not found")
         return current_sp, 200
@@ -539,6 +549,8 @@ class SPResource(Resource):
         loc_pincode = args.get("loc_pincode", None)
         description = args.get("description", None)
         active = args.get("active", None)
+        verified = args.get("verified", None)
+        verification_status = args.get("verification_status", None)
         if(not f_name):
             abort(400, message = "First Name is missing")
         
@@ -556,16 +568,26 @@ class SPResource(Resource):
         if(not sp):
             abort(400, message = "SP not found")
         
+        
+        
+        
         if active is not None:
-            if active == 0:
+            
+            if active == 'block':
                 check_admin_role()
-            if sp.active == 0:
-                if active == 1:
-                    check_admin_role()
-            sp.active = active
+                sp.active = False
+            if active == 'unblock':
+                check_admin_role()
+                sp.active = True
 
-        
-        
+        if not sp_data.verified:
+            check_admin_role()
+            if verified == 'verified':
+                sp_data.verified = True
+                sp_data.verification_status = verification_status
+            elif verified == 'rejected':
+                sp_data.verified = False
+                sp_data.verification_status = verification_status
 
 
         sp_data.f_name = f_name
@@ -579,6 +601,24 @@ class SPResource(Resource):
         db.session.commit()
 
         return "Professional Successfully Updated", 200
+    
+
+    @auth_required('token')
+    def delete(self, sp_id):
+        cache.delete('customer_cache')
+        check_admin_role()
+        
+        sp = db.session.query(ServiceProfessional).filter(ServiceProfessional.sp_id == sp_id).first()
+        sp_user = db.session.query(User).filter(User.uid == sp.sp_id).first()
+        if sp.profile_image_path:
+            os.remove(sp.profile_image_path)
+        if sp.submitted_doc_path:
+            os.remove(sp.submitted_doc_path)
+        db.session.delete(sp)
+        db.session.delete(sp_user)
+        db.session.commit()
+
+        return "Successfully Deleted", 200
     
 
 
@@ -601,6 +641,7 @@ class SPList(Resource):
             sp.active = db.session.query(User).filter(User.uid == sp.sp_id).first().active
 
             rel_srs = sp.srs
+            sp.service_requests = sp.srs
             rating_c = 0
             rating_s = 0
             sp.rating = 0
@@ -681,6 +722,22 @@ class CategoryResource(Resource):
 
 
 class ServiceResource(Resource):
+
+    @auth_required('token')
+    @marshal_with(service)
+    def get(self, s_id):
+        service = db.session.query(Service).filter(Service.s_id == s_id).first()
+        if not service:
+            abort(404, message = "Service not found")
+        
+        return service, 200
+
+
+
+
+
+
+
     @auth_required('token')
     def post(self):
         
