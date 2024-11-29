@@ -140,10 +140,7 @@ export default {
 
       } 
 
-      if (!this.spData.profile_image){
-        return 'Profile image is missing'
 
-      } 
 
       if (!this.spData.accepted){
         return 'Accept T&C'
@@ -301,7 +298,7 @@ export default {
         this.spData.service_type = null
         this.spData.experience = null
         this.spData.submitted_doc = null
-        this.spData.profile_image = null
+        
         this.spData.address = null
         this.spData.loc_pincode = null
         this.error_message = null
@@ -569,18 +566,7 @@ export default {
              
             </div>
 
-            <div class="input-group p-2 service-selector">
-              <label for="doc" class="form-label">Profile Image: &nbsp; </label>
-              <input
-                type="file"
-                class="form-control"
-                placeholder="Experience"
-                aria-label="experience"
-                aria-describedby="basic-addon1"
-                @change="handleImageUpload"
-              />
-             
-            </div>
+       
 
 
 

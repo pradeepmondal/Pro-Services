@@ -102,7 +102,7 @@ export default {
 }
 
 .search-input button {
-  max-width: 3rem;
+  max-width: 4rem;
   font-size: 1rem;
 }
 

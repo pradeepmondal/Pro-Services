@@ -164,7 +164,7 @@ customer = {
     "description": fields.String,
     "address": fields.String,
     "loc_pincode": fields.String,
-    "profile_image": fields.String(default=None)
+    
     }
 
 admin = {
@@ -230,7 +230,6 @@ sp = {
     "service_requests": fields.List(fields.Nested(service_request)),
     "address": fields.String,
     "loc_pincode": fields.Integer,
-    "profile_image": fields.String(default=None),
     "submitted_doc_path": fields.String(default=None),
     "verification_status": fields.String
 
@@ -495,11 +494,11 @@ class SPResource(Resource):
         experience = request.form.get('experience')
         address = request.form.get('address')
         loc_pincode = request.form.get('loc_pincode')
-        profile_image_path = None
+        
         submitted_doc_path = None
 
         submitted_doc = request.files.get('submitted_doc')
-        profile_image = request.files.get('profile_image')
+        
 
 
         if(not f_name):
@@ -522,8 +521,7 @@ class SPResource(Resource):
 
         if(not submitted_doc):
             abort(400, message = "submitted_doc is missing")
-        if(not profile_image):
-            abort(400, message = "profile_image is missing")
+        
         
 
         
@@ -533,10 +531,7 @@ class SPResource(Resource):
         if(sp):
             abort(400, message = "User with the email already exists")
 
-        if profile_image.filename.split('.')[1].lower() in EXTENSIONS:
-            path = os.path.join(app.config['SP_IMAGE_UPLOAD_FOLDER'], secure_filename(email + '.' + profile_image.filename.split('.')[1].lower()))
-            profile_image.save(path)
-            profile_image_path = path
+        
 
         if submitted_doc.filename.split('.')[1].lower() in DOC_EXTENSIONS:
             path = os.path.join(app.config['SP_DOC_UPLOAD_FOLDER'], secure_filename(email + '.' + submitted_doc.filename.split('.')[1].lower()))
@@ -545,7 +540,7 @@ class SPResource(Resource):
 
         ds.create_user(email = email, password = hash_password(password), roles = ['service_professional'])
         sp_user = ds.find_user(email = email)
-        sp_data = ServiceProfessional(sp_id = sp_user.uid, f_name = f_name, l_name = l_name, email = email, service_type = service_type, price = price, experience = experience, submitted_doc_path = submitted_doc_path, profile_image_path = profile_image_path, address = address, loc_pincode = loc_pincode )
+        sp_data = ServiceProfessional(sp_id = sp_user.uid, f_name = f_name, l_name = l_name, email = email, service_type = service_type, price = price, experience = experience, submitted_doc_path = submitted_doc_path, address = address, loc_pincode = loc_pincode )
         db.session.add(sp_data)
         db.session.commit()
 

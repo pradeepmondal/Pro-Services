@@ -41,13 +41,13 @@ export default {
 
 final_sps(){
   if(!this.search_mode){
-    return this.service_professionals
+    return this.service_professionals.filter((sp) => sp.verification_status === 'Approved')
   }
   else{
     let search_query = this.search_query.toLowerCase()
     let search_param = this.search_param
     let regex = new RegExp(search_query, 'i')
-    return this.service_professionals.filter((sp) => {
+    return this.service_professionals.filter((sp) => sp.verification_status === 'Approved').filter((sp) => {
         if(search_param === 'professional_name'){
           return regex.test(sp.f_name + ' ' + sp.l_name )
         }
@@ -130,7 +130,7 @@ final_sps(){
 
 <style scoped>
 .search-container {
-  width: 4rem;
+  width: 10rem;
 }
 
 
