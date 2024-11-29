@@ -206,7 +206,7 @@ export default {
     },
 
     async rejectSR(sr, remarks) {
-      sr.status = "Reject";
+      sr.status = "Rejected";
       sr.remarks = remarks
 
       {
@@ -288,7 +288,7 @@ export default {
     
     <SPSearch search_placeholder="Search in Service Requests" :updateSearchQuery="updateSearchQuery" :clearSearch="clearSearch" :search_mode="search_mode" search_param_req="true" search_in="sp_srs" />
     
-    <h2>Active Requests</h2>
+    <h3 class="heading">Active Requests</h3>
     <div class="container sr-table">
       <table class="table table-striped">
         <thead>
@@ -317,8 +317,14 @@ export default {
               <div class="service_name">{{ sr.customer_name }}</div>
             </td>
             <td>{{ sr.description }}</td>
-            <td>{{ sr.customer.address + ', ' + sr.customer.loc_pincode }}</td>
-            <td>{{ sr.status }}</td>
+            <td>{{ sr.address }}</td>
+            <td > <div v-if="sr.status === 'Requested'" class="status requested">{{ sr.status }}</div>
+              <div v-else-if="sr.status === 'In Progress'" class="status progress">{{ sr.status }}</div>
+              <div v-else-if="sr.status === 'Completed'" class="status completed">{{ sr.status }}</div>
+              <div v-else-if="sr.status === 'Rejected'" class="status rejected-cancelled">{{ sr.status }}</div>
+              <div v-else-if="sr.status === 'Cancelled'" class="status rejected-cancelled">{{ sr.status }}</div>
+              <div v-else-if="sr.status === 'Closed'" class="status closed">{{ sr.status }}</div>
+            </td>
             <td>{{ sr.rating }}</td>
 
             <td>
@@ -362,7 +368,7 @@ export default {
       </table>
     </div>
 
-    <h2>Pending Requests</h2>
+    <h3 class="heading">Pending Requests</h3>
     <div class="container sr-table">
       <table class="table table-striped">
         <thead>
@@ -391,8 +397,14 @@ export default {
               <div class="service_name">{{ sr.customer_name }}</div>
             </td>
             <td>{{ sr.description }}</td>
-            <td>{{ sr.customer.address + ', ' + sr.customer.loc_pincode }}</td>
-            <td>{{ sr.status }}</td>
+            <td>{{ sr.address }}</td>
+            <td > <div v-if="sr.status === 'Requested'" class="status requested">{{ sr.status }}</div>
+              <div v-else-if="sr.status === 'In Progress'" class="status progress">{{ sr.status }}</div>
+              <div v-else-if="sr.status === 'Completed'" class="status completed">{{ sr.status }}</div>
+              <div v-else-if="sr.status === 'Rejected'" class="status rejected-cancelled">{{ sr.status }}</div>
+              <div v-else-if="sr.status === 'Cancelled'" class="status rejected-cancelled">{{ sr.status }}</div>
+              <div v-else-if="sr.status === 'Closed'" class="status closed">{{ sr.status }}</div>
+            </td>
            
 
             <td>
@@ -457,5 +469,47 @@ export default {
 .button-container button {
     margin: 0 0.4rem;
     width: fit-content;
+}
+
+.requested {
+  background-color: rgb(222, 188, 15);
+  color: white;
+}
+
+.progress {
+  background-color: rgb(112, 103, 212);
+  color: white;
+}
+
+
+.completed {
+  background-color: rgb(54, 171, 15);
+  color: white;
+}
+
+
+.status {
+  padding: 0.3rem;
+  font-size:1rem;
+  justify-content: center;
+  height: fit-content;
+  border: 1px solid rgba(0, 0, 0, 0);
+  border-radius: 0.5rem;
+  max-width: fit-content;
+}
+
+.rejected-cancelled {
+  background-color: rgb(207, 44, 44);
+  color: white;
+}
+
+.closed {
+  background-color: gray;
+  color: white;
+}
+
+.heading {
+  padding-left: 4rem;
+  padding-top: 1rem;
 }
 </style>

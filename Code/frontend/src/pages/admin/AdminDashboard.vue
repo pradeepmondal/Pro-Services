@@ -128,7 +128,10 @@ export default {
 
 <template>
   <Navbar :email />
+  <div class="parent-container">
+    
   <div class="notification">
+    
     <div v-if="task_created_message" class="task-created-message">
       {{ task_created_message }}
     </div>
@@ -136,10 +139,13 @@ export default {
       <button class="btn btn-success" @click="downloadSRCSV" >Download SR Report</button>
     </div>
   </div>
+  <h2 class="welcome-message">Admin Dashboard</h2>
 
-  <div class="container-fluid">
+  <div class="container-fluid dashboard-tiles">
     <AdminTiles :exportSRCSV="exportSRCSV" />
   </div>
+
+</div>
 </template>
 
 <style scoped>
@@ -166,4 +172,31 @@ export default {
   margin-right: 1rem;
   margin-top: 0.8rem;
 }
+.dashboard-tiles {
+  
+  padding-top: 2rem;
+}
+
+.parent-container {
+  
+  
+  height: 92vh;
+  width:100%;
+  
+  background-color: antiquewhite;
+
+}
+
+.welcome-message {
+  padding: 1rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0rem;
+}
+
+
+
 </style>
+
+
+
+

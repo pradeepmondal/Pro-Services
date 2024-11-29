@@ -43,7 +43,7 @@ export default {
         let regex = new RegExp(search_query, 'i')
         return this.categories.filter((cat) => {
           return (
-            regex.test(cat.name) || regex.test(cat.description)
+            regex.test(cat.name)
           )
         })
 
@@ -104,9 +104,10 @@ export default {
 <template>
   <Navbar :email />
   <AdminModal :modal_type="modal_form" :heading="modal_heading" :obj="obj" :afterAction="fetchServices" />
-    <div class="">
+    <div class="parent-container">
+      <div class="section-heading">Service Categories</div>
       <AdminSearch search_placeholder="Search in Service Categories" :updateSearchQuery="updateSearchQuery" :clearSearch="clearSearch" :search_mode="search_mode"/>
-        <div>Services</div>
+        
         <CategoryTiles :addCategory="addCategory" :deleteCategory="deleteCategory" :categories="final_categories" :d_category="d_category"/>
 
 
@@ -119,6 +120,21 @@ export default {
 
 
 <style scoped>
+.section-heading {
+  font-size: 1.8rem;
+  padding-left: 2rem;
+  padding-top: 1rem;
+}
+
+.parent-container {
+  
+  
+  height: 92vh;
+  width:100%;
+  
+  background-color: antiquewhite;
+
+}
 
 
 </style>

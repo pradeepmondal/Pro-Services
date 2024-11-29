@@ -109,6 +109,7 @@ export default {
 
 <template>
 <Navbar :email="email"/>
+<div class="parent-container">
 
 <label class="services-stats-label">Services Stats</label>
 <div class="category-wise-service-distribution">
@@ -118,7 +119,7 @@ export default {
 
 <label class="pie-label">Category wise service distribution</label>
 
-
+</div>
 </template>
 
 
@@ -139,6 +140,16 @@ export default {
 .services-stats-label {
   font-size: 2rem;
   padding: 1rem;
+
+}
+
+.parent-container {
+  
+  
+  height: 92vh;
+  width:100%;
+  
+  background-color: antiquewhite;
 
 }
 

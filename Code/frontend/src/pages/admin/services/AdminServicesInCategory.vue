@@ -43,7 +43,7 @@ export default {
         let regex = new RegExp(search_query, 'i')
         return this.services.filter((service) => {
           return (
-            regex.test(service.name) || regex.test(service.description) 
+            regex.test(service.name)
           )
         })
 
@@ -151,10 +151,8 @@ export default {
     <Navbar :email/>
     <AdminModal :modal_type="modal_type" :obj="obj" :category_obj="category_obj" :heading="modal_heading" :afterAction="fetchServices" :afterAction2="fetchCategory"/>
 <div>
+  <div class="parent-container">
   <div class="container">
-    <AdminSearch search_placeholder="Search in Services" :updateSearchQuery="updateSearchQuery" :search_mode="search_mode" :clearSearch="clearSearch" />
-    
-    
     <div class="header-container">
     <div class="heading">Services in {{ category_obj.name }}
       <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop" @click="editCategory(category_obj)">
@@ -164,6 +162,10 @@ export default {
 
 
     </div>
+    <AdminSearch search_placeholder="Search in Services" :updateSearchQuery="updateSearchQuery" :search_mode="search_mode" :clearSearch="clearSearch" />
+    
+    
+    
 
     <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#staticBackdrop" @click="addService">
                     Add a Service
@@ -212,6 +214,7 @@ export default {
 
     </div>
     </div>
+  </div>
 </template>
 
 
@@ -252,6 +255,17 @@ export default {
 .header-container > button {
   max-height: fit-content;
 }
+
+.parent-container {
+  
+  
+  height: 92vh;
+  width:100%;
+  
+  background-color: antiquewhite;
+
+}
+
 
 
 

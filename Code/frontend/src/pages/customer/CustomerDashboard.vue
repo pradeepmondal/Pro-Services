@@ -69,13 +69,14 @@ export default {
 </script>
 
 <template>
-  <div v-if="block_status === 'blocked'">You have been blocked</div>
+ 
 
   <div v-if="loading">Loading...</div>
   
   <div v-else>
     <Navbar />
-    <div class="container-fluid">
+  
+    <div class=" parent-container">
       <CustomerNotification
         v-if="show_notification"
         :customer="customer"
@@ -83,9 +84,35 @@ export default {
       />
       <AddAddressForm v-if="show_add_address" :afterAction="fetchCustomer" />
 
-      <h1>Welcome {{ customer.f_name }} !!</h1>
+      <h4 class="welcome-message">Welcome {{ customer.f_name }} </h4>
       
       <ServiceCategories />
     </div>
   </div>
+  
 </template>
+
+
+<style scoped>
+
+.parent-container {
+  
+  
+  height: 86vh;
+  width:100%;
+  
+  background-color: antiquewhite;
+
+}
+
+.welcome-message {
+  padding: 1rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0rem;
+}
+  
+
+
+
+
+</style>

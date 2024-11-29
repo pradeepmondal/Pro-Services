@@ -27,7 +27,8 @@ export default {
         show_service_modal: false,
         selected_service_sps: null,
         search_mode: false,
-        search_query: null
+        search_query: null,
+        category: null
         
         
     }
@@ -43,7 +44,7 @@ export default {
         let regex = new RegExp(search_query, 'i')
         return this.services.filter((service) => {
           return (
-            regex.test(service.name) || regex.test(service.description) 
+            regex.test(service.name)
           )
         })
 
@@ -53,7 +54,9 @@ export default {
 
   async created() {
     try {
+      await this.fetchCategory()
       await this.fetchServices()
+      
     } catch (e) {
       console.error(e)
 
@@ -82,6 +85,29 @@ export default {
 
 
     },
+
+    async fetchCategory() {
+        try{
+        const res = await fetch('http://localhost:5050' + '//service_category/' + this.cat_id , {method: 'GET', headers: {"content-type" : "application/json", 'auth-token': this.$store.state.auth_token}})
+        if(res.ok){
+
+            const data = await res.json()
+            this.category = data
+
+
+
+        }
+    }catch(e){
+        console.error(e)
+    }
+        
+        
+
+
+    },
+
+
+
 
 
 
@@ -116,6 +142,7 @@ export default {
 
             const data = await res.json()
             this.selected_service_sps = data
+            this.selected_service_sps.filter((sp) => sp.verification_status === 'Approved')
             
             
         }
@@ -167,19 +194,22 @@ export default {
     <Navbar />
     <ServiceBookingModal  :selected_service="selected_service" :service_professionals="selected_service_sps" />
     <div v-if="loading" class="loading">Loading...</div> 
-    <div v-else class="container-fluid">
+    <div v-else class=" parent-container">
     
     
     
+   
+    
+    
+    
+    <div class="heading">Services in {{ category.name }}</div>
+    <p class="description">{{ category.description }}</p>
+
     <CustomerSearch search_placeholder="Search in Services" :updateSearchQuery="updateSearchQuery" :search_mode="search_mode" :clearSearch="clearSearch" />
-    
-    
-    
-    <div>Services in category {{ cat_id }}</div>
     <div class="tiles-container row">
         
         <div v-for="service in final_services" class="col-lg-3 col-md-6 col-12 services-container">
-            <Tile :tile_heading="service.name" :viewService="viewService" :service="service"  :openModal="true" />
+            <Tile :tile_heading="service.name" :viewService="viewService" :service="service"   :openModal="true" :obj="service" />
         </div>
         </div>
 
@@ -196,6 +226,24 @@ export default {
 
 }
 
+.heading {
+  font-size: 1.5rem;
+  padding: 1rem;
+  padding-bottom: 0.5rem;
+}
+
+.description {
+  padding-left: 1rem;
+}
+
+.parent-container {
+  
+  margin-top: 0;
+  height: 92vh;
+  
+  background-color: antiquewhite;
+
+}
 
 
 </style>

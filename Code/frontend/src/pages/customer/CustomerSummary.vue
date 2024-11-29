@@ -204,7 +204,7 @@ export default {
 
 <template>
 <Navbar :email="email"/>
-
+<div class="parent-container">
 <label class="services-stats-label">{{ customer.f_name }}'s Summary</label>
 
 <div class="chart-container">
@@ -241,6 +241,8 @@ export default {
 
 </div>
 
+</div>
+
 </template>
 
 
@@ -267,6 +269,16 @@ export default {
 .chart-container {
   display: flex;
   justify-content: space-around;
+}
+
+.parent-container {
+  
+  
+  height: 92vh;
+  width:100%;
+  
+  background-color: antiquewhite;
+
 }
 
 

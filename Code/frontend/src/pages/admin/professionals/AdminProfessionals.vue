@@ -227,7 +227,7 @@ export default {
 
 <template>
   <Navbar :email />
-
+<div class="parent-container">
   <div class="notification">
     <div v-if="task_created_message" class="task-created-message">
       {{ task_created_message }}
@@ -238,10 +238,11 @@ export default {
   </div>
   <AdminModal :modal_type="modal_type" :obj="obj" :heading="modal_heading" :afterAction="fetchSPs" />
   <div class="">
+    <h2 class="heading">Service Professionals</h2>
     <AdminSearch search_placeholder="Search in Professionals" :updateSearchQuery="updateSearchQuery" :clearSearch="clearSearch" :search_mode="search_mode" search_param_req="true" search_in="admin_professionals"/>
-    <div>Service Professionals</div>
+    
 
-    <div class="container services-table">
+    <div class="container professional-table">
       <table class="table table-striped">
         <thead>
           <tr>
@@ -324,6 +325,7 @@ export default {
       </table>
     </div>
   </div>
+</div>
 </template>
 
 <style scoped>
@@ -368,6 +370,22 @@ export default {
   margin-top: 0.8rem;
 }
 
+.parent-container {
+  
+  
+  height: 92vh;
+  width:100%;
+  
+  background-color: antiquewhite;
 
+}
+
+.heading {
+  padding: 1rem;
+}
+
+.professional-table {
+  margin-top: 2rem;
+}
 
 </style>

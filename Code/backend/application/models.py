@@ -92,6 +92,7 @@ class ServiceRequest(db.Model):
     request_date = db.Column(db.DateTime, nullable = False, default = datetime.now())
     completion_date = db.Column(db.DateTime)
     status = db.Column(db.String, nullable = False)
+    address = db.Column(db.String, nullable = False)
     remarks = db.Column(db.String)
     rating = db.Column(db.Integer)
     

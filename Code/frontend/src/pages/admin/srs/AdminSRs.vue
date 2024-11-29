@@ -188,8 +188,8 @@ export default {
     :action="action"
     :selected_sr="selected_sr"
   />
-  <div class="container-fluid">
-    <h1>Service Requests</h1>
+  <div class="parent-container">
+    <h2 class="heading">Service Requests</h2>
     <AdminSearch search_placeholder="Search in Service Requests" :updateSearchQuery="updateSearchQuery" :clearSearch="clearSearch" :search_mode="search_mode" search_param_req="true" search_in="admin_srs" />
 
     <div class="container sr-table">
@@ -220,7 +220,13 @@ export default {
             <td>{{ sr.professional_name }}</td>
             <td>{{ sr.customer_name }}</td>
             <td>₹{{ sr.professional_price }}</td>
-            <td>{{ sr.status }}</td>
+            <td > <div v-if="sr.status === 'Requested'" class="status requested">{{ sr.status }}</div>
+              <div v-else-if="sr.status === 'In Progress'" class="status progress">{{ sr.status }}</div>
+              <div v-else-if="sr.status === 'Completed'" class="status completed">{{ sr.status }}</div>
+              <div v-else-if="sr.status === 'Rejected'" class="status rejected-cancelled">{{ sr.status }}</div>
+              <div v-else-if="sr.status === 'Cancelled'" class="status rejected-cancelled">{{ sr.status }}</div>
+              <div v-else-if="sr.status === 'Closed'" class="status closed">{{ sr.status }}</div>
+            </td>
             <td>{{ sr.rating }}</td>
 
             <td>
@@ -248,5 +254,56 @@ export default {
 .button-container button {
     margin: 0 0.4rem;
     width: fit-content;
+}
+
+.requested {
+  background-color: rgb(222, 188, 15);
+  color: white;
+}
+
+.progress {
+  background-color: rgb(112, 103, 212);
+  color: white;
+}
+
+
+.completed {
+  background-color: rgb(54, 171, 15);
+  color: white;
+}
+
+
+.status {
+  padding: 0.3rem;
+  font-size:1rem;
+  justify-content: center;
+  height: fit-content;
+  border: 1px solid rgba(0, 0, 0, 0);
+  border-radius: 0.5rem;
+  max-width: fit-content;
+}
+
+.rejected-cancelled {
+  background-color: rgb(207, 44, 44);
+  color: white;
+}
+
+.closed {
+  background-color: gray;
+  color: white;
+}
+
+.parent-container {
+  
+  
+  height: 92vh;
+  width:100%;
+  
+  background-color: antiquewhite;
+
+}
+
+.heading {
+  padding: 1rem;
 }
 </style>

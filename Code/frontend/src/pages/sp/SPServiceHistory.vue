@@ -70,6 +70,7 @@ export default {
   <div v-if="loading">Loading...</div>
   <div v-else>
     <Navbar />
+    <div class="parent-container">
     
     
     <AllSRs />
@@ -78,10 +79,24 @@ export default {
 
     
 
-
+  </div>
 
   </div>
 
     
 
 </template>
+
+
+<style scoped>
+
+.parent-container {
+  
+  
+  height: 92vh;
+  width:100%;
+  
+  background-color: antiquewhite;
+
+}
+</style>

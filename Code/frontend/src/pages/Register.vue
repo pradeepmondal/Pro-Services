@@ -651,6 +651,7 @@ export default {
   background-color: red;
   color: white;
   height: fit-content;
+  margin: 0.6rem 0;
 }
 
 .service-selector {

@@ -150,7 +150,7 @@ export default {
 
 <template>
 <Navbar :email="email"/>
-<div class="container">
+<div class="parent-container">
 <label class="services-stats-label">Customer Stats</label>
 <div class="category-wise-service-distribution">
   <canvas id="pie_chart" width="600" ref="pie"></canvas>
@@ -180,6 +180,16 @@ export default {
 .services-stats-label {
   font-size: 2rem;
   padding: 1rem;
+
+}
+
+.parent-container {
+  
+  
+  height: 92vh;
+  width:100%;
+  
+  background-color: antiquewhite;
 
 }
 

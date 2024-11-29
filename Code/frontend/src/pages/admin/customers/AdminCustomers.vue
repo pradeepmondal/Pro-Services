@@ -133,11 +133,12 @@ export default {
 <template>
   <Navbar :email />
   <AdminModal :modal_type="modal_type" :obj="obj" :heading="modal_heading" :afterAction="fetchCustomers" />
-  <div class="">
+  <div class="parent-container">
+    <h2 class="heading">Customers</h2>
     <AdminSearch search_placeholder="Search in Customers" :updateSearchQuery="updateSearchQuery" :clearSearch="clearSearch" :search_mode="search_mode" search_param_req="true" search_in="admin_customers"/>
-    <div>Customers</div>
+    
 
-    <div class="container services-table">
+    <div class="container customer-table">
       <table class="table table-striped">
         <thead>
           <tr>
@@ -217,6 +218,24 @@ export default {
     text-decoration: underline;
     cursor: pointer;
 
+}
+
+.parent-container {
+  
+  
+  height: 92vh;
+  width:100%;
+  
+  background-color: antiquewhite;
+
+}
+
+.customer-table {
+  margin-top: 2rem;
+}
+
+.heading {
+  padding: 1rem;
 }
 
 

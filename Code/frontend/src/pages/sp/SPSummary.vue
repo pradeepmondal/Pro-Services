@@ -247,6 +247,7 @@ export default {
 
 <template>
 <Navbar :email="email"/>
+<div class="parent-container">
 
 <label class="services-stats-label">{{ sp.f_name }}'s Stats</label>
 
@@ -285,6 +286,7 @@ export default {
 
 
 </div>
+</div>
 
 </template>
 
@@ -315,6 +317,14 @@ export default {
   justify-content: space-around;
 }
 
+.parent-container {
+  
+  
+  height: 92vh;
+  width:100%;
+  
+  background-color: antiquewhite;
 
+}
 
 </style>

@@ -162,6 +162,17 @@ export default {
 
 }
 
+.select-container select {
+  background-color: rgb(253, 243, 229);
+  
+  
+}
+
+.search-input input {
+  
+  background-color: rgb(253, 243, 229);
+  border: 1px solid black;
+}
 
 
 </style>

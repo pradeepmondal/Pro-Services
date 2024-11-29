@@ -136,9 +136,10 @@ sr_parser.add_argument("c_id")
 sr_parser.add_argument("sp_id")
 sr_parser.add_argument("description")
 sr_parser.add_argument("status")
+sr_parser.add_argument("address", required=False)
 sr_parser.add_argument("remarks", required=False)
 sr_parser.add_argument("rating", required=False)
-
+sr_parser.add_argument("date", required=False)
 
 roles = {
     "rid": fields.Integer,
@@ -209,7 +210,8 @@ service_request = {
     "professional_name": fields.String,
     "professional_price": fields.Integer,
     "rating": fields.Integer,
-    "service": fields.Nested(service)
+    "service": fields.Nested(service),
+    "address": fields.String
 }
 
 sp = {
@@ -784,6 +786,13 @@ class ServiceResource(Resource):
         if not service:
             abort(404, message = "Service not found")
         
+
+        if(service.thumbnail_url):
+            thumbnail = open(service.thumbnail_url, "rb")
+            encoded_thumbnail = base64.b64encode(thumbnail.read()).decode('utf-8')
+            service.thumbnail = encoded_thumbnail
+            thumbnail.close()
+        
         return service, 200
 
 
@@ -945,6 +954,8 @@ class SRResource(Resource):
         status = args.get("status", None)
         remarks = args.get("remarks", None)
         rating = args.get("rating", None)
+        address = args.get("address", None)
+        date = args.get("date", None)
         
         if(not s_id):
             abort(400, message = "Service Id is missing")
@@ -957,8 +968,10 @@ class SRResource(Resource):
         if(not status):
             abort(400, message = "Status is missing")
 
-    
-        new_sr = ServiceRequest(s_id = s_id, c_id = c_id, sp_id = sp_id, description = description, status = status, remarks = remarks, rating = rating )
+        if(date):
+            date = datetime.strptime(date, '%Y-%m-%d')
+
+        new_sr = ServiceRequest(s_id = s_id, c_id = c_id, sp_id = sp_id, description = description, status = status, remarks = remarks, rating = rating, address = address, request_date = date )
         db.session.add(new_sr)
         db.session.commit()
 
@@ -976,6 +989,7 @@ class SRResource(Resource):
         status = args.get("status", None)
         remarks = args.get("remarks", None)
         rating = args.get("rating", None)
+        date = args.get("date", None)
 
         if(not s_id):
             abort(400, message = "Service Id is missing")
@@ -998,6 +1012,11 @@ class SRResource(Resource):
             if status == 'Completed':
                 service_request.completion_date = datetime.now()
 
+        if(date):
+            date = datetime.strptime(date, '%Y-%m-%d')
+        else:
+            date = service_request.request_date
+
         service_request.s_id = s_id
         service_request.c_id = c_id
         service_request.sp_id = sp_id
@@ -1005,6 +1024,7 @@ class SRResource(Resource):
         service_request.status = status
         service_request.remarks = remarks
         service_request.rating = rating
+        service_request.request_date = date
 
         db.session.add(service_request)
         db.session.commit()
@@ -1079,6 +1099,14 @@ class ServiceList(Resource):
             services = db.session.query(Service).filter(Service.cat_id == cat_id).all()
         else:
             services = db.session.query(Service).all()
+        
+
+        for service in services:
+            if(service.thumbnail_url):
+                thumbnail = open(service.thumbnail_url, "rb")
+                encoded_thumbnail = base64.b64encode(thumbnail.read()).decode('utf-8')
+                service.thumbnail = encoded_thumbnail
+                thumbnail.close()
         
         return services, 200
     

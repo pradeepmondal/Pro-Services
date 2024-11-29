@@ -33,6 +33,8 @@ export default {
         sp_id: this.selected_sp.sp_id,
         description: null,
         status: 'Requested',
+        address: this.customer.address + ' ' + this.customer.loc_pincode,
+        date: null
         
     
 
@@ -88,6 +90,11 @@ export default {
     <div class="mb-3">
     {{ selected_service.name }} by {{ selected_sp.f_name }}
 </div>
+
+<div class="mb-3">
+    Request Date: <input type="date" v-model="formData.date" />
+</div>
+
 <div class="mb-3">
     Rating: {{ selected_sp.rating }}
 </div>
@@ -107,7 +114,7 @@ export default {
             v-model="formData.description"
           ></textarea>
         </div>
-        <div class="message-container">
+        <div v-if="message" class="message-container">
             {{ this.message }}
         </div>
 
@@ -132,9 +139,10 @@ export default {
 }
 
 .message-container {
-    background-color: green;
+    background-color: rgba(0, 128, 0, 0.974);
     color: aliceblue;
     max-width: fit-content;
+    padding: 0.3rem;
 }
 
 </style>

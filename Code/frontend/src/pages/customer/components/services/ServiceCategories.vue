@@ -33,7 +33,7 @@ export default {
         let regex = new RegExp(search_query, 'i')
         return this.categories.filter((cat) => {
           return (
-            regex.test(cat.name) || regex.test(cat.description)
+            regex.test(cat.name)
           )
         })
 
@@ -91,15 +91,17 @@ export default {
 
 <template>
   
-    <div class="">
+    <div class="parent-container">
         <div v-if="loading">Loading...</div>
         <div v-else>
-        <div>Explore service categories</div>
+        <div class="heading">Explore Service Categories</div>
+        <div class="search-container">
         <CustomerSearch search_placeholder="Search in Service Categories" :updateSearchQuery="updateSearchQuery" :clearSearch="clearSearch" :search_mode="search_mode" />
+      </div>
         <div class="tiles-container row">
         
         <div v-for="cat in final_categories" class="col-lg-3 col-md-6 col-12 services-container">
-            <Tile :tile_heading="cat.name" :navlink="'/customer/service_category/'+cat.cat_id " />
+            <Tile :tile_heading="cat.name" :navlink="'/customer/service_category/'+cat.cat_id " :obj="cat" />
         </div>
     </div>
 
@@ -120,10 +122,18 @@ export default {
 
 <style scoped>
 .tiles-container {
-    margin: 5rem 1rem;
+    margin: 4rem 1rem;
     
     justify-content: space-evenly;
 
 }
+
+.heading {
+  font-size: 1.5rem;
+  padding: 1rem;
+  padding-bottom: 0.5rem;
+}
+
+
 
 </style>

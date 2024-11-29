@@ -98,8 +98,8 @@ export default {
     :action="action"
     :selected_sr="selected_sr"
   />
-  <div class="container-fluid">
-    <h1> {{ customer.f_name }}'s Profile</h1>
+  <div class="parent-container">
+    <h1 class="heading"> {{ customer.f_name }}'s Profile</h1>
 
 
     <div class="form-conatainer">
@@ -191,7 +191,7 @@ export default {
         </div>
         </div>
       </div>
-      <div v-if="message">{{ message }}</div>
+      <div v-if="message" class="message-container">{{ message }}</div>
 
       <button type="submit" class="btn btn-success" @click="updateProfile">Update</button>
     </form>
@@ -223,11 +223,13 @@ export default {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    border: 2px solid orange;
+    border: 2px solid rgb(31, 161, 66);
+    border-radius: 1rem;
     max-width: fit-content;
     margin: auto;
     padding: 2rem;
     margin-top: 4rem;
+    background-color: rgb(241, 255, 245);
    
 }
 
@@ -238,6 +240,31 @@ export default {
     padding: 1rem;
     
 }
+
+.parent-container {
+  
+  
+  height: 92vh;
+  width:100%;
+  
+  background-color: antiquewhite;
+
+}
+
+.heading {
+  padding: 1rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0rem;
+}
+
+
+  
+
+
+
+
+
+
 </style>
 
 

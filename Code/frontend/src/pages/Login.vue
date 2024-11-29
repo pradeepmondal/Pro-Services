@@ -130,17 +130,7 @@ export default {
               />
             </div>
             <div :class="[error_message ? 'active-error': '']">{{ error_message }}</div>
-            <div class="form-check stay-loggedin">
-              <input
-                class="form-check-input"
-                type="checkbox"
-                value=""
-                id="login-checkbox"
-              />
-              <label class="form-check-label" for="stayLoggedIn">
-                Stay logged in
-              </label>
-            </div>
+  
             
             <a href="#" class="btn btn-primary" @click="Login">Login</a>
           </div>
@@ -193,6 +183,7 @@ export default {
   background-color: red;
   color: white;
   height: fit-content;
+  margin: 0.6rem 0;
 }
 
 </style>

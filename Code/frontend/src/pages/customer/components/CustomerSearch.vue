@@ -117,16 +117,24 @@ export default {
     display: flex;
     height: 3rem;
     justify-content: space-evenly;
+    
 }
 
 .search-input .input-container {
   display: flex;
   width: 24rem;
+  
 }
 
 .search-input button {
   max-width: 4rem;
   font-size: 1rem;
+}
+
+.search-input input {
+  
+  background-color: rgb(253, 243, 229);
+  border: 1px solid black;
 }
 
 .search-input i {
@@ -139,7 +147,17 @@ export default {
   display: flex;
   
   
+  
 }
+
+.select-container select {
+  background-color: rgb(253, 243, 229);
+  
+  
+}
+  
+  
+
 
 .select-container label {
   width: 12rem;

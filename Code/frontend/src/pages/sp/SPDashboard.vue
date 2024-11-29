@@ -70,10 +70,17 @@ export default {
   <div v-if="loading">Loading...</div>
   <div v-else>
     <Navbar />
-    <h1>Welcome {{ sp.f_name }} !!</h1>
+
+    <div class="parent-container">
+
+      <h1 class="welcome-message">Welcome {{ sp.f_name }} !!</h1>
     
     <ActiveSRs />
 
+
+
+    </div>
+    
    
 
     
@@ -85,3 +92,28 @@ export default {
     
 
 </template>
+
+<style scoped>
+.parent-container {
+  
+  
+  height: 92vh;
+  width:100%;
+  
+  background-color: antiquewhite;
+
+}
+
+.welcome-message {
+  font-size: 2rem;
+  padding: 1rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0rem;
+}
+
+
+
+
+
+
+</style>

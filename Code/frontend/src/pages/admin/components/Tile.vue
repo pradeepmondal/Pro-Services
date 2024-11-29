@@ -44,7 +44,10 @@ export default {
     },
   },
   data() {
-    return {};
+    return {
+
+      
+    };
   },
   methods: {
     gotoNavigate() {
@@ -115,7 +118,11 @@ export default {
 </div>
   </div>
 
-  <div v-else class="tile">
+  <div
+    v-else
+    class="tile background-image"
+    :style="{ backgroundImage: `url(src/pages/admin/assets/${tile_heading}.png)` }"
+  ><div class="overlay">
     <div class="tile-heading">
       {{ tile_heading }}
     </div>
@@ -165,6 +172,7 @@ export default {
         Add
       </button>
     </div>
+</div>
   </div>
 </template>
 
@@ -180,19 +188,27 @@ export default {
   align-items: center;
 
   width: 100%;
-  height: 200px;
+  height: 20rem;
   background-size: cover;
   background-position: center;
+  
+
+  border-radius: 1rem;
+
+  
 
   
   
 }
 
 .overlay {
-    background: rgba(255, 255, 255, 0.813);
+    background: rgba(255, 255, 255, 0.517);
     z-index: 1;
-    position: absolute;
-    padding: 1rem;
+    position: relative;
+    padding: 1.5rem 3.5rem;
+    backdrop-filter: blur(0.8rem);
+    border: 1px solid rgba(255, 255, 255, 0.412);
+    border-radius: 1rem;
     
     
 
@@ -203,6 +219,9 @@ export default {
   max-height: max-content;
   max-width: max-content;
   font-size: 1.5rem;
+  margin: auto;
+  margin-bottom: 1rem;
+  color: rgb(46, 46, 46);
 }
 
 .tile-buttons {

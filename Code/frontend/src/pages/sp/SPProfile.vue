@@ -105,8 +105,8 @@ export default {
     :action="action"
     :selected_sr="selected_sr"
   />
-  <div class="container-fluid">
-    <h1> {{ sp.f_name }}'s Profile</h1>
+  <div class="parent-container">
+    <h1 class="heading"> {{ sp.f_name }}'s Profile</h1>
 
 
     <div class="form-conatainer">
@@ -302,11 +302,12 @@ export default {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    border: 2px solid orange;
+    border: 2px solid rgb(31, 161, 66);
     max-width: fit-content;
     margin: auto;
     padding: 1rem;
     margin-top: 0rem;
+    background-color: rgb(241, 255, 245);
    
 }
 
@@ -316,6 +317,23 @@ export default {
     margin: auto;
     padding: 1rem;
     
+}
+
+
+.parent-container {
+  
+  
+  height: 92vh;
+  width:100%;
+  
+  background-color: antiquewhite;
+
+}
+
+.heading {
+  padding: 1rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0rem;
 }
 </style>
 

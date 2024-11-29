@@ -50,10 +50,15 @@ export default {
 
 <template>
   <div class="custom-container">
-    <h1 id="heading"></h1>
+    
+
+
+    <div class="hovering-text-container">
+      <h1 id="heading">Welcome to Pro Services</h1>
+    </div>
     <div class="hovering-img-container">
-      <img class="graphics-1" src="../assets/graphic-1.png" />
-      <img class="graphics-2" src="../assets/graphic-2.png" />
+      <img class="graphics-1" :style="{ width: '300px', height: '270px' }" src="../assets/graphic-1.png" />
+      <img class="graphics-2" :style="{ width: '300px', height: '270px' }" src="../assets/graphic-2.png" />
     </div>
     <div class="login-container">
       <div class="login-container">
@@ -120,16 +125,38 @@ body {
 .custom-container {
   display: flex;
   justify-content: space-between;
-  padding: 5rem;
+  padding: 1rem 5rem;
   border: 2px solid green;
   height: 100vh;
   background-color: hsl(268, 48%, 71%);
 }
 
+.hovering-text-container {
+  display: flex;
+  
+  width: fit-content;
+  padding: 2rem;
+  padding-left: 4rem;
+  padding-top: 7rem;
+
+}
+
+.hovering-text-container #heading{
+  display: flex;
+  color: rgb(255, 179, 0);
+  width: fit-content;
+  font-size: 3rem;
+  
+
+}
+
 .hovering-img-container {
   padding: 2rem 1rem;
+  margin-top: 15rem;
+  
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  position: absolute;
   border: 2px solid hsl(279, 72%, 39%);
   width: fit-content;
   height: fit-content;
