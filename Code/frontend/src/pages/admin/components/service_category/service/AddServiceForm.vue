@@ -102,7 +102,7 @@ export default {
             </div>
   
             <div class="price-container">
-              <label for="price" class="form-label">Price</label>
+              <label for="price" class="form-label">Base Price</label>
               <input
                 type="text"
                 class="form-control"
