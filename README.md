@@ -32,6 +32,11 @@ To setup the project locally:
 - Celery: navigate to backend folder, activate the virtual environment, and type in ```celery -A app:celery_app worker -l INFO``` to start the celery worker
 - Celery Beat: navigate to backend folder, activate the virtual environment, and type in ```celery -A app:celery_app beat -l INFO ``` to start the celery beat for scheduled services
 - head over to the port 5173 of your localhost to explore the project
+
+  Built-in admin Credentials for testing:<br /><br />
+    email: admin@proservices.xyz  [ Just for presentation, not belongs to me :) ] <br />
+    password: test
+  
 <br />
 Few glimpses of the app:
 <br /><br />
